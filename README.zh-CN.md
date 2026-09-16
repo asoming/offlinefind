@@ -6,7 +6,7 @@
 
 拾文是一款离线桌面文档检索工具。选择文件夹，输入记得的一句话，就能在 PDF、Markdown、DOCX 中找到相关文档，并直接阅读命中上下文。轻磨砂玻璃用于导航和搜索区域，正文保持清晰。
 
-**当前版本：v0.1.0-beta.1。** 这是公开测试版，不代表 PRD 全部功能已完成。请先阅读[版本说明与限制](docs/RELEASE_NOTES.md)。
+**当前版本：v0.1.0-beta.2。** 这是公开测试版，不代表 PRD 全部功能已完成。请先阅读[版本说明与限制](docs/RELEASE_NOTES.md)。
 
 ## 已实现
 
@@ -20,12 +20,12 @@
 
 ## 下载与安装
 
-前往 [GitHub Releases](https://github.com/asoming/shiwen/releases)，下载 Windows x64 或 macOS Apple Silicon 的 ZIP，**完整解压**后运行 Shiwen。安装包已包含 Python，不需要单独安装。
+前往 [GitHub Releases](https://github.com/asoming/shiwen/releases)，下载 Windows x64 ZIP、macOS Apple Silicon ZIP，或 Linux x64 DEB / tar.gz。压缩包需**完整解压**后运行。Windows/macOS 包含 Python；Linux 复用系统运行时。
 
 - **Windows 11 x64：** 使用 Edge WebView2，需要电脑已安装该运行时；应用不会偷偷联网下载。大部分 Windows 11 环境已提供，隔离网络机器需提前准备。
 - **macOS 14+ Apple Silicon：** 使用系统 WebKit。测试版没有开发者证书签名和公证，首次启动可能需要在“系统设置 → 隐私与安全性”中批准。
 - 测试版没有可信发布者签名（macOS 打包可能带临时签名），可核对 Release 中的 SHA-256。无需关闭系统整体安全功能。
-- Linux 可配置 GTK/WebKit 或 Qt 后从源码开发运行，本版本不提供 Linux 二进制安装包。
+- **Ubuntu 22.04 / 24.04 x64：** 用系统软件安装器打开 `.deb`，或执行 `sudo apt install ./Shiwen-*-linux-amd64.deb`，然后在应用菜单搜索“拾文”。免安装压缩包解压后执行 `./Shiwen/shiwen`。两者复用系统 Python 3.10+、GTK 3 与 WebKit，已带齐 Python 模块，无需手动配置 pip。详见 [Linux 安装说明](docs/USER_GUIDE.zh-CN.md#linux-安装)。
 
 ## 第一次搜索
 
@@ -46,7 +46,7 @@ PRD 中的万份文档性能与内存预算是待验证目标，**本版本没�
 
 ## 源码运行
 
-需要 Python 3.10+，Release 使用 Python 3.12 构建。
+需要 Python 3.10+，Windows/macOS Release 使用 Python 3.12 构建；Linux 使用系统 Python 3.10+。
 
 ```bash
 git clone https://github.com/asoming/shiwen.git

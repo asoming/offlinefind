@@ -8,6 +8,10 @@ An offline desktop utility for people who remember a passage but not a file name
 
 System search and Everything already have some content-search capabilities. Shiwen aims to differentiate through approachable configuration, dependable Chinese search, clear passage previews and understandable indexing states; superiority has not been established by comparative testing.
 
+## Target platforms
+
+Windows 11 x64, macOS 14+ Apple Silicon, and Ubuntu 22.04 / 24.04 x64 desktops. Linux was explicitly added by the user on 2026-09-16 for use on their Ubuntu computer; provide DEB and portable archive packages. Other distributions, Linux ARM64 and Intel Macs remain unvalidated.
+
 ## P0 product scope
 
 - User-selected local folders, exclusions and overlapping-root deduplication; no default whole-drive scan.

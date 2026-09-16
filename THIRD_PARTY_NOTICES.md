@@ -19,3 +19,7 @@ Platform-dependent components, including pythonnet/.NET, PyObjC and WebView2, re
 
 pythonnet/.NET、PyObjC、WebView2 等平台组件适用各自条款。ReportLab 仅用于生成测试样例，不随应用包分发。
 
+
+Linux packages additionally include bottle, proxy-tools and typing_extensions Python modules, with their distribution metadata/license files. GTK, PyGObject and WebKitGTK are system dependencies, not redistributed in the Linux archive; they retain their upstream terms.
+
+Linux 包还包含 bottle、proxy-tools 和 typing_extensions Python 模块及各自分发元数据与许可文件。GTK、PyGObject 和 WebKitGTK 作为系统依赖使用，不包含在 Linux 压缩包内，保留各自许可。

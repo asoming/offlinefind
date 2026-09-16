@@ -6,7 +6,7 @@
 
 Shiwen is an offline desktop search app for PDF, Markdown and DOCX documents. Choose your folders, type a phrase, and read the matching passage before opening the original file. A frosted-glass interface keeps the navigation quiet and the document text readable.
 
-**Status: v0.1.0-beta.1.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
+**Status: v0.1.0-beta.2.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
 
 ## What works
 
@@ -20,12 +20,12 @@ Shiwen is an offline desktop search app for PDF, Markdown and DOCX documents. Ch
 
 ## Download
 
-Get the Windows x64 ZIP or macOS Apple Silicon ZIP from [GitHub Releases](https://github.com/asoming/shiwen/releases). Extract the entire archive before launching **Shiwen**. Python is bundled; you do not need to install it.
+Get the package for your platform from [GitHub Releases](https://github.com/asoming/shiwen/releases): Windows x64 ZIP, macOS Apple Silicon ZIP, or Linux x64 DEB / tar.gz. Extract the entire archive before launching **Shiwen**. Windows/macOS packages include Python; Linux reuses the system runtime.
 
 - **Windows 11 x64:** uses Microsoft Edge WebView2. The runtime must already be installed; Shiwen does not silently download it. Most Windows 11 installations include it. Air-gapped machines need the runtime provisioned separately.
 - **macOS 14+ Apple Silicon:** uses the system WebKit. The beta is not notarized and has no developer signing certificate. macOS may require approval through System Settings → Privacy & Security after the first launch attempt.
 - These beta binaries are unsigned (macOS packaging may apply an ad-hoc signature). Verify the published SHA-256 checksum. Do not disable system-wide security settings.
-- Linux source execution is supported for development with a compatible GTK/WebKit or Qt backend; no Linux binary is promised in this release.
+- **Ubuntu 22.04 / 24.04 x64:** install the `.deb` through your software installer or `sudo apt install ./Shiwen-*-linux-amd64.deb`. Search **Shiwen** in the application menu. The portable tar.gz runs with `./Shiwen/shiwen`; see the [Linux guide](docs/USER_GUIDE.en.md#linux-installation). Both use system Python 3.10+, GTK 3 and WebKit; Python modules are included, so no pip setup is needed.
 
 ## First search
 
@@ -46,7 +46,7 @@ The PRD’s 10,000-document latency and memory budgets are targets, **not measur
 
 ## Run from source
 
-Requires Python 3.10+ (3.12 is used for release builds).
+Requires Python 3.10+ (Windows/macOS bundles use Python 3.12; Linux uses system Python).
 
 ```bash
 git clone https://github.com/asoming/shiwen.git
@@ -71,4 +71,3 @@ Folder selection and native file opening belong to the desktop app. Browser mode
 Read the [development guide](docs/DEVELOPMENT.en.md) and [contributing notes](CONTRIBUTING.md). Please use synthetic or explicitly shareable examples in bug reports; do not upload private documents or indexes.
 
 MIT © 2026 asoming. See [LICENSE](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md).
-

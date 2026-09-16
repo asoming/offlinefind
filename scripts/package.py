@@ -43,6 +43,9 @@ def collect_notices() -> Path:
 
 def main():
     os.chdir(ROOT)
+    if sys.platform == "linux":
+        subprocess.run([sys.executable, str(ROOT / "scripts" / "package_linux.py")], check=True)
+        return
     output = ROOT / "dist"
     notices = collect_notices()
     args = [

@@ -4,7 +4,7 @@
 
 ## Architecture
 
-The desktop is Python + pywebview using WebView2 on Windows and WKWebView on macOS. The UI is bundled vanilla HTML/CSS/JavaScript with no build step or CDN dependencies. This beta chooses a testable Python implementation over the PRD's tentative Rust option; that option was not a committed requirement.
+The desktop is Python + pywebview using WebView2 on Windows and WKWebView on macOS, and GTK 3 / WebKitGTK on Linux. The UI is bundled vanilla HTML/CSS/JavaScript with no build step or CDN dependencies. This beta chooses a testable Python implementation over the PRD's tentative Rust option; that option was not a committed requirement.
 
 | File | Responsibility |
 | --- | --- |
@@ -56,7 +56,9 @@ python scripts/package.py
 
 The script builds a PyInstaller directory bundle, runs its packaged `--self-test`, then archives it and writes a SHA-256 checksum. On macOS it uses `ditto` to preserve application-bundle links. Signing and notarization are not configured; do not label these binaries signed.
 
-The `Tests` workflow covers three operating systems. The `Release` workflow runs tests, builds Windows x64 and macOS arm64 packages, checks the frozen executable, builds Python source/wheel distributions, and publishes a prerelease **only after all required jobs pass**. A manual workflow run builds artifacts without publishing. Version tags must match `pyproject.toml`, `__version__` and the bilingual release notes.
+The `Tests` workflow covers three operating systems. The `Release` workflow runs tests, builds Windows x64, macOS arm64 and Linux x64 packages, checks the frozen executable, builds Python source/wheel distributions, and publishes a prerelease **only after all required jobs pass**. A manual workflow run builds artifacts without publishing. Version tags must match `pyproject.toml`, `__version__` and the bilingual release notes.
+
+On Linux, `scripts/package.py` delegates to `scripts/package_linux.py`. Build on Ubuntu 22.04 with Python 3.10+ in a virtual environment; install system `python3-gi`, `python3-gi-cairo`, `gir1.2-gtk-3.0`, `gir1.2-webkit2-4.1`, `xdg-utils` and `desktop-file-utils`. It vendors the application and Python dependencies into a DEB and a tar.gz; the launcher uses isolated system Python (`-I`) and OS-maintained GTK/WebKit. It does not bundle an entire browser. Core and native bridge smoke tests run before archiving. CI also installs the actual DEB and runs its core/GUI checks on Ubuntu 22.04 and 24.04. Headless CI uses `xvfb-run`; desktop builds use the current display. No document databases are packaged.
 
 Top-level runtime dependencies are pinned. Transitive/platform-specific dependencies are resolved on the build runner; this is not a fully hermetic build. Keep dependency updates explicit and re-run the platform matrix.
 

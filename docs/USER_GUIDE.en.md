@@ -2,6 +2,23 @@
 
 [简体中文](USER_GUIDE.zh-CN.md) · [Home](../README.md)
 
+## Linux installation
+
+Supported desktop targets are Ubuntu 22.04 / 24.04 x64. Open the downloaded `.deb` in your software installer, or run:
+
+```bash
+sudo apt install ./Shiwen-*-linux-amd64.deb
+shiwen
+```
+
+Find **Shiwen** in the application menu after installation. For the portable tar.gz, extract it and run `./shiwen` inside the Shiwen folder. Both packages use system Python 3.10+, GTK 3 and WebKit. Install missing dependencies with:
+
+```bash
+sudo apt install python3 python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.1 xdg-utils
+```
+
+Existing `gir1.2-webkit2-4.0` also works on Ubuntu 22.04. Application Python modules are bundled; no pip or virtual-environment setup is needed. Provision system dependencies beforehand; launching, indexing and searching then work offline. Other distributions, ARM64 and headless systems are not validated targets. `sudo apt remove shiwen` removes the application but keeps your index and source files; clear the index from app settings.
+
 ## Add your documents
 
 Select **Add folder**. Shiwen reads PDF, `.md`, `.markdown` and `.docx` files inside that folder. Overlapping folders do not create duplicate results. Hidden folders, common dependency folders, symlinks and the application's own data directory are excluded. Whole drives and ancestors of Shiwen's data directory cannot be added.

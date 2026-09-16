@@ -1,10 +1,12 @@
-# Shiwen v0.1.0-beta.1 / 拾文首个公开测试版
+# Shiwen v0.1.0-beta.2 / 拾文 Linux 支持测试版
 
 ## 简体中文
 
-首个可运行的离线全文检索版本：PDF / Markdown / DOCX 解析、中文双字词与英文搜索、原文高亮预览、目录范围与排除、收藏、后台更新、暂停恢复，以及中英文玻璃界面。
+新增 Linux x64 DEB 与免安装 tar.gz，支持 Ubuntu 22.04 / 24.04 桌面。修复 GTK 自检退出顺序，补齐中英文安装说明和应用菜单入口。
 
-下载对应系统的 ZIP，完整解压后运行 Shiwen。Windows x64 需要预装 WebView2；macOS arm64 使用系统 WebKit。包内包含 Python。SHA-256 文件用于核对下载完整性。此版本没有可信发布者签名或 macOS 公证。
+离线全文检索包括：PDF / Markdown / DOCX 解析、中文双字词与英文搜索、原文高亮预览、目录范围与排除、收藏、后台更新、暂停恢复，以及中英文玻璃界面。
+
+Windows/macOS 下载 ZIP 并完整解压，包内包含 Python；Windows x64 需要预装 WebView2，macOS arm64 使用系统 WebKit。Linux 可用系统软件安装器打开 DEB，或执行 `sudo apt install ./Shiwen-*-linux-amd64.deb`；免安装 tar.gz 解压后执行 `./Shiwen/shiwen`。Linux 包复用系统 Python 3.10+、GTK 3 和 WebKit，Python 模块已随包提供。系统依赖准备好后即可离线使用。SHA-256 文件用于核对下载完整性。此版本没有可信发布者签名或 macOS 公证。
 
 已提供自动化核心测试、跨平台 CI、打包后自检。**不代表已通过所有真实桌面人工验收或 PRD 的万文档性能目标。**
 
@@ -14,9 +16,11 @@
 
 ## English
 
-First runnable offline full-text search preview: PDF / Markdown / DOCX extraction, Chinese two-character and English queries, highlighted original excerpts, folder scopes and exclusions, bookmarks, background updates, pause/resume, and a bilingual frosted-glass interface.
+Adds Linux x64 DEB and portable tar.gz packages for Ubuntu 22.04 / 24.04 desktops, fixes GTK smoke-test shutdown ordering, and includes bilingual install instructions and an application-menu launcher.
 
-Download and fully extract the ZIP for your platform. Windows x64 needs WebView2 already installed; macOS arm64 uses system WebKit. Python is included. Verify downloads with the accompanying SHA-256 files. This beta has no trusted publisher signature or macOS notarization.
+Offline full-text search includes: PDF / Markdown / DOCX extraction, Chinese two-character and English queries, highlighted original excerpts, folder scopes and exclusions, bookmarks, background updates, pause/resume, and a bilingual frosted-glass interface.
+
+Fully extract the Windows/macOS ZIP; Python is included. Windows x64 needs WebView2 installed; macOS arm64 uses system WebKit. On Linux, open the DEB in your software installer or run `sudo apt install ./Shiwen-*-linux-amd64.deb`; alternatively extract the tar.gz and run `./Shiwen/shiwen`. Linux reuses system Python 3.10+, GTK 3 and WebKit, with the application Python modules included. Provision system dependencies before offline use. Verify downloads with the accompanying SHA-256 files. This beta has no trusted publisher signature or macOS notarization.
 
 Automated core tests, cross-platform CI and packaged self-tests are included. **These do not establish complete manual desktop acceptance or the PRD's 10,000-document performance targets.**
 

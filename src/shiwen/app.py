@@ -247,14 +247,14 @@ def main():
             if args.gui_smoke:
 
                 def smoke():
-                    def complete(value):
-                        args.gui_smoke.write_text(json.dumps(value), encoding="utf-8")
-                        timer.cancel()
-                        window.destroy()
+                    finished = threading.Event()
+                    result = {"ok": False, "timeout": True}
 
-                    timer = threading.Timer(30, lambda: complete({"ok": False, "timeout": True}))
-                    timer.daemon = True
-                    timer.start()
+                    def complete(value):
+                        nonlocal result
+                        result = value
+                        finished.set()
+
                     window.events.loaded.wait(20)
                     window.evaluate_js(
                         "window.pywebview.api.call('status', {}).then(function(r) {"
@@ -262,10 +262,15 @@ def main():
                         "bridge: !!r.data, title: document.title}; })",
                         callback=complete,
                     )
+                    finished.wait(30)
+                    args.gui_smoke.write_text(json.dumps(result), encoding="utf-8")
+                    # Let GTK finish returning the RPC result before destroying its WebView.
+                    window.evaluate_js("document.title")
+                    window.destroy()
 
             webview.start(
                 func=smoke,
-                gui="edgechromium" if sys.platform == "win32" else None,
+                gui={"win32": "edgechromium", "linux": "gtk"}.get(sys.platform),
                 private_mode=True,
                 debug=False,
             )

@@ -4,7 +4,7 @@
 
 ## 架构
 
-桌面使用 Python + pywebview，Windows 使用 WebView2，macOS 使用 WKWebView。HTML/CSS/JavaScript 随包分发，无前端构建步骤和 CDN。PRD 中的 Rust 只是候选方案；本测试版选择更易验证和交付的 Python 实现。
+桌面使用 Python + pywebview，Windows 使用 WebView2，macOS 使用 WKWebView，Linux 使用 GTK 3 / WebKitGTK。HTML/CSS/JavaScript 随包分发，无前端构建步骤和 CDN。PRD 中的 Rust 只是候选方案；本测试版选择更易验证和交付的 Python 实现。
 
 | 文件 | 职责 |
 | --- | --- |
@@ -56,7 +56,11 @@ python scripts/package.py
 
 脚本创建 PyInstaller 目录包，运行打包后程序的 `--self-test`，成功后归档并生成 SHA-256。macOS 用 `ditto` 保留应用包链接。尚未配置可信证书签名与公证，不能声称已签名。
 
-`Tests` 工作流在三个系统运行。`Release` 工作流依次测试、构建 Windows x64 / macOS arm64、检查冻结后的可执行文件、构建 Python 源码包与 wheel，**全部成功后**才发布 prerelease。手动运行仅生成构建产物。版本标签必须与 `pyproject.toml`、`__version__`、中英文发布说明保持一致。
+`Tests` 工作流在三个系统运行。`Release` 工作流依次测试、构建 Windows x64 / macOS arm64 / Linux x64、检查冻结后的可执行文件、构建 Python 源码包与 wheel，**全部成功后**才发布 prerelease。手动运行仅生成构建产物。版本标签必须与 `pyproject.toml`、`__version__`、中英文发布说明保持一致。
 
 直接运行依赖已固定版本；传递依赖和平台依赖在 runner 上解析，尚不属于完全封闭可复现构建。升级依赖时需显式提交并重跑平台矩阵。
 
+
+## Linux 打包
+
+在 Ubuntu 22.04 上使用 Python 3.10+ 虚拟环境，安装系统依赖 `python3-gi`、`python3-gi-cairo`、`gir1.2-gtk-3.0`、`gir1.2-webkit2-4.1`、`xdg-utils` 和 `desktop-file-utils`，执行同一个 `python scripts/package.py`。它调用 `scripts/package_linux.py`，将应用和 Python 依赖打为 DEB 与 tar.gz。启动器通过 `-I` 使用隔离的系统 Python，GTK/WebKit 由系统维护，不捆绑整套浏览器。核心和原生桥接自检通过后才归档；CI 还会在 Ubuntu 22.04 与 24.04 真正安装 DEB 并运行核心和 GUI 检查。无显示器的 CI 使用 `xvfb-run`，本机使用当前桌面。包中不含用户文档数据库。

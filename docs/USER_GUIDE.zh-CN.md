@@ -2,6 +2,23 @@
 
 [English](USER_GUIDE.en.md) · [返回首页](../README.zh-CN.md)
 
+## Linux 安装
+
+支持 Ubuntu 22.04 / 24.04 x64 桌面。下载 `.deb` 后用系统软件安装器打开，或执行：
+
+```bash
+sudo apt install ./Shiwen-*-linux-amd64.deb
+shiwen
+```
+
+安装后可在应用菜单找到“拾文”。免安装版解压 tar.gz，进入 Shiwen 文件夹运行 `./shiwen`。它依赖系统 Python 3.10+、GTK 3 与 WebKit；若缺少依赖，先执行：
+
+```bash
+sudo apt install python3 python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.1 xdg-utils
+```
+
+Ubuntu 22.04 已有 `gir1.2-webkit2-4.0` 时也可以使用。Python 应用依赖随包提供，无需 pip 或虚拟环境。系统依赖需提前准备好；之后运行、索引和搜索均可离线。其他 Linux 发行版、ARM64 与无桌面环境暂未验证。`sudo apt remove shiwen` 卸载程序，但保留索引与原文件；删除索引请使用应用设置。
+
 ## 添加资料
 
 点击“添加文件夹”。拾文会读取其中的 PDF、`.md`、`.markdown`、`.docx`。父子目录重复添加不会产生重复结果。隐藏目录、常见依赖目录、符号链接及应用自己的数据目录会被跳过；不能选择整盘或包含拾文数据目录的上级目录。
