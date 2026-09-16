@@ -1,44 +1,299 @@
 <!doctype html>
 <html lang="zh-CN">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<meta http-equiv="Content-Security-Policy" content="default-src 'none'; script-src 'unsafe-inline'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'">
-<title>拾文 · Shiwen</title>
-<style>/*__STYLE__*/</style>
-</head>
-<body>
-<div class="app">
- <aside class="sidebar">
-  <div class="brand"><span class="brand-icon" data-icon="book"></span><div><strong>拾文</strong><small>SHIWEN</small></div><span class="beta">BETA</span></div>
-  <nav class="navigation" aria-label="Navigation">
-   <button data-view="all" class="nav-item active"><span data-icon="files"></span><span data-i18n="allDocs"></span><span id="all-count" class="count">0</span></button>
-   <button data-view="saved" class="nav-item"><span data-icon="bookmark"></span><span data-i18n="saved"></span><span id="saved-count" class="count">0</span></button>
-  </nav>
-  <div class="folder-heading"><span data-i18n="searchScope"></span><button id="add-small" class="icon-button" data-title="addFolder"><span data-icon="plus"></span></button></div>
-  <div id="folders" class="folders"></div>
-  <button id="manage-folders" class="text-button" data-i18n="manageFolders"></button>
-  <div class="sidebar-bottom"><button id="index-status" class="index-status"><span class="status-dot"></span><span id="status-label"></span><span data-icon="chevron"></span></button><span id="index-detail" class="muted small"></span><button id="settings-button" class="nav-item"><span data-icon="settings"></span><span data-i18n="settings"></span></button></div>
- </aside>
- <main>
-  <header class="search-area"><div class="page-heading"><h1 data-i18n="tagline"></h1><span class="private-badge"><span data-icon="shield"></span><span data-i18n="offline"></span></span></div>
-   <form id="search-form" class="search-box"><span data-icon="search"></span><input id="query" type="search" data-placeholder="searchPlaceholder" data-label="searchPlaceholder" autocomplete="off" spellcheck="false"><button type="button" id="clear-query" class="icon-button" data-title="clearSearch"><span data-icon="x"></span></button><kbd id="search-key">Ctrl K</kbd></form>
-   <div class="filter-row"><div class="filters" aria-label="File type"><button class="filter active" data-type="all" data-i18n="all"></button><button class="filter" data-type="pdf">PDF</button><button class="filter" data-type="md">Markdown</button><button class="filter" data-type="docx">Word</button></div><span class="search-caption"><span data-icon="text"></span><span data-i18n="titleAndBody"></span></span></div>
-  </header>
-  <section id="welcome" class="welcome" hidden><div class="welcome-icon" data-icon="folder"></div><span class="eyebrow">A LITTLE ORDER, A LOT MORE CLARITY</span><h2 data-i18n="welcomeTitle"></h2><p data-i18n="welcomeBody"></p><button id="add-first" class="primary"><span data-icon="plus"></span><span data-i18n="addFolder"></span></button><small data-i18n="supported"></small></section>
-  <div id="workspace" class="workspace">
-   <section class="results-pane"><div class="results-toolbar"><span id="result-summary" aria-live="polite"></span><select id="sort" data-label="sort"><option value="relevance" data-i18n="relevance"></option><option value="date" data-i18n="recent"></option></select></div><div id="results" role="list" aria-label="Search results"></div><button id="load-more" class="secondary load-more" data-i18n="loadMore" hidden></button></section>
-   <aside class="preview-pane" id="preview-pane"><div class="preview-toolbar"><span data-i18n="preview"></span><div class="preview-tools"><button id="bookmark" class="icon-button" data-title="save" aria-pressed="false" disabled><span data-icon="bookmark"></span></button><button id="reveal" class="icon-button" data-title="reveal" disabled><span data-icon="folder"></span></button><button id="close-preview" class="icon-button close-preview" data-title="close"><span data-icon="x"></span></button></div></div><div id="preview-empty" class="preview-empty"><span data-icon="book"></span><p data-i18n="chooseDocument"></p></div><div id="document" hidden><div class="match-nav"><span id="match-label"></span><div><button id="prev-hit" class="icon-button" data-title="previous"><span data-icon="up"></span></button><button id="next-hit" class="icon-button" data-title="next"><span data-icon="down"></span></button></div></div><article class="paper"><div id="paper-type" class="paper-type"></div><h2 id="paper-title"></h2><div id="paper-location" class="paper-location"></div><div id="paper-text" class="paper-text"></div><div class="paper-footer"><span>SHIWEN / LOCAL DOCUMENT</span><span id="paper-number"></span></div></article><div id="document-status" class="document-status"></div><p id="document-path" class="document-path"></p><button id="open-document" class="secondary open-document"><span data-icon="external"></span><span data-i18n="openOriginal"></span></button></div></aside>
-  </div>
-  <footer><span><span data-icon="lock"></span><span data-i18n="privacyFooter"></span></span><span id="footer-note" data-i18n="noAccount"></span></footer>
- </main>
-</div>
-<div id="toast" role="status" hidden></div>
-<dialog id="settings-dialog"><div class="dialog-head"><h2 data-i18n="settings"></h2><button class="icon-button" data-close="settings-dialog" data-title="close"><span data-icon="x"></span></button></div><div class="settings-body"><label><span data-i18n="language"></span><select id="language"><option value="zh">简体中文</option><option value="en">English</option></select></label><label><span data-i18n="appearance"></span><select id="theme"><option value="system" data-i18n="system"></option><option value="light" data-i18n="light"></option><option value="dark" data-i18n="dark"></option></select></label><label><span data-i18n="glass"></span><input type="checkbox" id="glass"></label><label><span data-i18n="resource"></span><select id="resource"><option value="standard" data-i18n="standard"></option><option value="low" data-i18n="low"></option></select></label><div class="setting-note" data-i18n="resourceNote"></div><div class="data-info"><span data-i18n="localData"></span><strong id="disk-size"></strong><code id="data-directory"></code><p data-i18n="indexPrivacy"></p></div><button id="clear-data" class="danger" data-i18n="clearData"></button><p class="version">Shiwen · <span id="version"></span> · MIT</p></div></dialog>
-<dialog id="folders-dialog"><div class="dialog-head"><h2 data-i18n="manageFolders"></h2><button class="icon-button" data-close="folders-dialog" data-title="close"><span data-icon="x"></span></button></div><div id="folder-management"></div><button id="add-managed" class="primary"><span data-icon="plus"></span><span data-i18n="addFolder"></span></button><p class="setting-note" data-i18n="folderNote"></p></dialog>
-<dialog id="status-dialog"><div class="dialog-head"><h2 data-i18n="indexState"></h2><button class="icon-button" data-close="status-dialog" data-title="close"><span data-icon="x"></span></button></div><div id="index-progress"></div><div class="dialog-actions"><button id="pause" class="secondary"></button><button id="retry" class="secondary" data-i18n="retry"></button></div><div id="status-counts"></div><p class="setting-note" data-i18n="statusNote"></p></dialog>
-<dialog id="confirm-dialog"><h2 id="confirm-title"></h2><p id="confirm-text"></p><input id="confirm-input" hidden><div class="dialog-actions"><button id="confirm-cancel" class="secondary" data-i18n="cancel"></button><button id="confirm-ok" class="primary" data-i18n="confirm"></button></div></dialog>
-<script>/*__BOOT__*/</script>
-<script>/*__SCRIPT__*/</script>
-</body>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta
+      http-equiv="Content-Security-Policy"
+      content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
+    />
+    <title>拾文 · Shiwen</title>
+    <style>
+      /*__STYLE__*/
+    </style>
+  </head>
+  <body>
+    <div class="app">
+      <aside class="sidebar">
+        <div class="brand">
+          <span class="brand-icon" data-icon="book"></span>
+          <div><strong>拾文</strong><small>SHIWEN</small></div>
+          <span class="beta">BETA</span>
+        </div>
+        <nav class="navigation" aria-label="Navigation">
+          <button data-view="all" class="nav-item active">
+            <span data-icon="files"></span><span data-i18n="allDocs"></span
+            ><span id="all-count" class="count">0</span>
+          </button>
+          <button data-view="saved" class="nav-item">
+            <span data-icon="bookmark"></span><span data-i18n="saved"></span
+            ><span id="saved-count" class="count">0</span>
+          </button>
+        </nav>
+        <div class="folder-heading">
+          <span data-i18n="searchScope"></span
+          ><button id="add-small" class="icon-button" data-title="addFolder">
+            <span data-icon="plus"></span>
+          </button>
+        </div>
+        <div id="folders" class="folders"></div>
+        <button
+          id="manage-folders"
+          class="text-button"
+          data-i18n="manageFolders"
+        ></button>
+        <div class="sidebar-bottom">
+          <button id="index-status" class="index-status">
+            <span class="status-dot"></span><span id="status-label"></span
+            ><span data-icon="chevron"></span></button
+          ><span id="index-detail" class="muted small"></span
+          ><button id="settings-button" class="nav-item">
+            <span data-icon="settings"></span><span data-i18n="settings"></span>
+          </button>
+        </div>
+      </aside>
+      <main>
+        <header class="search-area">
+          <div class="page-heading">
+            <h1 data-i18n="tagline"></h1>
+            <span class="private-badge"
+              ><span data-icon="shield"></span><span data-i18n="offline"></span
+            ></span>
+          </div>
+          <form id="search-form" class="search-box">
+            <span data-icon="search"></span
+            ><input
+              id="query"
+              type="search"
+              data-placeholder="searchPlaceholder"
+              data-label="searchPlaceholder"
+              autocomplete="off"
+              spellcheck="false"
+            /><button
+              type="button"
+              id="clear-query"
+              class="icon-button"
+              data-title="clearSearch"
+            >
+              <span data-icon="x"></span></button
+            ><kbd id="search-key">Ctrl K</kbd>
+          </form>
+          <div class="filter-row">
+            <div class="filters" aria-label="File type">
+              <button
+                class="filter active"
+                data-type="all"
+                data-i18n="all"
+              ></button
+              ><button class="filter" data-type="pdf">PDF</button
+              ><button class="filter" data-type="md">Markdown</button
+              ><button class="filter" data-type="docx">Word</button>
+            </div>
+            <span class="search-caption"
+              ><span data-icon="text"></span
+              ><span data-i18n="titleAndBody"></span
+            ></span>
+          </div>
+        </header>
+        <section id="welcome" class="welcome" hidden>
+          <div class="welcome-icon" data-icon="folder"></div>
+          <span class="eyebrow">A LITTLE ORDER, A LOT MORE CLARITY</span>
+          <h2 data-i18n="welcomeTitle"></h2>
+          <p data-i18n="welcomeBody"></p>
+          <button id="add-first" class="primary">
+            <span data-icon="plus"></span
+            ><span data-i18n="addFolder"></span></button
+          ><small data-i18n="supported"></small>
+        </section>
+        <div id="workspace" class="workspace">
+          <section class="results-pane">
+            <div class="results-toolbar">
+              <span id="result-summary" aria-live="polite"></span
+              ><select id="sort" data-label="sort">
+                <option value="relevance" data-i18n="relevance"></option>
+                <option value="date" data-i18n="recent"></option>
+              </select>
+            </div>
+            <div id="results" role="list" aria-label="Search results"></div>
+            <button
+              id="load-more"
+              class="secondary load-more"
+              data-i18n="loadMore"
+              hidden
+            ></button>
+          </section>
+          <aside class="preview-pane" id="preview-pane">
+            <div class="preview-toolbar">
+              <span data-i18n="preview"></span>
+              <div class="preview-tools">
+                <button
+                  id="bookmark"
+                  class="icon-button"
+                  data-title="save"
+                  aria-pressed="false"
+                  disabled
+                >
+                  <span data-icon="bookmark"></span></button
+                ><button
+                  id="reveal"
+                  class="icon-button"
+                  data-title="reveal"
+                  disabled
+                >
+                  <span data-icon="folder"></span></button
+                ><button
+                  id="close-preview"
+                  class="icon-button close-preview"
+                  data-title="close"
+                >
+                  <span data-icon="x"></span>
+                </button>
+              </div>
+            </div>
+            <div id="preview-empty" class="preview-empty">
+              <span data-icon="book"></span>
+              <p data-i18n="chooseDocument"></p>
+            </div>
+            <div id="document" hidden>
+              <div class="match-nav">
+                <span id="match-label"></span>
+                <div>
+                  <button
+                    id="prev-hit"
+                    class="icon-button"
+                    data-title="previous"
+                  >
+                    <span data-icon="up"></span></button
+                  ><button id="next-hit" class="icon-button" data-title="next">
+                    <span data-icon="down"></span>
+                  </button>
+                </div>
+              </div>
+              <article class="paper">
+                <div id="paper-type" class="paper-type"></div>
+                <h2 id="paper-title"></h2>
+                <div id="paper-location" class="paper-location"></div>
+                <div id="paper-text" class="paper-text"></div>
+                <div class="paper-footer">
+                  <span>SHIWEN / LOCAL DOCUMENT</span
+                  ><span id="paper-number"></span>
+                </div>
+              </article>
+              <div id="document-status" class="document-status"></div>
+              <p id="document-path" class="document-path"></p>
+              <button id="open-document" class="secondary open-document">
+                <span data-icon="external"></span
+                ><span data-i18n="openOriginal"></span>
+              </button>
+            </div>
+          </aside>
+        </div>
+        <footer>
+          <span
+            ><span data-icon="lock"></span
+            ><span data-i18n="privacyFooter"></span></span
+          ><span id="footer-note" data-i18n="noAccount"></span>
+        </footer>
+      </main>
+    </div>
+    <div id="toast" role="status" hidden></div>
+    <dialog id="settings-dialog">
+      <div class="dialog-head">
+        <h2 data-i18n="settings"></h2>
+        <button
+          class="icon-button"
+          data-close="settings-dialog"
+          data-title="close"
+        >
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div class="settings-body">
+        <label
+          ><span data-i18n="language"></span
+          ><select id="language">
+            <option value="zh">简体中文</option>
+            <option value="en">English</option>
+          </select></label
+        ><label
+          ><span data-i18n="appearance"></span
+          ><select id="theme">
+            <option value="system" data-i18n="system"></option>
+            <option value="light" data-i18n="light"></option>
+            <option value="dark" data-i18n="dark"></option></select></label
+        ><label
+          ><span data-i18n="glass"></span
+          ><input type="checkbox" id="glass" /></label
+        ><label
+          ><span data-i18n="resource"></span
+          ><select id="resource">
+            <option value="standard" data-i18n="standard"></option>
+            <option value="low" data-i18n="low"></option></select
+        ></label>
+        <div class="setting-note" data-i18n="resourceNote"></div>
+        <div class="data-info">
+          <span data-i18n="localData"></span><strong id="disk-size"></strong
+          ><code id="data-directory"></code>
+          <p data-i18n="indexPrivacy"></p>
+        </div>
+        <button id="clear-data" class="danger" data-i18n="clearData"></button>
+        <p class="version">Shiwen · <span id="version"></span> · MIT</p>
+      </div>
+    </dialog>
+    <dialog id="folders-dialog">
+      <div class="dialog-head">
+        <h2 data-i18n="manageFolders"></h2>
+        <button
+          class="icon-button"
+          data-close="folders-dialog"
+          data-title="close"
+        >
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div id="folder-management"></div>
+      <button id="add-managed" class="primary">
+        <span data-icon="plus"></span><span data-i18n="addFolder"></span>
+      </button>
+      <p class="setting-note" data-i18n="folderNote"></p>
+    </dialog>
+    <dialog id="status-dialog">
+      <div class="dialog-head">
+        <h2 data-i18n="indexState"></h2>
+        <button
+          class="icon-button"
+          data-close="status-dialog"
+          data-title="close"
+        >
+          <span data-icon="x"></span>
+        </button>
+      </div>
+      <div id="index-progress"></div>
+      <div class="dialog-actions">
+        <button id="pause" class="secondary"></button
+        ><button id="retry" class="secondary" data-i18n="retry"></button>
+      </div>
+      <div id="status-counts"></div>
+      <p class="setting-note" data-i18n="statusNote"></p>
+    </dialog>
+    <dialog id="confirm-dialog">
+      <h2 id="confirm-title"></h2>
+      <p id="confirm-text"></p>
+      <input id="confirm-input" hidden />
+      <div class="dialog-actions">
+        <button
+          id="confirm-cancel"
+          class="secondary"
+          data-i18n="cancel"
+        ></button
+        ><button id="confirm-ok" class="primary" data-i18n="confirm"></button>
+      </div>
+    </dialog>
+    <script>
+      /*__BOOT__*/
+    </script>
+    <script>
+      /*__SCRIPT__*/
+    </script>
+  </body>
 </html>

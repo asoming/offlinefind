@@ -9,6 +9,7 @@ import secrets
 import subprocess
 import sys
 import tempfile
+import threading
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -214,6 +215,7 @@ def main():
     )
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--self-test", type=Path, metavar="RESULT_JSON")
+    parser.add_argument("--gui-smoke", type=Path, metavar="RESULT_JSON")
     args = parser.parse_args()
     if args.self_test:
         self_test(args.self_test)
@@ -238,9 +240,31 @@ def main():
                 min_size=(780, 580),
                 background_color="#f5f7fa",
                 text_select=True,
+                hidden=bool(args.gui_smoke),
             )
             bridge._window = window
+            smoke = None
+            if args.gui_smoke:
+
+                def smoke():
+                    def complete(value):
+                        args.gui_smoke.write_text(json.dumps(value), encoding="utf-8")
+                        timer.cancel()
+                        window.destroy()
+
+                    timer = threading.Timer(30, lambda: complete({"ok": False, "timeout": True}))
+                    timer.daemon = True
+                    timer.start()
+                    window.events.loaded.wait(20)
+                    window.evaluate_js(
+                        "window.pywebview.api.call('status', {}).then(function(r) {"
+                        "return {ok: r.ok && !!document.querySelector('#query'),"
+                        "bridge: !!r.data, title: document.title}; })",
+                        callback=complete,
+                    )
+
             webview.start(
+                func=smoke,
                 gui="edgechromium" if sys.platform == "win32" else None,
                 private_mode=True,
                 debug=False,
