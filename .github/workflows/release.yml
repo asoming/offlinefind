@@ -7,6 +7,7 @@ permissions:
   contents: read
 jobs:
   package:
+    timeout-minutes: 20
     strategy:
       fail-fast: false
       matrix:
@@ -36,6 +37,7 @@ jobs:
           if-no-files-found: error
   linux:
     runs-on: ubuntu-22.04
+    timeout-minutes: 15
     steps:
       - uses: actions/checkout@v4
       - name: Install desktop runtime and packaging tools
@@ -53,7 +55,7 @@ jobs:
         run: |
           sudo apt-get install -y ./dist/Shiwen-*-linux-amd64.deb
           shiwen --self-test /tmp/shiwen-deb-core.json
-          xvfb-run -a shiwen --gui-smoke /tmp/shiwen-deb-gui.json --data-dir /tmp/shiwen-deb-data
+          timeout 90s xvfb-run -a shiwen --gui-smoke /tmp/shiwen-deb-gui.json --data-dir /tmp/shiwen-deb-data
           /usr/bin/python3 -c "import json; assert all(json.load(open('/tmp/shiwen-deb-' + k + '.json'))['ok'] for k in ['core', 'gui'])"
       - uses: actions/upload-artifact@v4
         with:
@@ -66,6 +68,7 @@ jobs:
   linux-compatibility:
     needs: linux
     runs-on: ubuntu-24.04
+    timeout-minutes: 10
     steps:
       - uses: actions/download-artifact@v4
         with:
@@ -77,7 +80,7 @@ jobs:
       - name: Check core and native desktop bridge
         run: |
           shiwen --self-test /tmp/shiwen-core.json
-          xvfb-run -a shiwen --gui-smoke /tmp/shiwen-gui.json --data-dir /tmp/shiwen-data
+          timeout 90s xvfb-run -a shiwen --gui-smoke /tmp/shiwen-gui.json --data-dir /tmp/shiwen-data
           /usr/bin/python3 -c "import json; assert all(json.load(open('/tmp/shiwen-' + k + '.json'))['ok'] for k in ['core', 'gui'])"
   source:
     runs-on: ubuntu-latest
@@ -111,7 +114,11 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
-        run: >-
-          gh release create "$RELEASE_TAG" release-assets/*
-          --verify-tag --prerelease --title "Shiwen $RELEASE_TAG"
-          --notes-file docs/RELEASE_NOTES.md
+        run: |
+          if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
+            echo "Release already exists; preserving its published assets."
+          else
+            gh release create "$RELEASE_TAG" release-assets/* \
+              --verify-tag --prerelease --title "Shiwen $RELEASE_TAG" \
+              --notes-file docs/RELEASE_NOTES.md
+          fi
