@@ -6,10 +6,12 @@ import json
 import multiprocessing
 import os
 import secrets
+import sqlite3
 import subprocess
 import sys
 import tempfile
 import threading
+import time
 import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -17,6 +19,7 @@ from pathlib import Path
 from platformdirs import user_data_path
 
 from . import __version__
+from .desktop import guard_evaluation
 from .library import Library
 from .updates import RELEASES, Updater, tls_context
 
@@ -26,8 +29,42 @@ class Bridge:
         self._library = library
         self._window = None
         self._updater = Updater()
+        self._closing = threading.Event()
+        self._calls = threading.Condition()
+        self._active = 0
 
     def call(self, method: str, args: dict | None = None) -> dict:
+        with self._calls:
+            if self._closing.is_set():
+                return {"ok": False, "error": "app_closing"}
+            self._active += 1
+        try:
+            return self._dispatch(method, args)
+        finally:
+            with self._calls:
+                self._active -= 1
+                self._calls.notify_all()
+
+    def _request_close(self):
+        self._closing.set()
+        self._library.request_stop()
+        self._updater.cancel()
+
+    def _close(self):
+        self._request_close()
+
+        def finish_library():
+            with self._calls:
+                self._calls.wait_for(lambda: self._active == 0)
+            self._library.close()
+
+        # Keep the database alive until both RPCs and index workers have finished.
+        cleanup = threading.Thread(target=finish_library, name="shiwen-close", daemon=True)
+        cleanup.start()
+        cleanup.join(timeout=5)
+        self._updater.close()
+
+    def _dispatch(self, method: str, args: dict | None = None) -> dict:
         args = args or {}
         library = self._library
         actions = {
@@ -75,7 +112,7 @@ class Bridge:
                 "update_invalid",
             }
             return {"ok": False, "error": code if code in known else "operation_failed"}
-        except (OSError, TypeError):
+        except (OSError, TypeError, sqlite3.Error):
             return {"ok": False, "error": "operation_failed"}
 
     def _release_page(self):
@@ -246,14 +283,16 @@ def main():
     parser.add_argument("--port", type=int, default=8765)
     parser.add_argument("--self-test", type=Path, metavar="RESULT_JSON")
     parser.add_argument("--gui-smoke", type=Path, metavar="RESULT_JSON")
+    parser.add_argument("--gui-close-smoke", type=Path, metavar="RESULT_JSON")
     args = parser.parse_args()
+    gui_result = args.gui_smoke or args.gui_close_smoke
     if args.self_test:
         self_test(args.self_test)
         return
     library = Library(
         args.data_dir,
         automatic=not args.folder,
-        disk_provider=(lambda: ([], set())) if args.gui_smoke else None,
+        disk_provider=(lambda: ([], set())) if gui_result else None,
     )
     bridge = Bridge(library)
     try:
@@ -274,11 +313,15 @@ def main():
                 min_size=(780, 580),
                 background_color="#f5f7fa",
                 text_select=True,
-                hidden=bool(args.gui_smoke),
+                hidden=bool(gui_result),
             )
             bridge._window = window
+            window.events.closing += bridge._request_close
+            window.events.closed += bridge._request_close
+            if sys.platform == "linux":
+                guard_evaluation(window, bridge._closing)
             smoke = None
-            if args.gui_smoke:
+            if gui_result:
 
                 def smoke():
                     finished = threading.Event()
@@ -297,9 +340,19 @@ def main():
                         callback=complete,
                     )
                     finished.wait(30)
-                    args.gui_smoke.write_text(json.dumps(result), encoding="utf-8")
+                    gui_result.write_text(json.dumps(result), encoding="utf-8")
                     # Let GTK finish returning the RPC result before destroying its WebView.
                     window.evaluate_js("document.title")
+                    if args.gui_close_smoke:
+                        # Close while WebKit still owes a callback to a non-daemon caller.
+                        threading.Thread(
+                            target=window.evaluate_js,
+                            args=(
+                                "(()=>{const t=Date.now();while(Date.now()-t<2000){};"
+                                "return true;})()",
+                            ),
+                        ).start()
+                        time.sleep(0.2)
                     window.destroy()
 
             webview.start(
@@ -309,8 +362,7 @@ def main():
                 debug=False,
             )
     finally:
-        bridge._updater.close()
-        library.close()
+        bridge._close()
 
 
 if __name__ == "__main__":

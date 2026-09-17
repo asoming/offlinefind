@@ -6,6 +6,7 @@ import stat as stat_types
 import threading
 import time
 import uuid
+from functools import partial
 from pathlib import Path
 
 from .discovery import SKIP_NAMES, linked_directory, local_disks
@@ -32,9 +33,13 @@ class Library:
         self, directory: Path, extractor=extract_isolated, automatic=False, disk_provider=None
     ):
         self.store = Store(directory)
-        self.extractor = extractor
         self.operation = threading.RLock()
         self.stop_event = threading.Event()
+        self.extractor = (
+            partial(extract_isolated, cancel=self.stop_event)
+            if extractor is extract_isolated
+            else extractor
+        )
         self.wake = threading.Event()
         self.thread = None
         self.observer = None
@@ -166,6 +171,8 @@ class Library:
             if not available:
                 continue
             for parent, directories, files in os.walk(base, followlinks=False):
+                if self.stop_event.is_set():
+                    return
                 directories[:] = [
                     d
                     for d in directories
@@ -175,6 +182,8 @@ class Library:
                     and self.allowed(Path(parent) / d)
                 ]
                 for name in files:
+                    if self.stop_event.is_set():
+                        return
                     path = Path(parent) / name
                     if path.suffix.lower() not in SUPPORTED or path in seen or path.is_symlink():
                         continue
@@ -228,6 +237,8 @@ class Library:
                 else:
                     self.progress["phase"] = "indexing"
                     result = self.extractor(path)
+                if self.stop_event.is_set():
+                    break
                 after = path.stat()
                 if (after.st_size, after.st_mtime_ns, after.st_ctime_ns) != (
                     stat.st_size,
@@ -289,6 +300,8 @@ class Library:
                     and self.allowed(Path(parent) / name)
                 ]
                 for name in directories + files:
+                    if self.stop_event.is_set():
+                        return
                     path = Path(parent) / name
                     if not self.allowed(path):
                         continue
@@ -364,6 +377,8 @@ class Library:
                         continue
                     else:
                         result = self.extractor(path)
+                    if self.stop_event.is_set():
+                        return
                     after = path.stat()
                     if (before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
                         after.st_size,
@@ -444,9 +459,12 @@ class Library:
         except OSError:
             self.observer = None  # Periodic reconciliation remains available.
 
-    def close(self):
+    def request_stop(self):
         self.stop_event.set()
         self.wake.set()
+
+    def close(self):
+        self.request_stop()
         if self.observer:
             self.observer.stop()
             self.observer.join(timeout=3)

@@ -1,5 +1,14 @@
 # Changelog / 更新记录
 
+## 0.1.0-beta.6 — 2026-09-17
+
+- Fix Linux exit hanging when a WebView callback is outstanding as the window closes.
+- Cancel in-flight document parsing on close and keep unfinished documents pending for restart.
+- Drain active bridge requests before closing the index database; add shutdown regression tests and a packaged GTK close-race smoke test.
+- 修复 Linux 关闭窗口时等待界面回调、导致进程不退出的竞态。
+- 关闭时取消正在执行的文档解析，未完成文档保留待处理状态，重启后继续。
+- 等待已有桥接请求结束后再关闭索引数据库；新增退出回归测试与打包后的 GTK 关闭竞态自检。
+
 ## 0.1.0-beta.5 — 2026-09-17
 
 - Add manual update checks and release notes in Settings, with platform-matched package downloads.

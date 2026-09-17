@@ -2,6 +2,7 @@
 
 import multiprocessing
 import os
+import time
 import zipfile
 from pathlib import Path
 
@@ -104,19 +105,27 @@ def _worker(path: str, sender) -> None:
         sender.close()
 
 
-def extract_isolated(path: Path, timeout: float = 60) -> dict:
+def extract_isolated(path: Path, timeout: float = 60, cancel=None) -> dict:
+    if cancel is not None and cancel.is_set():
+        return {"status": "cancelled", "blocks": []}
     context = multiprocessing.get_context("spawn")
     receiver, sender = context.Pipe(duplex=False)
     process = context.Process(target=_worker, args=(str(path), sender), daemon=True)
     process.start()
     sender.close()
     try:
-        if receiver.poll(timeout):
-            try:
-                return receiver.recv()
-            except EOFError:
-                return {"status": "parse_error", "blocks": []}
-        return {"status": "timeout", "blocks": []}
+        deadline = time.monotonic() + timeout
+        while True:
+            if cancel is not None and cancel.is_set():
+                return {"status": "cancelled", "blocks": []}
+            remaining = deadline - time.monotonic()
+            if remaining <= 0:
+                return {"status": "timeout", "blocks": []}
+            if receiver.poll(min(remaining, 0.1)):
+                try:
+                    return receiver.recv()
+                except EOFError:
+                    return {"status": "parse_error", "blocks": []}
     finally:
         receiver.close()
         if process.is_alive():

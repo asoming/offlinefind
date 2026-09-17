@@ -77,3 +77,7 @@ Only manual update actions connect to GitHub. Startup, indexing, searching and o
 - **macOS blocks launch:** use the OS's approval flow for a downloaded unsigned app; do not turn off global protections.
 - **Damaged local database:** quit Shiwen and move its data directory aside, then restart to discover disks automatically. Automatic repair is planned. Do not upload the old database: it contains document text.
 
+
+## Window shutdown
+
+Closing the title-bar × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.6 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that Shiwen process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.

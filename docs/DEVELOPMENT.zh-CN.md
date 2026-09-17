@@ -84,3 +84,9 @@ python scripts/package.py
 `updates.py` 只在桥接接口收到检查 / 下载请求后联网。优先读取主分支公开的 `updates/latest.json`，无法打开时回退到 GitHub Releases API。所有打包检查通过并发布 Release 后，发布任务通过 `scripts/release_feed.py` 将已发布版本元数据提交到 main；版本标签保持不变，更新清单是独立提交。
 
 版本比较区分 alpha、beta、候选版和正式版。下载仅接受服务端已匹配的本仓库标准资源，校验 HTTPS 重定向，使用系统信任证书与随包 certifi 证书，并在核对长度和 SHA-256 后才将临时文件改为正式安装包。取消和失败会清理部分下载，不调用自动安装器。`tests/test_updates.py` 覆盖版本 / 平台、离线启动、完整性、取消、网络 / 存储失败和桥接参数限制；打包后的核心自检还验证证书可用性。
+
+## 退出回归验证
+
+`desktop.guard_evaluation` 为 GTK 的 `evaluate_js` 和 `run_js` 等待绑定窗口关闭事件。底层 WebKit 调用放在守护线程，因为 GTK 事件循环销毁后可能不再发回完成回调；关闭时释放桥接调用线程。不使用强制退出整个进程的方式。已有桥接请求结束后才关闭数据库。独立解析器轮询取消事件，终止并回收子进程，中断文档保持待处理。
+
+`tests/test_shutdown.py` 覆盖回调结果 / 异常、回调丢失、真实解析子进程取消及重启续处理、请求与数据库关闭顺序。`--gui-close-smoke RESULT_JSON` 在 JavaScript 尚未返回时关闭原生窗口，要求子进程在 15 秒内正常退出。Linux 打包与 Ubuntu 22.04 / 24.04 的已安装 DEB 检查均执行此回归，并保留普通 GUI 自检。

@@ -56,6 +56,7 @@ jobs:
           sudo apt-get install -y ./dist/Shiwen-*-linux-amd64.deb
           shiwen --self-test /tmp/shiwen-deb-core.json
           timeout 90s xvfb-run -a shiwen --gui-smoke /tmp/shiwen-deb-gui.json --data-dir /tmp/shiwen-deb-data
+          timeout 15s xvfb-run -a shiwen --gui-close-smoke /tmp/shiwen-deb-close.json --data-dir /tmp/shiwen-deb-data
           /usr/bin/python3 -c "import json; assert all(json.load(open('/tmp/shiwen-deb-' + k + '.json'))['ok'] for k in ['core', 'gui'])"
       - uses: actions/upload-artifact@v4
         with:
@@ -81,6 +82,7 @@ jobs:
         run: |
           shiwen --self-test /tmp/shiwen-core.json
           timeout 90s xvfb-run -a shiwen --gui-smoke /tmp/shiwen-gui.json --data-dir /tmp/shiwen-data
+          timeout 15s xvfb-run -a shiwen --gui-close-smoke /tmp/shiwen-close.json --data-dir /tmp/shiwen-data
           /usr/bin/python3 -c "import json; assert all(json.load(open('/tmp/shiwen-' + k + '.json'))['ok'] for k in ['core', 'gui'])"
   source:
     runs-on: ubuntu-latest

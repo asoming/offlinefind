@@ -55,13 +55,17 @@ def main():
     shutil.copy2(ROOT / "packaging" / "linux" / "README.txt", bundle / "START-HERE.txt")
     executable = bundle / "shiwen"
     environment = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
-    for flag, filename in [("--self-test", "linux-core.json"), ("--gui-smoke", "linux-gui.json")]:
+    for flag, filename in [
+        ("--self-test", "linux-core.json"),
+        ("--gui-smoke", "linux-gui.json"),
+        ("--gui-close-smoke", "linux-close.json"),
+    ]:
         result = output / filename
         result.unlink(missing_ok=True)
         subprocess.run(
             [str(executable), flag, str(result), "--data-dir", str(staging / "smoke-data")],
             check=True,
-            timeout=120,
+            timeout=15 if flag == "--gui-close-smoke" else 120,
             env=environment,
         )
         if not json.loads(result.read_text(encoding="utf-8"))["ok"]:
