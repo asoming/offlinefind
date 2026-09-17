@@ -1,6 +1,6 @@
 # Changelog / 更新记录
 
-## 0.1.0-beta.6 — 2026-09-17
+## 0.1.0-beta.7 — 2026-09-17
 
 - Fix Linux exit hanging when a WebView callback is outstanding as the window closes.
 - Cancel in-flight document parsing on close and keep unfinished documents pending for restart.

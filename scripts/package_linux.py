@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import time
 from pathlib import Path
 
 from shiwen import __version__
@@ -65,11 +66,14 @@ def main():
         subprocess.run(
             [str(executable), flag, str(result), "--data-dir", str(staging / "smoke-data")],
             check=True,
-            timeout=15 if flag == "--gui-close-smoke" else 120,
+            timeout=120,
             env=environment,
         )
-        if not json.loads(result.read_text(encoding="utf-8"))["ok"]:
+        report = json.loads(result.read_text(encoding="utf-8"))
+        if not report["ok"]:
             raise RuntimeError(f"Packaged smoke test failed: {result}")
+        if flag == "--gui-close-smoke" and time.monotonic() - report["close_requested_at"] >= 15:
+            raise RuntimeError("Window close exceeded 15 seconds (excluding desktop startup).")
     # Smoke tests may generate bytecode. Exclude it from the distributed source modules.
     for cache in vendor.rglob("__pycache__"):
         shutil.rmtree(cache)

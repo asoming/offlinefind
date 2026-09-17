@@ -89,4 +89,4 @@ python scripts/package.py
 
 `desktop.guard_evaluation` 为 GTK 的 `evaluate_js` 和 `run_js` 等待绑定窗口关闭事件。底层 WebKit 调用放在守护线程，因为 GTK 事件循环销毁后可能不再发回完成回调；关闭时释放桥接调用线程。不使用强制退出整个进程的方式。已有桥接请求结束后才关闭数据库。独立解析器轮询取消事件，终止并回收子进程，中断文档保持待处理。
 
-`tests/test_shutdown.py` 覆盖回调结果 / 异常、回调丢失、真实解析子进程取消及重启续处理、请求与数据库关闭顺序。`--gui-close-smoke RESULT_JSON` 在 JavaScript 尚未返回时关闭原生窗口，要求子进程在 15 秒内正常退出。Linux 打包与 Ubuntu 22.04 / 24.04 的已安装 DEB 检查均执行此回归，并保留普通 GUI 自检。
+`tests/test_shutdown.py` 覆盖回调结果 / 异常、回调丢失、真实解析子进程取消及重启续处理、请求与数据库关闭顺序。`--gui-close-smoke RESULT_JSON` 在 JavaScript 尚未返回时关闭原生窗口，要求发出关闭请求后 15 秒内正常退出，单独排除 WebKit 启动耗时。Linux 打包与 Ubuntu 22.04 / 24.04 的已安装 DEB 检查均执行此回归，并保留普通 GUI 自检。
