@@ -1,5 +1,83 @@
 [
   {
+    "tag_name": "v0.1.0-beta.9",
+    "prerelease": true,
+    "published_at": "2026-09-17T09:02:32Z",
+    "body": "# Shiwen v0.1.0-beta.9 / 拾文 · 启动与升级\n\n## 简体中文\n\n同一索引只运行一个拾文实例。再次打开应用时会请求唤起已有窗口，避免重复索引；崩溃后系统自动释放锁，不需删除锁文件。窗口唤起仅使用带随机令牌的本机回环通信，不上传文件。回环被系统禁用时仍能阻止重复启动，但无法唤起窗口。\n\nLinux tar.gz 解压后，在 Shiwen 目录运行 `./install-user`，无需管理员权限即可安装到 `~/.local` 并创建应用菜单入口。以后安装新版时，同一个入口指向新版；旧版本的绝对启动路径也会转到新版。安装器保留旧版本备份、索引、收藏和原文档，并阻止降级覆盖。系统 Python / GTK / WebKit 依赖仍需预先安装。DEB 用户继续使用系统软件安装器升级。\n\n**从 beta.8 或更早版本升级，请先退出旧窗口。** 旧版本尚无实例锁，安装不会强制结束正在运行的旧进程。设置中的下载仍需完成后手动安装；不是静默自动更新。\n\n保留 beta.8 的 Linux 标题栏关闭修复。新增跨进程锁与崩溃恢复、安装升级与旧入口、原生窗口唤起验证。提供 Windows x64、macOS Apple Silicon、Linux x64 DEB / tar.gz。\n\n仍为公开测试版：完整桌面内存、真实全盘检索性能和跨平台人工验收尚未完成，不能据此宣称已满足正式版全部指标。签名与 macOS 公证仍未提供。详见 [路线图](ROADMAP.md)。\n\n## English\n\nOne Shiwen process owns each index. Reopening requests activation of the existing window instead of starting another indexer. OS locks release after a crash without deleting lock files. Activation uses authenticated loopback communication only; no documents are uploaded. If loopback is disabled, duplicate launches remain blocked but activation is unavailable.\n\nExtract the Linux tar.gz and run `./install-user` inside Shiwen to install under `~/.local` and create a menu entry without administrator privileges. Subsequent upgrades update the same entry and redirect older absolute portable launch paths. Installation preserves old launcher backups, indexes, bookmarks and originals, and rejects downgrades. System Python / GTK / WebKit dependencies must already be installed. DEB users should continue upgrading through the OS package installer.\n\n**Quit beta.8 or older before upgrading.** Those versions do not implement the instance lock; installation does not forcibly terminate running processes. Downloads in Settings still require manual installation, not silent automatic updates.\n\nRetains beta.8's Linux title-bar close fix. Adds checks for cross-process locking, crash recovery, installer upgrades, legacy entry points and native window activation. Includes Windows x64, macOS Apple Silicon and Linux x64 DEB / tar.gz packages.\n\nThis remains a public preview: complete desktop memory, representative whole-disk performance and cross-platform manual acceptance are unfinished. Trusted publisher signing and macOS notarization are also unavailable. See the [roadmap](ROADMAP.md).\n",
+    "assets": [
+      {
+        "name": "Shiwen-0.1.0b9-linux-amd64.deb",
+        "size": 1062306,
+        "state": "uploaded",
+        "digest": "sha256:77f01109a0769f82e0cf27c450c054b4a8aae12d540fd1f14f74b51bdd0d9909",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-linux-amd64.deb"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-linux-amd64.deb.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:e3ee9a3d137ba9e7e1ae1532eb72a8ecfd0044a371bf71a2d86a1db2c0adc8d1",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-linux-amd64.deb.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-linux-x64.tar.gz",
+        "size": 1299127,
+        "state": "uploaded",
+        "digest": "sha256:8de5c029b8778616dff0a532764639b4738dc023b7d00caf7ce0199908ca4093",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-linux-x64.tar.gz"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-linux-x64.tar.gz.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:ab79dbc4ef8a7400025a48eef5e319f5187da8b59aa3fd755cb2f9708fc6e5a9",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-linux-x64.tar.gz.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-macos-arm64.zip",
+        "size": 16985675,
+        "state": "uploaded",
+        "digest": "sha256:b1142ed4c69fb65084b5a3d2f0203e4b5980db04475ca06a266fcb509b14bb0b",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-macos-arm64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-macos-arm64.zip.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:f2137dc00f82174f9e7157f327f89e00c0a0b9339d886e6ad411284b08084169",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-macos-arm64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b9-py3-none-any.whl",
+        "size": 54366,
+        "state": "uploaded",
+        "digest": "sha256:9146838825d1a731c3609ceb7a44644b5c8b33e9311d0aa39bf918a2553f3d7d",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/shiwen-0.1.0b9-py3-none-any.whl"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-windows-x64.zip",
+        "size": 22636764,
+        "state": "uploaded",
+        "digest": "sha256:d49dba59d74e90474b36af22e9d5fbc51418bf980dc69bf3af4fe2d5feb0634d",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-windows-x64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b9-windows-x64.zip.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:c7322daebc293556e724e9ff71e06350e742a3424f443d0929e8468d30a90f47",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/Shiwen-0.1.0b9-windows-x64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b9.tar.gz",
+        "size": 107744,
+        "state": "uploaded",
+        "digest": "sha256:2d25ac35b73ff2c4bc248a5746be75152eea53f2ab8df9931e648794c58ee2f5",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.9/shiwen-0.1.0b9.tar.gz"
+      }
+    ]
+  },
+  {
     "tag_name": "v0.1.0-beta.8",
     "prerelease": true,
     "published_at": "2026-09-17T03:39:37Z",
