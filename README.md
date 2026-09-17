@@ -6,7 +6,7 @@
 
 Shiwen automatically discovers local files for offline desktop search. Open it and type: no folder selection is required. Find images, archives, code and folders by name; search PDF, Markdown and DOCX contents with highlighted excerpts. The interface retains its frosted-glass appearance.
 
-**Status: v0.1.0-beta.8.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
+**Status: v0.1.0-beta.9.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
 
 ## What works
 
@@ -19,6 +19,7 @@ Shiwen automatically discovers local files for offline desktop search. Open it a
 - Paginated problem-file lists and individual retries that stay pending across pause/restart.
 - Light/dark/system appearance, optional frosted glass, Chinese/English interface and keyboard navigation.
 - Manual update checks, platform-matched downloads, progress/cancellation and SHA-256 verification in Settings.
+- One running instance per index; reopening activates its window. Linux portable bundles include a user installer.
 - No account, telemetry, external fonts, remote document rendering or automatic updates.
 
 ## Download

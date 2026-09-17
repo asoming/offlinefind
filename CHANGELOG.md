@@ -1,5 +1,14 @@
 # Changelog / 更新记录
 
+## 0.1.0-beta.9 — 2026-09-17
+
+- Keep one process per index and activate the existing window on repeated launches; OS locks recover after a crash.
+- Add Linux `install-user`: a stable menu/command entry, atomic version pointer, redirects for older portable launchers, and downgrade protection.
+- Preserve existing indexes and documents during installation. Add lock, installer and native window-activation checks.
+- 同一索引仅允许一个实例；重复启动唤起已有窗口，进程崩溃后系统自动释放锁。
+- Linux 新增 `install-user`：固定菜单与命令入口、原子切换版本、兼容旧启动路径并阻止降级。
+- 安装保留索引与文档，新增锁、安装器及原生窗口唤起检查。仍为测试版，正式版性能验收尚未完成。
+
 ## 0.1.0-beta.8 — 2026-09-17
 
 - Fix Linux exit hanging when a WebView callback is outstanding as the window closes.

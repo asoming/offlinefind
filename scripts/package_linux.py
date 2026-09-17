@@ -7,6 +7,7 @@ import shutil
 import subprocess
 import sys
 import tarfile
+import tempfile
 import time
 from pathlib import Path
 
@@ -47,9 +48,10 @@ def main():
     shutil.rmtree(vendor / "bin", ignore_errors=True)
     for provenance in vendor.glob("*.dist-info/direct_url.json"):
         provenance.unlink()
-    for name in ["shiwen", "launch.py", "shiwen.svg"]:
+    for name in ["shiwen", "launch.py", "shiwen.svg", "install-user", "install.py"]:
         shutil.copy2(ROOT / "packaging" / "linux" / name, bundle / name)
     (bundle / "shiwen").chmod(0o755)
+    (bundle / "install-user").chmod(0o755)
     for name in ["LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "README.zh-CN.md"]:
         shutil.copy2(ROOT / name, bundle / name)
     shutil.copytree(ROOT / "docs", bundle / "docs")
@@ -74,6 +76,25 @@ def main():
             raise RuntimeError(f"Packaged smoke test failed: {result}")
         if flag == "--gui-close-smoke" and time.monotonic() - report["close_requested_at"] >= 15:
             raise RuntimeError("Window close exceeded 15 seconds (excluding desktop startup).")
+    # Exercise the shipped installer, including a prefix containing spaces.
+    with tempfile.TemporaryDirectory(prefix="shiwen install ") as temporary:
+        prefix = Path(temporary) / "local"
+        subprocess.run(
+            [str(bundle / "install-user"), "--prefix", str(prefix)],
+            check=True,
+            timeout=30,
+            env=environment,
+        )
+        entry = prefix / "bin/shiwen-app"
+        installed_version = subprocess.check_output([str(entry), "--version"], text=True).strip()
+        if installed_version != __version__:
+            raise RuntimeError("Installed entry point selected the wrong version")
+        result = output / "linux-user-install.json"
+        subprocess.run(
+            [str(entry), "--self-test", str(result)], check=True, timeout=120, env=environment
+        )
+        if not json.loads(result.read_text())["ok"]:
+            raise RuntimeError("User-installed package failed its core test")
     # Smoke tests may generate bytecode. Exclude it from the distributed source modules.
     for cache in vendor.rglob("__pycache__"):
         shutil.rmtree(cache)

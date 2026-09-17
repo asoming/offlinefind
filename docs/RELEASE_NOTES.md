@@ -1,21 +1,25 @@
-# Shiwen v0.1.0-beta.8 / 拾文 · 关闭窗口修复
+# Shiwen v0.1.0-beta.9 / 拾文 · 启动与升级
 
 ## 简体中文
 
-修复 Linux 上点击标题栏 × 后应用可能无法完全退出的问题：窗口销毁时，尚未返回的 WebView 回调可能使界面请求线程永久等待。现在关闭窗口会解除这些等待，并停止接收新请求。
+同一索引只运行一个拾文实例。再次打开应用时会请求唤起已有窗口，避免重复索引；崩溃后系统自动释放锁，不需删除锁文件。窗口唤起仅使用带随机令牌的本机回环通信，不上传文件。回环被系统禁用时仍能阻止重复启动，但无法唤起窗口。
 
-关闭时主动取消文档解析子进程，不再等待长文档的完整解析超时。未完成的文档保留待处理状态，下次启动继续；已完成的索引与收藏保留。数据库会在已有界面请求和索引任务结束后再关闭，避免退出时访问已关闭数据库。
+Linux tar.gz 解压后，在 Shiwen 目录运行 `./install-user`，无需管理员权限即可安装到 `~/.local` 并创建应用菜单入口。以后安装新版时，同一个入口指向新版；旧版本的绝对启动路径也会转到新版。安装器保留旧版本备份、索引、收藏和原文档，并阻止降级覆盖。系统 Python / GTK / WebKit 依赖仍需预先安装。DEB 用户继续使用系统软件安装器升级。
 
-新增退出回归测试和安装包级 GTK 关闭竞态自检。保留 beta.5 的手动检查更新、下载进度、取消和 SHA-256 校验，以及自动发现本机文件的搜索流程。
+**从 beta.8 或更早版本升级，请先退出旧窗口。** 旧版本尚无实例锁，安装不会强制结束正在运行的旧进程。设置中的下载仍需完成后手动安装；不是静默自动更新。
 
-Linux x64 提供 DEB / tar.gz，Windows x64 和 macOS Apple Silicon 提供 ZIP。测试版仍无可信发布者签名或 macOS 公证。退出期间正在进行的联网操作仍受网络超时影响；关闭窗口不等待界面回调。原文件不会修改或上传。
+保留 beta.8 的 Linux 标题栏关闭修复。新增跨进程锁与崩溃恢复、安装升级与旧入口、原生窗口唤起验证。提供 Windows x64、macOS Apple Silicon、Linux x64 DEB / tar.gz。
+
+仍为公开测试版：完整桌面内存、真实全盘检索性能和跨平台人工验收尚未完成，不能据此宣称已满足正式版全部指标。签名与 macOS 公证仍未提供。详见 [路线图](ROADMAP.md)。
 
 ## English
 
-Fixes a Linux exit hang after clicking the title-bar ×. Destroying the WebView with an outstanding JavaScript callback could leave a non-daemon request thread waiting forever. Closing now releases these waits and rejects new requests.
+One Shiwen process owns each index. Reopening requests activation of the existing window instead of starting another indexer. OS locks release after a crash without deleting lock files. Activation uses authenticated loopback communication only; no documents are uploaded. If loopback is disabled, duplicate launches remain blocked but activation is unavailable.
 
-In-flight document parser processes are cancelled instead of waiting for the full document timeout. Unfinished documents remain pending for the next launch; completed indexes and bookmarks are preserved. The database stays open until existing bridge requests and indexing tasks finish.
+Extract the Linux tar.gz and run `./install-user` inside Shiwen to install under `~/.local` and create a menu entry without administrator privileges. Subsequent upgrades update the same entry and redirect older absolute portable launch paths. Installation preserves old launcher backups, indexes, bookmarks and originals, and rejects downgrades. System Python / GTK / WebKit dependencies must already be installed. DEB users should continue upgrading through the OS package installer.
 
-Adds shutdown regression tests and a packaged GTK close-race smoke test. Retains beta.5 manual update checks, download progress/cancellation, SHA-256 verification and automatic local-file discovery.
+**Quit beta.8 or older before upgrading.** Those versions do not implement the instance lock; installation does not forcibly terminate running processes. Downloads in Settings still require manual installation, not silent automatic updates.
 
-Includes Linux x64 DEB / tar.gz, Windows x64 ZIP and macOS Apple Silicon ZIP. Beta packages still lack trusted publisher signing and macOS notarization. An in-flight network operation remains subject to its network timeout during cleanup; closing the window no longer waits for UI callbacks. Originals are neither modified nor uploaded.
+Retains beta.8's Linux title-bar close fix. Adds checks for cross-process locking, crash recovery, installer upgrades, legacy entry points and native window activation. Includes Windows x64, macOS Apple Silicon and Linux x64 DEB / tar.gz packages.
+
+This remains a public preview: complete desktop memory, representative whole-disk performance and cross-platform manual acceptance are unfinished. Trusted publisher signing and macOS notarization are also unavailable. See the [roadmap](ROADMAP.md).

@@ -19,6 +19,15 @@ sudo apt install python3 python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webki
 
 Existing `gir1.2-webkit2-4.0` also works on Ubuntu 22.04. Application Python modules are bundled; no pip or virtual-environment setup is needed. Provision system dependencies beforehand; launching, indexing and searching then work offline. Other distributions, ARM64 and headless systems are not validated targets. `sudo apt remove shiwen` removes the application but keeps your index and source files; clear the index from app settings.
 
+## Portable installation and repeated launches
+
+On Linux, extract the tar.gz, enter `Shiwen`, then run `./install-user`. It installs into `~/.local/share/shiwen/<version>`, creates `~/.local/bin/shiwen-app` and a menu entry, and atomically updates the `current` link. Run the same installer from each downloaded new version. No administrator privileges are needed for the app; system runtime dependencies still apply. DEB installations should be upgraded through the package manager.
+
+Older portable launch paths under that installation follow the current version. Launcher backups are kept as `launch.py.before-upgrade`. The default index in `~/.local/share/Shiwen` is preserved. Quit the old app before installing: versions before beta.9 cannot participate in the single-instance protocol. The installer does not stop running processes.
+
+From beta.9, a repeated launch using the same data directory requests the existing window to restore/show and exits. Different `--data-dir` values may run independently. Activation uses a random-token authenticated socket bound only to `127.0.0.1`; this is local communication, not Internet access. If local sockets are restricted, the lock still prevents duplicate indexers. Crashed processes release the lock automatically; do not delete the lock file while running.
+
+
 ## Open and search
 
 Open Shiwen normally to discover local disks automatically. No folder selection is required, and mixed folders are supported. Regular files and folders are indexed by name first; an independent worker extracts PDF, Markdown and DOCX contents. Images, videos, archives, code and other formats receive a name index only, without reading their contents.

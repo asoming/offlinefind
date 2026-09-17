@@ -20,6 +20,7 @@ from platformdirs import user_data_path
 
 from . import __version__
 from .desktop import guard_evaluation
+from .instance import Instance
 from .library import Library
 from .updates import RELEASES, Updater, tls_context
 
@@ -285,10 +286,29 @@ def main():
     parser.add_argument("--gui-smoke", type=Path, metavar="RESULT_JSON")
     parser.add_argument("--gui-close-smoke", type=Path, metavar="RESULT_JSON")
     args = parser.parse_args()
-    gui_result = args.gui_smoke or args.gui_close_smoke
     if args.self_test:
         self_test(args.self_test)
         return
+    instance = Instance(args.data_dir.resolve())
+    if not instance.acquire():
+        activated = instance.notify()
+        print(
+            "Shiwen is already running."
+            + (" Window activation requested." if activated else " Wait for startup or shutdown.")
+        )
+        return
+    try:
+        try:
+            instance.listen()
+        except OSError:
+            pass  # The index lock still protects offline use if loopback is unavailable.
+        run_application(args, instance)
+    finally:
+        instance.close()
+
+
+def run_application(args, instance):
+    gui_result = args.gui_smoke or args.gui_close_smoke
     library = Library(
         args.data_dir,
         automatic=not args.folder,
@@ -316,6 +336,16 @@ def main():
                 hidden=bool(gui_result),
             )
             bridge._window = window
+
+            activated_event = threading.Event()
+
+            def activate():
+                if not bridge._closing.is_set():
+                    window.restore()
+                    window.show()
+                    activated_event.set()
+
+            window.events.loaded += lambda: instance.set_callback(activate)
             window.events.closing += bridge._request_close
             window.events.closed += bridge._request_close
             if sys.platform == "linux":
@@ -340,6 +370,14 @@ def main():
                         callback=complete,
                     )
                     finished.wait(30)
+                    contender = Instance(args.data_dir.resolve())
+                    try:
+                        locked = not contender.acquire()
+                        notified = contender.notify() if locked else False
+                        result["single_instance"] = locked and notified and activated_event.wait(5)
+                        result["ok"] = result.get("ok", False) and result["single_instance"]
+                    finally:
+                        contender.close()
                     gui_result.write_text(json.dumps(result), encoding="utf-8")
                     # Let GTK finish returning the RPC result before destroying its WebView.
                     window.evaluate_js("document.title")

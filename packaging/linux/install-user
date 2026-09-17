@@ -1,0 +1,2 @@
+#!/bin/sh
+exec /usr/bin/python3 -I "$(dirname "$(readlink -f "$0")")/install.py" "$@"
