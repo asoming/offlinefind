@@ -19,7 +19,7 @@ from pathlib import Path
 from platformdirs import user_data_path
 
 from . import __version__
-from .desktop import WindowControls, guard_evaluation
+from .desktop import WindowControls, configure_linux_rendering, guard_evaluation
 from .instance import Instance
 from .library import Library
 from .updates import RELEASES, Updater, tls_context
@@ -334,6 +334,7 @@ def run_application(args, instance):
         if args.serve:
             serve(bridge, args.port)
         else:
+            configure_linux_rendering()
             import webview
 
             window = webview.create_window(

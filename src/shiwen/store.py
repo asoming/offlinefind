@@ -59,6 +59,11 @@ class Store:
         self.connection.execute(
             "CREATE INDEX IF NOT EXISTS documents_status ON documents(status,id)"
         )
+        self.connection.execute(
+            "CREATE INDEX IF NOT EXISTS documents_recent ON documents(mtime_ns DESC,id) "
+            "WHERE status != 'unavailable'"
+        )
+        self.connection.execute("CREATE INDEX IF NOT EXISTS documents_saved ON documents(saved)")
         self.path.chmod(0o600)
 
     def close(self):

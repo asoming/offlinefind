@@ -13,7 +13,9 @@ from shiwen.library import Library
 def test_window_actions_toggle_and_keep_resize_bounds(monkeypatch):
     monkeypatch.setattr("shiwen.desktop.platform", "win32")
     window = Mock()
-    window.events = SimpleNamespace(maximized=Event(window), restored=Event(window))
+    window.events = SimpleNamespace(
+        maximized=Event(window), restored=Event(window), minimized=Event(window)
+    )
     controls = WindowControls(window)
     assert controls.action("maximize")["maximized"]
     window.maximize.assert_called_once()
@@ -42,3 +44,16 @@ def test_browser_preview_cannot_control_desktop(tmp_path):
         assert bridge.call("window", {"action": "close"}) == {"ok": False, "error": "desktop_only"}
     finally:
         bridge._close()
+
+
+def test_software_rendering_fallback_preserves_explicit_preference(monkeypatch):
+    from shiwen.desktop import configure_linux_rendering
+
+    monkeypatch.setattr("shiwen.desktop.platform", "linux")
+    monkeypatch.setattr("shiwen.desktop.os.access", lambda *_: False)
+    monkeypatch.delenv("WEBKIT_DISABLE_COMPOSITING_MODE", raising=False)
+    configure_linux_rendering()
+    assert __import__("os").environ["WEBKIT_DISABLE_COMPOSITING_MODE"] == "1"
+    monkeypatch.setenv("WEBKIT_DISABLE_COMPOSITING_MODE", "0")
+    configure_linux_rendering()
+    assert __import__("os").environ["WEBKIT_DISABLE_COMPOSITING_MODE"] == "0"

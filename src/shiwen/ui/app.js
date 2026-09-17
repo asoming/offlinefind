@@ -501,6 +501,9 @@
       .forEach((el) => el.setAttribute("aria-label", t(el.dataset.label)));
   }
   function applySettings(settings) {
+    const signature = JSON.stringify(settings);
+    if (state.settingsSignature === signature) return;
+    state.settingsSignature = signature;
     state.language = settings.language;
     translate();
     const dark =
@@ -677,6 +680,10 @@
       b.setAttribute("aria-pressed", String(active));
     });
   }
+  function setText(id, value) {
+    const text = String(value);
+    if ($(id).textContent !== text) $(id).textContent = text;
+  }
   async function refreshStatus() {
     const status = await api("status");
     const previous = state.status;
@@ -686,14 +693,15 @@
     }
     $("auto-hint").hidden = !status.automatic;
     applySettings(status.settings);
-    $("all-count").textContent = status.counts.total;
-    $("saved-count").textContent = status.counts.saved;
+    if (status.window) drawWindow(status.window);
+    setText("all-count", status.counts.total);
+    setText("saved-count", status.counts.saved);
     const phase = status.paused
       ? "paused"
       : status.progress.phase === "idle" && status.counts.by_status.pending
         ? "indexing"
         : status.progress.phase;
-    $("status-label").textContent = t(phase);
+    setText("status-label", t(phase));
     $("index-detail").textContent = t("folderCount", {
       n: status.roots.length,
     });
@@ -704,9 +712,9 @@
     $("index-progress").textContent = status.progress.error
       ? t(status.progress.error)
       : processing;
-    $("pause").textContent = t(status.paused ? "resume" : "pause");
-    $("disk-size").textContent = size(status.disk_bytes);
-    $("data-directory").textContent = status.data_directory;
+    setText("pause", t(status.paused ? "resume" : "pause"));
+    setText("disk-size", size(status.disk_bytes));
+    setText("data-directory", status.data_directory);
     $("status-counts").replaceChildren();
     for (const [name, n] of Object.entries(status.counts.by_status)) {
       const row = make("div", "status-row");
@@ -1182,6 +1190,12 @@
   function drawWindow(info) {
     document.body.classList.toggle("window-maximized", info.maximized);
     const button = $("window-maximize");
+    const label = t(info.maximized ? "restoreWindow" : "maximizeWindow");
+    if (
+      button.getAttribute("aria-pressed") === String(info.maximized) &&
+      button.title === label
+    )
+      return;
     button.dataset.title = info.maximized ? "restoreWindow" : "maximizeWindow";
     button.title = t(button.dataset.title);
     button.setAttribute("aria-label", button.title);

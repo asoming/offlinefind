@@ -1,6 +1,8 @@
 """Keep GTK WebView callbacks from holding the process open after window close."""
 
+import os
 import threading
+from pathlib import Path
 from sys import platform
 
 
@@ -41,6 +43,15 @@ def _until_closed(evaluate, closing):
     return evaluate_until_closed
 
 
+def configure_linux_rendering():
+    """Avoid expensive software GL compositing when no render device is accessible."""
+    if platform != "linux":
+        return
+    devices = [*Path("/dev/dri").glob("renderD*"), Path("/dev/nvidia0")]
+    if not any(os.access(path, os.R_OK | os.W_OK) for path in devices):
+        os.environ.setdefault("WEBKIT_DISABLE_COMPOSITING_MODE", "1")
+
+
 class WindowControls:
     """A narrow command surface for the app's own frameless window."""
 
@@ -48,11 +59,21 @@ class WindowControls:
         self.window = window
         self.maximized = False
         self.restore_bounds = None
+        self.minimized = False
         window.events.maximized += lambda: self._set_maximized(True)
-        window.events.restored += lambda: self._set_maximized(False)
+        window.events.minimized += self._minimized
+        window.events.restored += self._restored
 
     def _set_maximized(self, value):
         self.maximized = value
+
+    def _minimized(self):
+        self.minimized = True
+
+    def _restored(self):
+        if not self.minimized:
+            self.maximized = False
+        self.minimized = False
 
     def state(self):
         return {"maximized": self.maximized}

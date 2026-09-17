@@ -90,21 +90,30 @@ def main():
         def capture(name):
             if sys.platform != "linux":
                 return
-            from gi.repository import Gdk, GLib
+            from webview.platforms.gtk import BrowserView, glib, webkit
 
-            done = threading.Event()
+            done, errors = threading.Event(), []
+            view = BrowserView.instances[window.uid].webview
+
+            def received(view, response, _):
+                try:
+                    surface = view.get_snapshot_finish(response)
+                    surface.write_to_png(str(directory / name))
+                except Exception as error:
+                    errors.append(error)
+                finally:
+                    done.set()
 
             def save():
-                native = window.native.get_window()
-                pixbuf = Gdk.pixbuf_get_from_window(
-                    native, 0, 0, native.get_width(), native.get_height()
+                view.get_snapshot(
+                    webkit.SnapshotRegion.VISIBLE, webkit.SnapshotOptions.NONE, None, received, None
                 )
-                pixbuf.savev(str(directory / name), "png", [], [])
-                done.set()
                 return False
 
-            GLib.idle_add(save)
-            assert done.wait(5)
+            glib.idle_add(save)
+            assert done.wait(10), "WebKit snapshot timed out"
+            if errors:
+                raise errors[0]
 
         try:
             assert window.events.loaded.wait(30)
@@ -117,6 +126,10 @@ def main():
             )
             result["first_results_seconds"] = time.perf_counter() - before_launch
             result["checks"].append("production automatic discovery and integrated controls")
+            if args.existing_index:
+                phase = "ready_before_interaction"
+                time.sleep(10)
+                phase = "interaction"
             assert window.frameless and not window.easy_drag and window.resizable
             if sys.platform == "linux":
                 assert not window.native.get_decorated()
