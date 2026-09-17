@@ -19,7 +19,7 @@ def grams(text: str) -> str:
     )
 
 
-def query_terms(query: str) -> list[str]:
+def query_terms(query: str, allow_single: bool = False) -> list[str]:
     if len(query) > 256:
         raise ValueError("query_too_long")
     if query.count('"') % 2:
@@ -28,7 +28,7 @@ def query_terms(query: str) -> list[str]:
     terms = list(dict.fromkeys(term for term in terms if term))
     if len(terms) > 12:
         raise ValueError("too_many_terms")
-    if any(len(term) < 2 for term in terms):
+    if not allow_single and any(len(term) < 2 for term in terms):
         raise ValueError("query_too_short")
     return terms
 

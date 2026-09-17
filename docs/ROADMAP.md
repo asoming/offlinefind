@@ -23,3 +23,9 @@ AI 问答、文档编辑、自动重命名、云同步不属于首版主线。
 beta.3 delivers per-file retries, issue pagination and removable exclusions, plus a synthetic performance baseline. This does not complete the PRD’s full performance acceptance.
 
 beta.3 已交付单文件重试、问题列表分页与排除撤销，并建立合成性能基线；PRD 的完整性能验收仍未完成。
+
+## Automatic discovery follow-up / 自动发现后续
+
+Beta.4 replaces folder onboarding with automatic disk discovery and independent name/content indexing. Next: NTFS MFT / USN or platform change journals, larger file-library benchmarks, and lower-cost incremental reconciliation.
+
+beta.4 已取消文件夹选择前置步骤，自动发现磁盘，名称与正文独立索引。后续关注 NTFS MFT / USN 或平台变更日志、大型文件库基准和增量核对成本。

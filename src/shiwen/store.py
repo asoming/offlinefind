@@ -46,10 +46,19 @@ class Store:
         self.lock = threading.RLock()
         self.connection = sqlite3.connect(self.path, check_same_thread=False, timeout=10)
         self.connection.row_factory = sqlite3.Row
+        self.connection.create_function("normalize_name", 1, normalize, deterministic=True)
         self.connection.execute("PRAGMA journal_mode=WAL")
         self.connection.execute("PRAGMA secure_delete=ON")
         self.connection.execute("PRAGMA cache_size=-8192")
         self.connection.executescript(SCHEMA)
+        columns = {row[1] for row in self.connection.execute("PRAGMA table_info(documents)")}
+        if "seen_scan" not in columns:
+            self.connection.execute(
+                "ALTER TABLE documents ADD COLUMN seen_scan TEXT NOT NULL DEFAULT ''"
+            )
+        self.connection.execute(
+            "CREATE INDEX IF NOT EXISTS documents_status ON documents(status,id)"
+        )
         self.path.chmod(0o600)
 
     def close(self):
@@ -78,6 +87,73 @@ class Store:
             return self.connection.execute(
                 "SELECT id FROM roots WHERE path=?", (str(path),)
             ).fetchone()[0]
+
+    def add_automatic_root(self, path: Path):
+        # Only OS discovery calls this; the RPC never accepts arbitrary disk roots.
+        with self.lock, self.connection:
+            self.connection.execute("INSERT OR IGNORE INTO roots(path) VALUES(?)", (str(path),))
+
+    def discover_batch(self, entries, scan_id):
+        values = []
+        for path, stat, fingerprint, kind, status in entries:
+            values.append(
+                (
+                    str(path),
+                    path.name,
+                    kind,
+                    stat.st_size,
+                    stat.st_mtime_ns,
+                    fingerprint,
+                    status,
+                    grams(path.name),
+                    time.time(),
+                    scan_id,
+                )
+            )
+        with self.lock, self.connection:
+            self.connection.executemany(
+                """INSERT INTO documents
+                (path,name,type,size,mtime_ns,fingerprint,status,body,blocks,title_tokens,
+                 body_tokens,updated,seen_scan) VALUES(?,?,?,?,?,?,?,'','[]',?,'',?,?)
+                ON CONFLICT(path) DO UPDATE SET name=excluded.name,type=excluded.type,
+                size=excluded.size,mtime_ns=excluded.mtime_ns,fingerprint=excluded.fingerprint,
+                status=excluded.status,body='',blocks='[]',title_tokens=excluded.title_tokens,
+                body_tokens='',updated=excluded.updated,seen_scan=excluded.seen_scan
+                WHERE documents.fingerprint != excluded.fingerprint
+                   OR documents.size != excluded.size OR documents.mtime_ns != excluded.mtime_ns
+                   OR documents.status='unavailable'""",
+                values,
+            )
+            self.connection.executemany(
+                "UPDATE documents SET seen_scan=? WHERE path=?",
+                [(scan_id, row[0]) for row in values],
+            )
+
+    def finish_discovery(self, scan_id):
+        with self.lock, self.connection:
+            self.connection.execute(
+                """UPDATE documents SET status='unavailable',body='',blocks='[]',body_tokens=''
+                   WHERE seen_scan != ? AND status != 'unavailable'""",
+                (scan_id,),
+            )
+
+    def queue_contents(self):
+        with self.lock, self.connection:
+            self.connection.execute(
+                """UPDATE documents SET status='pending',body='',blocks='[]',body_tokens=''
+                   WHERE type IN ('pdf','md','docx') AND status != 'unavailable'"""
+            )
+
+    def pending_batch(self, after_id):
+        with self.lock:
+            return [
+                dict(row)
+                for row in self.connection.execute(
+                    "SELECT id,path FROM documents WHERE status='pending' AND id>? "
+                    "ORDER BY id LIMIT 64",
+                    (after_id,),
+                )
+            ]
 
     def setting(self, key, default=None):
         with self.lock:
@@ -158,9 +234,17 @@ class Store:
 
     def delete_outside(self, allowed):
         with self.lock, self.connection:
-            for row in self.connection.execute("SELECT id,path FROM documents").fetchall():
-                if not allowed(Path(row["path"])):
-                    self.connection.execute("DELETE FROM documents WHERE id=?", (row["id"],))
+            after_id = 0
+            while True:
+                rows = self.connection.execute(
+                    "SELECT id,path FROM documents WHERE id>? ORDER BY id LIMIT 128", (after_id,)
+                ).fetchall()
+                if not rows:
+                    break
+                for row in rows:
+                    after_id = row["id"]
+                    if not allowed(Path(row["path"])):
+                        self.connection.execute("DELETE FROM documents WHERE id=?", (row["id"],))
         self.compact()
 
     def remove_exclusion(self, root_id: int, relative: str):
@@ -180,7 +264,8 @@ class Store:
         items, skipped = [], 0
         with self.lock:
             rows = self.connection.execute(
-                "SELECT id,name,path,type,status FROM documents WHERE status != 'ready' ORDER BY id"
+                "SELECT id,name,path,type,status FROM documents "
+                "WHERE status NOT IN ('ready','metadata') ORDER BY id"
             )
             for row in rows:
                 if allowed and not allowed(Path(row["path"])):
@@ -241,16 +326,22 @@ class Store:
         sort: str = "relevance",
         offset: int = 0,
         allowed=None,
+        mode: str = "all",
     ) -> dict:
-        terms = query_terms(query.strip())
+        terms = query_terms(query.strip(), allow_single=mode != "content")
         offset = max(0, min(int(offset), 100000))
         params, conditions = [], ["d.status != 'unavailable'"]
         join = ""
-        if terms:
+        indexed_terms = [term for term in terms if len(term) >= 2]
+        if indexed_terms:
             join = " JOIN search_index ON search_index.rowid=d.id"
             conditions.append("search_index MATCH ?")
-            params.append(match_expression(terms))
-        if file_type in {"pdf", "md", "docx"}:
+            params.append(match_expression(indexed_terms))
+        for term in terms:
+            if len(term) == 1:
+                conditions.append("instr(normalize_name(d.name),?) > 0")
+                params.append(term)
+        if file_type in {"pdf", "md", "docx", "folder"}:
             conditions.append("d.type=?")
             params.append(file_type)
         if saved:
@@ -260,7 +351,7 @@ class Store:
             return {"items": [], "has_more": False, "terms": terms, "offset": offset}
         order = (
             "d.mtime_ns DESC,d.id"
-            if sort == "date" or not terms
+            if sort == "date" or not indexed_terms
             else ("bm25(search_index,5.0,1.0),d.mtime_ns DESC,d.id")
         )
         # Sort lightweight candidates, then load text only as needed for literal verification.
@@ -281,6 +372,10 @@ class Store:
                     "SELECT * FROM documents WHERE id=?", (candidate["id"],)
                 ).fetchone()
                 title, body = normalize(row["name"]), normalize(row["body"])
+                if mode == "name":
+                    body = ""
+                elif mode == "content":
+                    title = ""
                 if not all(term in title or term in body for term in terms):
                     continue
                 if skipped < offset:

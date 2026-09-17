@@ -36,6 +36,7 @@
             <span data-icon="plus"></span>
           </button>
         </div>
+        <p id="auto-hint" class="muted small" data-i18n="autoHint" hidden></p>
         <div id="folders" class="folders"></div>
         <button
           id="manage-folders"
@@ -88,10 +89,19 @@
               ><button class="filter" data-type="pdf">PDF</button
               ><button class="filter" data-type="md">Markdown</button
               ><button class="filter" data-type="docx">Word</button>
+              <button
+                class="filter"
+                data-type="folder"
+                data-i18n="foldersType"
+              ></button>
             </div>
+            <select id="search-mode" data-label="searchMode">
+              <option value="all" data-i18n="modeAll"></option>
+              <option value="name" data-i18n="modeName"></option>
+              <option value="content" data-i18n="modeContent"></option>
+            </select>
             <span class="search-caption"
-              ><span data-icon="text"></span
-              ><span data-i18n="titleAndBody"></span
+              ><span data-icon="text"></span><span id="search-caption"></span
             ></span>
           </div>
         </header>

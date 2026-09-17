@@ -4,17 +4,18 @@
 
 [简体中文](README.zh-CN.md) · [Releases](https://github.com/asoming/shiwen/releases) · [User guide](docs/USER_GUIDE.en.md) · [Development](docs/DEVELOPMENT.en.md)
 
-Shiwen is an offline desktop search app for PDF, Markdown and DOCX documents. Choose your folders, type a phrase, and read the matching passage before opening the original file. A frosted-glass interface keeps the navigation quiet and the document text readable.
+Shiwen automatically discovers local files for offline desktop search. Open it and type: no folder selection is required. Find images, archives, code and folders by name; search PDF, Markdown and DOCX contents with highlighted excerpts. The interface retains its frosted-glass appearance.
 
-**Status: v0.1.0-beta.3.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
+**Status: v0.1.0-beta.4.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
 
 ## What works
 
-- Search file names and document contents, including two-character Chinese terms and mixed Chinese/English text.
+- Automatically discover local disks, index file/folder names first, and extract document contents independently.
+- Choose Names + contents, File names only, or Document contents only.
 - Literal phrase queries, space-separated AND conditions, type/folder filters and bookmarks.
 - Real excerpts with highlights; PDF page, Markdown line and DOCX paragraph references.
 - Local SQLite FTS5 bigram index, followed by exact text verification to reject false positives.
-- Read-only isolated parsers, file watcher plus reconciliation, pause/resume, editable subfolder exclusions and clear-data controls.
+- Read-only isolated parsers, periodic disk reconciliation, pause/resume, editable subfolder exclusions and clear-data controls.
 - Paginated problem-file lists and individual retries that stay pending across pause/restart.
 - Light/dark/system appearance, optional frosted glass, Chinese/English interface and keyboard navigation.
 - No account, telemetry, external fonts, remote document rendering or automatic updates.
@@ -30,16 +31,18 @@ Get the package for your platform from [GitHub Releases](https://github.com/asom
 
 ## First search
 
-1. Select **Add folder** and choose a local document folder.
-2. Wait for the first documents to be indexed; you can search while indexing continues.
+1. Open Shiwen; local file discovery starts automatically.
+2. Type immediately. Names become searchable first, followed by document contents.
 3. Search for `部署`, `budget approval`, or `"offline deployment"`.
 4. Select a result to read its extracted text. Use **Open original** for the original layout.
 
-`Ctrl+K` / `Cmd+K` focuses search inside the app. Every search term needs at least two characters. Space-separated terms must all appear in the same document. Search is literal, not AI-powered or semantic.
+`Ctrl+K` / `Cmd+K` focuses search inside the app. Names support single-character terms; content terms need at least two characters. Space-separated terms must all appear in the same document. Search is literal, not AI-powered or semantic.
 
 ## Privacy and limits
 
-Files are never moved, renamed or modified. The local index contains extracted document text and **is not separately encrypted**. Protect it as you would the original documents, using OS account permissions and disk encryption. You can remove scopes or clear all application data in Settings.
+Files are never moved, renamed or modified. The local index contains extracted document text and **is not separately encrypted**. Protect it as you would the original documents, using OS account permissions and disk encryption. Use Index & exclusions to exclude folders, or clear local data and pause indexing.
+
+Automatic indexing skips virtual filesystems, network mounts, cache/dependency directories, symlinks and its own index. Inaccessible directories are skipped without elevation. Windows discovers drive-letter fixed disks; Linux/macOS traverse local directory trees. Changes are reconciled at approximately 30-second intervals plus scan time; NTFS MFT / USN acceleration is not implemented.
 
 Scanned pages need OCR, which is not included. Password-protected files, unsupported encodings, parser errors and size limits are shown explicitly. File names may remain searchable when their contents cannot be parsed. Default limits: 100 MiB per file, 1,000 PDF pages and 10 MiB of extracted text. DOCX previews contain ordinary paragraphs and table text, not original Word pagination.
 
@@ -65,7 +68,7 @@ Development-only browser mode (bound to loopback, authenticated per process):
 shiwen --serve --port 8765 --folder /absolute/path/to/documents
 ```
 
-Folder selection and native file opening belong to the desktop app. Browser mode is a development convenience, not a hosted service. Runtime operation is offline; installing source dependencies requires a prepared package cache or internet access.
+`--folder` limits development tests to an explicit scope; normal launching needs no such argument. File opening uses the desktop app. Browser mode is a development convenience, not a hosted service. Runtime operation is offline; installing source dependencies requires a prepared package cache or internet access.
 
 ## Contributing and license
 

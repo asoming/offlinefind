@@ -1,5 +1,14 @@
 # Changelog / 更新记录
 
+## 0.1.0-beta.4 — 2026-09-17
+
+- Open and search: automatically discover local disks with no folder selection.
+- Index all regular file/folder names in batches; extract PDF/Markdown/DOCX contents independently.
+- Add name/content modes and single-character filename queries. Preserve existing exclusions on upgrade.
+- 开机式使用流程：打开即自动发现本机文件，无需选择文档文件夹。
+- 分批收录各类文件和文件夹名称，正文独立后台解析。
+- 新增名称 / 正文筛选、单字符名称查询，升级保留已有排除规则。
+
 ## 0.1.0-beta.3 — 2026-09-17
 
 - Added paginated problem-file details and per-document retries, preserving bookmarks and pending work across pause/restart.

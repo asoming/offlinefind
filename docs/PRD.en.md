@@ -1,44 +1,67 @@
-# Shiwen product requirements — English implementation brief
+# Shiwen · Product requirements
 
-This is the English companion to the [full Chinese PRD v0.1](PRD.zh-CN.md), dated 2026-09-16. It summarizes the intended product; it is not a statement that the current beta implements every requirement. See [release notes](RELEASE_NOTES.md) for actual scope.
+[简体中文](PRD.zh-CN.md)
 
-## Product and audience
+Version v0.2, September 17, 2026. This revision supersedes the earlier manual document-folder selection workflow.
 
-An offline desktop utility for people who remember a passage but not a file name: office workers, researchers, students and personal knowledge collectors. The core task is to choose folders, index locally, search a phrase, verify its original context and open the source file.
+## 1. Goal
 
-System search and Everything already have some content-search capabilities. Shiwen aims to differentiate through approachable configuration, dependable Chinese search, clear passage previews and understandable indexing states; superiority has not been established by comparative testing.
+Deliver an Everything-like workflow: **open the app → discover local files automatically → type a query → open a result**. Users do not select folders or reorganize files into document-only directories. Add offline PDF, Markdown and DOCX content search and contextual previews to filename search.
 
-## Target platforms
+Everything-like describes the interaction and file-search capability. It does not claim NTFS MFT / USN implementation or equivalent speed, and does not assume competitors lack content search.
 
-Windows 11 x64, macOS 14+ Apple Silicon, and Ubuntu 22.04 / 24.04 x64 desktops. Linux was explicitly added by the user on 2026-09-16 for use on their Ubuntu computer; provide DEB and portable archive packages. Other distributions, Linux ARM64 and Intel Macs remain unvalidated.
+## 2. Default behavior
 
-## P0 product scope
+- Discover local disks on normal launch; existing indexes remain immediately searchable.
+- Index regular files of all types and folders by name, without a document-format restriction.
+- Extract PDF, Markdown and DOCX text in an independent background worker; slow parsers must not block name discovery.
+- Keep search, previews and indexes offline, without accounts, telemetry or document uploads.
+- Never move, edit, rename or delete original files.
 
-- User-selected local folders, exclusions and overlapping-root deduplication; no default whole-drive scan.
-- Extractable-text PDF, UTF-8 Markdown and ordinary DOCX paragraphs/tables. Scanned pages, encryption and parser limits must be visible.
-- Literal Chinese/English search, two-character Chinese terms, phrase queries and AND conditions; type/folder filters and relevant/recent sorting.
-- Genuine excerpts with highlights; page/line/paragraph positions, previous/next matches, opening and revealing originals.
-- Persistent bookmarks, incremental updates, pause/resume, reconciliation after sleep or missed notifications, error recovery and safe cleanup.
-- Three-pane frosted-glass desktop UI; light/dark/system appearance, keyboard focus and reduced motion. Reading surfaces remain opaque.
-- No account or telemetry. No document, path, search text or crash-data uploads. A local index may contain sensitive plaintext and must be managed accordingly.
+## 3. Scope
 
-## Deferred scope
+Windows discovers fixed disks with drive letters. Linux/macOS traverse local directory trees, prioritizing the user's home directory. Respect the current account and macOS privacy permissions without elevation.
 
-Offline OCR, global hotkey, additional formats and date filters follow the core loop. AI question-answering, semantic search, automatic organization, document editing and cloud synchronization are outside the initial release.
+Skip virtual filesystems, network mounts, symlinks, common cache/dependency/trash directories and the index itself. Ordinary hidden files remain searchable. Do not download cloud placeholders. Optional **Index & exclusions** controls exclude subfolders; no initial inclusion setup is required.
 
-## Desired reliability
+Preserve existing exclusions and bookmarks on upgrade. Overlapping scopes must not duplicate results. Clearing data pauses automatic indexing; resuming rebuilds from discovered disks without modifying originals.
 
-File changes should replace versions coherently. Confirmed deletions and revoked permissions must withdraw searchable content; temporarily inaccessible folders must not masquerade as deleted files. Removing a scope or clearing application data must never change originals. Parser failures must not stop other files. Tests should cover Chinese input composition, stale asynchronous results, special characters, overlapping scopes, large/encrypted/corrupt documents, script-bearing Markdown and abnormal shutdowns.
+## 4. Search and interaction
 
-## Provisional performance goals
+- Offer Names + contents, File names only, and Document contents only.
+- Names accept single-character terms; contents require two characters per term. Single-character conditions match names only.
+- Support Chinese substrings, English case and full-width normalization, quoted phrases and space-separated AND conditions.
+- Combine file type (including folders), disk and bookmark filters; sort by relevance or modification time.
+- Show names, types, paths and actual matching excerpts. Preserve name search and explain failures when text extraction fails.
+- Select to preview extracted text; double-click, Enter or Open original launches the system app. Folder results open as folders.
+- Retain Chinese/English, light/dark/system themes, optional glass effects and keyboard navigation.
+- Neither the home screen nor automatic-mode management requires selecting a folder.
 
-On a documented 4-core / 8 GB / SSD reference machine, with 10,000 files and around 100 MiB of extracted text: hot-search P95 ≤ 300 ms, cold-search P95 ≤ 1 s, first searchable batch ≤ 30 s, full indexing ≤ 15 min, idle process-tree resident memory ≤ 250 MiB, indexing peak ≤ 600 MiB, and derived data ≤ 500 MiB. These are targets, not beta measurements. Exact-phrase fixtures should have full recall; a labeled relevance set should achieve at least 90% Top-5 success.
+## 5. Index lifecycle
 
-## Delivery gates
+Commit discovered names to SQLite in batches without loading a full-disk inventory into memory. Parse contents serially in an independent worker, using an isolated process and 60-second timeout per document. Persist pending work across pause/restart.
 
-1. Validate parsers, Chinese indexing and resource assumptions.
-2. Deliver the complete local search/preview/open loop.
-3. Add recovery, scope management, usability and accessibility.
-4. Verify offline installation, target-platform packages, performance and user task completion.
+Reconcile new, changed and disappeared files periodically. Interrupted or paused traversals must not mark unvisited records as deleted. Withdraw stale extracted text before replacing it. Individual retries preserve bookmarks; exclusions immediately affect queries.
 
-The current Python/WebView beta implements a subset. beta.3 adds per-file recovery and removable exclusions. Atomic rebuilds, stable rename identity, resource hard limits and comprehensive performance acceptance remain explicitly tracked in the [roadmap](ROADMAP.md).
+Beta.4 uses ordinary traversal and approximately 30-second reconciliation intervals plus scan duration, without recursive whole-disk watchers. MFT / USN, change journals and larger-library performance improvements remain future work.
+
+## 6. Document and privacy boundaries
+
+Extract PDF, UTF-8 Markdown and DOCX paragraphs / ordinary tables. Default parser limits: 100 MiB per file, 1,000 PDF pages and 10 MiB extracted text. OCR, AI, original-layout rendering, automatic database repair and bookmark migration on rename are excluded.
+
+Indexes contain paths and extracted text, without application-level encryption. Protect them using account permissions and disk encryption. Issue reports should contain synthetic fixtures, not private documents or databases.
+
+## 7. Acceptance
+
+1. A fresh installation discovers files and displays progress without a folder picker.
+2. Images, archives, code, documents and subfolders in the same mixed directory are searchable by name; PDF / Markdown / DOCX also support contents.
+3. Pause, restart, deletion/update and exclusion/restoration work without modifying originals.
+4. Names become available before extraction completes; metadata-only entries are not parser failures.
+5. Windows, macOS and Linux builds and native bridge checks pass; public releases include checksums and bilingual documentation.
+6. Verify legacy-index migration and exclusion preservation, and document hidden-file / inaccessible-location behavior.
+
+## 8. Performance acceptance remains open
+
+Full-disk first-index time, million-entry memory/latency, timely updates and full-GUI memory need separate measurements. The earlier document benchmark's 4-core / 8 GB environment, 40% PDF / 40% Markdown / 20% DOCX mix, at least 100 queries and cross-platform cold/warm tests remain incomplete.
+
+The [beta.3 synthetic baseline](PERFORMANCE.en.md) measures a selected document corpus, not beta.4 full-disk performance.

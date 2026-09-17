@@ -198,7 +198,7 @@ def test_queries_are_safe_and_explicit(collection):
     write(folder / "note.md", '<script>alert(1)</script> "quoted"')
     library.scan()
     assert names(library, "<script>")
-    for query in ["部", '"unfinished', "x" * 257]:
+    for query in ['"unfinished', "x" * 257]:
         with pytest.raises(ValueError):
             library.search(query=query)
     assert query_terms('预算 "offline deployment"') == ["预算", "offline deployment"]

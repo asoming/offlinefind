@@ -186,10 +186,16 @@ def self_test(destination: Path):
         note = folder / "测试.md"
         note.write_text("# Offline\n支持离线部署。Local files stay private.", encoding="utf-8")
         os.utime(note, (time.time() - 5, time.time() - 5))
-        library = Library(base / "data", extractor=extract_isolated)
+        library = Library(
+            base / "data",
+            extractor=extract_isolated,
+            automatic=True,
+            disk_provider=lambda: ([folder], set()),
+        )
         try:
-            library.add_root(str(folder))
             library.scan()
+            assert len(library.search(query="测试")["items"]) == 1
+            library.parse_pending()
             result = library.search(query="部署")
             assert len(result["items"]) == 1
             assert "离线部署" in library.document(result["items"][0]["id"])["blocks"][0]["text"]
@@ -219,7 +225,11 @@ def main():
     if args.self_test:
         self_test(args.self_test)
         return
-    library = Library(args.data_dir)
+    library = Library(
+        args.data_dir,
+        automatic=not args.folder,
+        disk_provider=(lambda: ([], set())) if args.gui_smoke else None,
+    )
     bridge = Bridge(library)
     try:
         for folder in args.folder:

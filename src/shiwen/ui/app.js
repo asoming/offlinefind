@@ -5,6 +5,7 @@
     language: "zh",
     query: "",
     type: "all",
+    mode: "all",
     view: "all",
     root: null,
     sort: "relevance",
@@ -24,22 +25,31 @@
   };
   const words = {
     zh: {
-      allDocs: "全部文档",
+      allDocs: "全部文件",
+      thisComputer: "这台电脑",
+      searchMode: "搜索方式",
+      modeAll: "文件名 + 内容",
+      modeName: "仅文件名",
+      modeContent: "仅文档内容",
+      foldersType: "文件夹",
+      metadata: "已收录名称",
+      metadataPreview: "此项目支持按名称搜索。双击结果可打开文件或文件夹。",
+      autoHint: "自动索引本机 · 无需选择文件夹",
       saved: "我的收藏",
-      searchScope: "搜索范围",
+      searchScope: "本机磁盘",
       addFolder: "添加文件夹",
-      manageFolders: "管理文件夹",
+      manageFolders: "索引与排除",
       settings: "设置",
       tagline: "记得内容，就找得到。",
       offline: "本地离线",
-      searchPlaceholder: "搜索文档里的文字…",
+      searchPlaceholder: "搜索文件名、文件夹或文档内容…",
       clearSearch: "清空搜索",
       all: "全部",
       titleAndBody: "搜索标题与正文",
       welcomeTitle: "让散落的文字，重新相遇。",
       welcomeBody:
-        "选择存放文档的文件夹。拾文会在这台电脑上建立索引，帮你找回记得的那句话。",
-      supported: "支持 PDF、Markdown、Word · 文件不会上传",
+        "正在自动发现本机文件，无需选择文件夹。文件名先可搜索，文档正文会在后台陆续加入。",
+      supported: "各类文件名 · PDF、Markdown、Word 正文 · 全程离线",
       sort: "排序",
       relevance: "相关度优先",
       recent: "最近修改",
@@ -68,7 +78,7 @@
         "索引可能包含文档原文，未单独加密。请使用系统用户权限与磁盘加密保护这台设备。",
       clearData: "清除全部本地数据",
       folderNote:
-        "只读取选定目录；跳过隐藏目录、依赖目录和符号链接。移除范围不会删除原文件。",
+        "自动扫描本地磁盘；排除系统虚拟目录、缓存、依赖目录和符号链接。不读取网络共享，不提升权限。可在下方排除不想索引的目录。",
       indexState: "索引状态",
       retry: "重新检查全部",
       retryFile: "重试此文档",
@@ -87,20 +97,20 @@
       cancel: "取消",
       confirm: "确认",
       loadMore: "加载更多",
-      ready: "文档已就绪",
-      scanning: "正在发现文档",
+      ready: "索引已就绪",
+      scanning: "正在发现本机文件",
       indexing: "正在建立索引",
       paused: "索引已暂停",
       error: "索引需要处理",
-      idle: "文档已就绪",
+      idle: "索引已就绪",
       pause: "暂停索引",
       resume: "继续索引",
-      found: "找到 {n} 份文档",
-      atLeast: "已找到至少 {n} 份文档",
-      folderCount: "{n} 个文件夹",
+      found: "找到 {n} 个结果",
+      atLeast: "已找到至少 {n} 个结果",
+      folderCount: "{n} 个磁盘 / 范围",
       processed: "已发现 {n} 份 · 已处理 {p} 份",
-      noResults: "没有找到相关文档",
-      noResultsHint: "试试其他关键词或搜索范围；有些文档可能还未完成索引。",
+      noResults: "没有找到相关文件",
+      noResultsHint: "试试其他关键词或本机磁盘；有些文档可能还未完成索引。",
       savedEmpty: "还没有符合条件的收藏",
       nameOnly: "文件名匹配",
       savedToast: "已加入我的收藏",
@@ -113,17 +123,17 @@
       textPreview: "提取文本预览",
       noTextPreview:
         "这份文件暂无可预览的文字。可以用原应用打开，或在索引状态中查看原因。",
-      removed: "已移除搜索范围，原文件保持不变",
+      removed: "已移除本机磁盘，原文件保持不变",
       remove: "移除",
       exclude: "排除子目录",
       excluded: "已排除：",
       removeConfirm: "移除这个文件夹的索引与收藏引用？原文件不会被删除。",
       excludePrompt: "输入相对于该文件夹的子目录路径，例如 archive/private。",
       clearConfirm:
-        "这将清除索引、收藏、文件夹范围与设置。原始文档不会被修改或删除。",
+        "这将清除索引、收藏、排除规则与设置，并暂停自动索引。点击继续索引可重新扫描。原文件不会改变。",
       cleared: "本地数据已清除",
       retrying: "已安排重新检查",
-      noFolders: "尚未添加文件夹",
+      noFolders: "正在自动发现磁盘",
       connectionError: "无法连接本地检索服务，请重启应用。",
       unavailable: "文件或目录当前不可用",
       partial: "部分页面无可提取文字",
@@ -156,22 +166,32 @@
       partialList: "仅显示前 50 条，可继续加载",
     },
     en: {
-      allDocs: "All documents",
+      allDocs: "All files",
+      thisComputer: "This computer",
+      searchMode: "Search mode",
+      modeAll: "Names + contents",
+      modeName: "File names only",
+      modeContent: "Document contents only",
+      foldersType: "Folders",
+      metadata: "Name indexed",
+      metadataPreview:
+        "This item can be found by name. Double-click a result to open the file or folder.",
+      autoHint: "Automatic local indexing · No folder selection",
       saved: "Bookmarks",
-      searchScope: "SEARCH FOLDERS",
+      searchScope: "LOCAL DISKS",
       addFolder: "Add folder",
-      manageFolders: "Manage folders",
+      manageFolders: "Index & exclusions",
       settings: "Settings",
       tagline: "Remember the words. Find the file.",
       offline: "Offline",
-      searchPlaceholder: "Search inside your documents…",
+      searchPlaceholder: "Search files, folders or document contents…",
       clearSearch: "Clear search",
       all: "All",
       titleAndBody: "Search names and contents",
       welcomeTitle: "Your words, within reach.",
       welcomeBody:
-        "Choose a folder of documents. Shiwen builds an index on this computer, so a remembered phrase leads you back to the right file.",
-      supported: "PDF, Markdown and Word · Nothing uploaded",
+        "Discovering local files automatically. No folder selection needed. Names become searchable first; document contents follow in the background.",
+      supported: "All file names · PDF, Markdown and Word contents · Offline",
       sort: "Sort results",
       relevance: "Most relevant",
       recent: "Last modified",
@@ -201,7 +221,7 @@
         "The index may contain original document text and is not separately encrypted. Protect it with your OS account and disk encryption.",
       clearData: "Clear all local data",
       folderNote:
-        "Only selected folders are read. Hidden folders, dependencies and symlinks are skipped. Removing a scope never deletes original files.",
+        "Local disks are scanned automatically. Virtual system folders, caches, dependencies and symlinks are skipped. No network shares or elevated access. Exclude unwanted folders below.",
       indexState: "Index status",
       retry: "Recheck all documents",
       retryFile: "Retry this document",
@@ -221,19 +241,19 @@
       cancel: "Cancel",
       confirm: "Confirm",
       loadMore: "Load more",
-      ready: "Documents are ready",
-      scanning: "Discovering documents",
+      ready: "Index is ready",
+      scanning: "Discovering local files",
       indexing: "Indexing documents",
       paused: "Indexing paused",
       error: "Index needs attention",
-      idle: "Documents are ready",
+      idle: "Index is ready",
       pause: "Pause indexing",
       resume: "Resume indexing",
-      found: "{n} documents found",
-      atLeast: "At least {n} documents found",
-      folderCount: "{n} folders",
+      found: "{n} results found",
+      atLeast: "At least {n} results found",
+      folderCount: "{n} disks / scopes",
       processed: "{n} discovered · {p} processed",
-      noResults: "No matching documents",
+      noResults: "No matching files",
       noResultsHint:
         "Try another phrase or folder. Some documents may still be waiting to be indexed.",
       savedEmpty: "No matching bookmarks yet",
@@ -257,10 +277,10 @@
       excludePrompt:
         "Enter a subfolder path relative to this folder, for example archive/private.",
       clearConfirm:
-        "This removes the index, bookmarks, folder scopes and settings. Original documents will not be changed or deleted.",
+        "This removes the index, bookmarks, exclusions and settings, and pauses automatic indexing. Resume to scan again. Original files stay unchanged.",
       cleared: "Local data cleared",
       retrying: "Recheck scheduled",
-      noFolders: "No folders added",
+      noFolders: "Discovering disks automatically",
       connectionError:
         "Cannot connect to the local search service. Please restart Shiwen.",
       unavailable: "File or folder is unavailable",
@@ -388,6 +408,9 @@
       .catch((error) => toast(t(error.message)));
   }
   function translate() {
+    $("search-caption").textContent = t(
+      { all: "modeAll", name: "modeName", content: "modeContent" }[state.mode],
+    );
     document.documentElement.lang = state.language === "zh" ? "zh-CN" : "en";
     document
       .querySelectorAll("[data-i18n]")
@@ -426,7 +449,7 @@
       );
       button.append(
         icon("folder"),
-        make("span", "folder-name", basename(root.path)),
+        make("span", "folder-name", basename(root.path) || t("thisComputer")),
       );
       button.title = root.path;
       button.setAttribute("aria-pressed", String(state.root === root.id));
@@ -440,7 +463,7 @@
       $("folders").append(button);
       const panel = make("div", "managed-folder");
       panel.append(
-        make("strong", "", basename(root.path)),
+        make("strong", "", basename(root.path) || t("thisComputer")),
         make("p", "", root.path),
       );
       if (!root.available) panel.append(make("p", "", t("disconnected")));
@@ -487,7 +510,8 @@
           await search();
           toast(t("removed"));
         });
-      actions.append(exclude, remove);
+      actions.append(exclude);
+      if (!state.status.automatic) actions.append(remove);
       panel.append(actions);
       $("folder-management").append(panel);
     }
@@ -508,10 +532,18 @@
     const status = await api("status");
     const previous = state.status;
     state.status = status;
+    for (const id of ["add-small", "add-first", "add-managed"]) {
+      if ($(id)) $(id).hidden = status.automatic;
+    }
+    $("auto-hint").hidden = !status.automatic;
     applySettings(status.settings);
     $("all-count").textContent = status.counts.total;
     $("saved-count").textContent = status.counts.saved;
-    const phase = status.paused ? "paused" : status.progress.phase;
+    const phase = status.paused
+      ? "paused"
+      : status.progress.phase === "idle" && status.counts.by_status.pending
+        ? "indexing"
+        : status.progress.phase;
     $("status-label").textContent = t(phase);
     $("index-detail").textContent = t("folderCount", {
       n: status.roots.length,
@@ -553,6 +585,7 @@
       const result = await api("search", {
         query: state.query,
         file_type: state.type,
+        mode: state.mode,
         root_id: state.root,
         saved: state.view === "saved",
         sort: state.sort,
@@ -648,7 +681,11 @@
         file = make(
           "span",
           `file-icon ${item.type}`,
-          item.type === "docx" ? "DOC" : item.type.toUpperCase(),
+          item.type === "folder"
+            ? "DIR"
+            : item.type === "docx"
+              ? "DOC"
+              : item.type.toUpperCase().slice(0, 5),
         ),
         labels = make("span"),
         title = make("span", "result-title");
@@ -668,6 +705,7 @@
       head.append(file, labels);
       button.append(head);
       for (const excerpt of item.excerpts) {
+        if (!excerpt.text) continue;
         const span = make("span", "excerpt");
         highlight(span, excerpt.text, excerpt.ranges);
         if (excerpt.before) span.prepend(document.createTextNode("…"));
@@ -676,9 +714,10 @@
       }
       const parent = item.path.replace(/[\\/][^\\/]+$/, "");
       const path = make("span", "result-path");
-      path.append(icon("folder"), document.createTextNode(basename(parent)));
+      path.append(icon("folder"), document.createTextNode(parent));
+      path.title = item.path;
       button.append(path);
-      if (item.status !== "ready")
+      if (!["ready", "metadata"].includes(item.status))
         button.append(make("span", "result-warning", t(item.status)));
       else if (item.name_only)
         button.append(make("span", "result-warning", t("nameOnly")));
@@ -733,13 +772,22 @@
     $("preview-empty").hidden = true;
     $("document").hidden = false;
     $("bookmark").setAttribute("aria-pressed", String(Boolean(document.saved)));
-    $("paper-title").textContent = document.name.replace(/\.[^.]+$/, "");
+    const metadata = document.status === "metadata";
+    $("document").querySelector(".match-nav").hidden = metadata;
+    $("paper-title").textContent = metadata
+      ? document.name
+      : document.name.replace(/\.[^.]+$/, "");
     $("paper-type").textContent =
-      `${document.type.toUpperCase()} / ${t("textPreview")}`;
+      `${document.type.toUpperCase()} / ${t(metadata ? "metadata" : "textPreview")}`;
     $("document-path").textContent = document.path;
-    $("document-status").textContent =
-      document.status === "ready" ? "" : t(document.status);
-    $("retry-document").hidden = document.status === "ready";
+    $("document-status").textContent = ["ready", "metadata"].includes(
+      document.status,
+    )
+      ? ""
+      : t(document.status);
+    $("retry-document").hidden = ["ready", "metadata"].includes(
+      document.status,
+    );
     $("retry-document").disabled = document.status === "pending";
     drawBlock();
     if (show) $("workspace").classList.add("show-preview");
@@ -763,7 +811,10 @@
       : "";
     $("paper-number").textContent = block?.location ?? "";
     if (block) highlight($("paper-text"), block.text, block.ranges);
-    else $("paper-text").textContent = t("noTextPreview");
+    else
+      $("paper-text").textContent = t(
+        doc.status === "metadata" ? "metadataPreview" : "noTextPreview",
+      );
   }
   function moveHit(step) {
     if (!state.document) return;
@@ -836,6 +887,11 @@
   $("manage-folders").onclick = () => {
     $("folders-dialog").showModal();
     drawFolders();
+  };
+  $("search-mode").onchange = () => {
+    state.mode = $("search-mode").value;
+    translate();
+    run(() => search());
   };
   $("settings-button").onclick = () => $("settings-dialog").showModal();
   $("index-status").onclick = () => {

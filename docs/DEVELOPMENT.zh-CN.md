@@ -70,3 +70,11 @@ python scripts/package.py
 `tests/test_recovery.py` 覆盖单文件重试持久化、收藏保留、不可访问或越界目标、问题列表分页、重叠排除和全库重试竞态。单文件重试复用持久化的 `pending` 状态，无需数据库迁移。全库请求带独立标识，只有完整扫描结束且请求未被更新时才确认消费。
 
 执行 `python scripts/benchmark.py /tmp/shiwen-benchmark`，在一个新目录内运行万文档基准；加 `--documents 100 --rounds 3` 可快速检查。详见[性能测量方法](PERFORMANCE.zh-CN.md)。基准仅生成合成文件，逐文件使用正式的独立解析进程，并核对已知搜索结果。CI 不在每个任务中重复万文档工作量。
+
+## beta.4 自动发现
+
+正常桌面启动构造 `Library(automatic=True)`，`discovery.py` 发现系统磁盘与不可扫描挂载。`--folder` 保留为开发用显式语料范围；`--gui-smoke` 使用空的磁盘提供器，避免 CI 扫描整台构建机。打包核心自检使用自动模式的合成磁盘。
+
+名称遍历每 128 项提交，使用 `seen_scan` 标记完整扫描；中断时不清理未访问记录。另一个线程以每页 64 项读取 pending 文档并串行启动解析进程。全盘模式不创建递归 watchdog 监听器，使用周期核对。测试可注入 `disk_provider`，避免读取个人文件。旧模式仍供既有文档基准使用。
+
+`tests/test_automatic.py` 覆盖无选择启动、混合文件类型与目录、名称先可查、搜索方式、单字符名称、更新删除、暂停中断、排除迁移、挂载策略及系统磁盘发现。

@@ -1119,3 +1119,22 @@ input[type="checkbox"] {
   scrollbar-width: thin;
   scrollbar-color: color-mix(in srgb, var(--muted) 35%, transparent) transparent;
 }
+
+#search-mode {
+  max-width: 210px;
+  border: 1px solid var(--line);
+  border-radius: 9px;
+  padding: 7px 10px;
+  color: var(--ink);
+  background: var(--paper);
+  font: inherit;
+  font-size: 12px;
+}
+#auto-hint {
+  line-height: 1.65;
+  padding: 0 14px;
+}
+.file-icon.folder {
+  color: #8a691e;
+  background: #efe4c4;
+}

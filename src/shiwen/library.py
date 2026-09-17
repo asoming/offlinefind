@@ -2,11 +2,13 @@
 
 import os
 import sqlite3
+import stat as stat_types
 import threading
 import time
 import uuid
 from pathlib import Path
 
+from .discovery import SKIP_NAMES, linked_directory, local_disks
 from .extract import MAX_FILE, SUPPORTED, extract_isolated
 from .store import Store
 
@@ -26,7 +28,9 @@ def placeholder(stat) -> bool:
 
 
 class Library:
-    def __init__(self, directory: Path, extractor=extract_isolated):
+    def __init__(
+        self, directory: Path, extractor=extract_isolated, automatic=False, disk_provider=None
+    ):
         self.store = Store(directory)
         self.extractor = extractor
         self.operation = threading.RLock()
@@ -36,9 +40,17 @@ class Library:
         self.observer = None
         self.progress = {"phase": "idle", "processed": 0, "discovered": 0, "error": None}
         self.revision = 0
+        self.automatic = automatic
+        self.disk_provider = disk_provider or local_disks
+        self.blocked_paths = set()
+        self.parser_thread = None
+        if automatic:
+            self._refresh_disks()
 
     def allowed(self, path: Path, check_file: bool = False) -> bool:
-        if path.is_relative_to(self.store.directory):
+        if path.is_relative_to(self.store.directory) or any(
+            path.is_relative_to(blocked) for blocked in self.blocked_paths
+        ):
             return False
         roots = self.store.roots()
         included = False
@@ -47,7 +59,12 @@ class Library:
             if not path.is_relative_to(base):
                 continue
             relative = path.relative_to(base)
-            if any(part.startswith(".") or part in EXCLUDED_NAMES for part in relative.parts):
+            if any(
+                part in SKIP_NAMES
+                if self.automatic
+                else part.startswith(".") or part in EXCLUDED_NAMES
+                for part in relative.parts
+            ):
                 return False
             if any(path.is_relative_to(base / rule) for rule in root["excluded"]):
                 return False
@@ -55,7 +72,11 @@ class Library:
             if check_file:
                 try:
                     # No symlinks/junctions may escape an explicitly selected root.
-                    if path.resolve() != path or not base.is_dir() or not path.is_file():
+                    if (
+                        path.resolve() != path
+                        or not base.is_dir()
+                        or not (path.is_file() or (self.automatic and path.is_dir()))
+                    ):
                         return False
                     if any(
                         part.is_symlink() for part in [path, *path.parents] if part != base.parent
@@ -95,6 +116,9 @@ class Library:
             self.store.clear()
             self.revision += 1
             self.progress = {"phase": "idle", "processed": 0, "discovered": 0, "error": None}
+        if self.automatic:
+            self._refresh_disks()
+            self.pause(True)
         self._watch()
 
     def remove_exclusion(self, root_id: int, relative: str):
@@ -106,6 +130,8 @@ class Library:
     def retry_document(self, document_id: int):
         with self.operation:
             path = self.verified_path(document_id)
+            if self.automatic and (path.is_dir() or path.suffix.lower() not in SUPPORTED):
+                raise ValueError("invalid_setting")
             self.store.invalidate(str(path), "pending")
         self.wake.set()
 
@@ -157,6 +183,8 @@ class Library:
                         yield path
 
     def scan(self, force: bool = False):
+        if self.automatic:
+            return self._scan_names(force)
         with self.operation:
             if self.paused() or self.stop_event.is_set():
                 return False
@@ -229,6 +257,139 @@ class Library:
         self.progress["phase"] = "paused" if self.paused() else "idle"
         return completed
 
+    def _refresh_disks(self):
+        roots, blocked = self.disk_provider()
+        self.blocked_paths = set(blocked)
+        for path in roots:
+            self.store.add_automatic_root(Path(path).resolve())
+
+    def _all_entries(self):
+        roots = sorted(
+            {Path(root["path"]) for root in self.store.roots()}, key=lambda p: len(p.parts)
+        )
+        roots = [
+            root
+            for i, root in enumerate(roots)
+            if not any(root.is_relative_to(p) for p in roots[:i])
+        ]
+        home = Path.home().resolve()
+        starts = ([home] if any(home.is_relative_to(root) for root in roots) else []) + roots
+        finished = []
+        for base in starts:
+            if base in finished or not self.allowed(base):
+                continue
+            for parent, directories, files in os.walk(base, followlinks=False):
+                if self.stop_event.is_set() or self.paused():
+                    return
+                directories[:] = [
+                    name
+                    for name in directories
+                    if not linked_directory(Path(parent) / name)
+                    and not any((Path(parent) / name).is_relative_to(done) for done in finished)
+                    and self.allowed(Path(parent) / name)
+                ]
+                for name in directories + files:
+                    path = Path(parent) / name
+                    if not self.allowed(path):
+                        continue
+                    try:
+                        str(path).encode("utf-8")
+                        stat = path.lstat()
+                    except (OSError, UnicodeError):
+                        continue
+                    if stat_types.S_ISDIR(stat.st_mode) or stat_types.S_ISREG(stat.st_mode):
+                        yield path, stat
+            finished.append(base)
+
+    def _scan_names(self, force=False):
+        with self.operation:
+            if self.paused() or self.stop_event.is_set():
+                return False
+            self._refresh_disks()
+            generation = self.revision
+            scan_id = uuid.uuid4().hex
+            self.progress = {"phase": "scanning", "processed": 0, "discovered": 0, "error": None}
+        batch = []
+        for path, stat in self._all_entries():
+            if self.paused() or self.stop_event.is_set() or generation != self.revision:
+                return False
+            kind = "folder" if stat_types.S_ISDIR(stat.st_mode) else path.suffix.lower().lstrip(".")
+            if kind == "markdown":
+                kind = "md"
+            kind = kind or "file"
+            status = "pending" if kind in {"pdf", "md", "docx"} else "metadata"
+            fingerprint = f"{stat.st_dev}:{stat.st_ino}:{stat.st_ctime_ns}"
+            batch.append((path, stat, fingerprint, kind, status))
+            self.progress["discovered"] += 1
+            if len(batch) >= 128:
+                with self.operation:
+                    if generation != self.revision:
+                        return False
+                    self.store.discover_batch(batch, scan_id)
+                self.progress["processed"] += len(batch)
+                batch.clear()
+        with self.operation:
+            if self.paused() or self.stop_event.is_set() or generation != self.revision:
+                return False
+            self.store.discover_batch(batch, scan_id)
+            self.progress["processed"] += len(batch)
+            self.store.finish_discovery(scan_id)
+            if force:
+                self.store.queue_contents()
+            self.progress["phase"] = "idle"
+        return True
+
+    def parse_pending(self):
+        # Independent from disk discovery: a slow PDF cannot hold up filename search.
+        after_id = 0
+        while not self.stop_event.is_set() and not self.paused():
+            rows = self.store.pending_batch(after_id)
+            if not rows:
+                return
+            for row in rows:
+                after_id = row["id"]
+                if self.stop_event.is_set() or self.paused():
+                    return
+                generation = self.revision
+                path = Path(row["path"])
+                try:
+                    if not self.allowed(path, check_file=True):
+                        continue
+                    before = path.stat()
+                    if placeholder(before):
+                        result = {"status": "cloud", "blocks": []}
+                    elif before.st_size > MAX_FILE:
+                        result = {"status": "file_limit", "blocks": []}
+                    elif time.time() - before.st_mtime < 1:
+                        continue
+                    else:
+                        result = self.extractor(path)
+                    after = path.stat()
+                    if (before.st_size, before.st_mtime_ns, before.st_ctime_ns) != (
+                        after.st_size,
+                        after.st_mtime_ns,
+                        after.st_ctime_ns,
+                    ):
+                        continue
+                    with self.operation:
+                        if generation == self.revision and self.allowed(path):
+                            fingerprint = f"{before.st_dev}:{before.st_ino}:{before.st_ctime_ns}"
+                            self.store.upsert(path, before, fingerprint, result)
+                except PermissionError:
+                    self.store.invalidate(str(path), "permission")
+                except OSError:
+                    self.store.invalidate(str(path))
+                if self.store.setting("resource", "standard") == "low":
+                    self.stop_event.wait(0.1)
+
+    def _parse_loop(self):
+        while not self.stop_event.is_set():
+            try:
+                self.parse_pending()
+            except (sqlite3.Error, OSError):
+                self.progress.update(error="storage_error")
+            self.stop_event.wait(1)
+
     def _run(self):
         while not self.stop_event.is_set():
             self.wake.clear()
@@ -250,10 +411,13 @@ class Library:
             return
         self.thread = threading.Thread(target=self._run, name="shiwen-index", daemon=True)
         self.thread.start()
+        if self.automatic:
+            self.parser_thread = threading.Thread(target=self._parse_loop, daemon=True)
+            self.parser_thread.start()
         self._watch()
 
     def _watch(self):
-        if not self.thread:
+        if not self.thread or self.automatic:
             return
         from watchdog.events import FileSystemEventHandler
         from watchdog.observers import Observer
@@ -288,6 +452,8 @@ class Library:
             self.observer.join(timeout=3)
         if self.thread:
             self.thread.join(timeout=65)
+        if self.parser_thread:
+            self.parser_thread.join(timeout=65)
         self.store.close()
 
     def search(self, **kwargs):
@@ -296,6 +462,7 @@ class Library:
     def status(self):
         size = sum(p.stat().st_size for p in self.store.directory.glob("library.sqlite3*"))
         return {
+            "automatic": self.automatic,
             "roots": self.store.roots(),
             "counts": self.store.counts(),
             "progress": dict(self.progress),
@@ -321,7 +488,7 @@ class Library:
             raise ValueError("unavailable")
         import json
 
-        terms = query_terms(query)
+        terms = query_terms(query, allow_single=True)
         blocks = json.loads(document["blocks"])
         for block in blocks:
             block["ranges"] = ranges(block["text"], terms)

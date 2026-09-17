@@ -68,3 +68,11 @@ Top-level runtime dependencies are pinned. Transitive/platform-specific dependen
 `tests/test_recovery.py` covers individual retry persistence, bookmark preservation, inaccessible/out-of-scope targets, issue pagination, overlapping exclusions, and full-library retry races. Single-file retries reuse the persistent `pending` status; no database schema migration is required. Full-library requests carry an identity and are acknowledged only after a complete scan if no newer request has replaced them.
 
 Run `python scripts/benchmark.py /tmp/shiwen-benchmark` in a new directory for the 10,000-document benchmark, or add `--documents 100 --rounds 3` for a quick check. See [performance methodology](PERFORMANCE.en.md). The benchmark generates synthetic files only, uses the production spawned parser for each file and verifies known search results. It is not run as a 10,000-file workload in every CI job.
+
+## Beta.4 automatic discovery
+
+Normal desktop startup constructs `Library(automatic=True)`; `discovery.py` discovers OS disks and excluded mounts. `--folder` remains an explicit development corpus override. `--gui-smoke` injects an empty disk provider to avoid scanning the CI runner. Packaged core tests use a synthetic automatic disk.
+
+Discovery commits 128 names at a time and uses `seen_scan` to reconcile only complete traversals. A separate thread reads pending documents in pages of 64 and runs isolated parsers serially. Whole-disk mode uses periodic reconciliation rather than recursive watchdog subscriptions. Tests inject `disk_provider` and do not read personal files. Legacy scoped mode remains available to the earlier document benchmark.
+
+`tests/test_automatic.py` covers setup-free discovery, mixed files/folders, names before contents, search modes, single-character names, changes/deletions, interrupted scans, exclusion migration, mount policies and native disk discovery.
