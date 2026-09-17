@@ -41,7 +41,9 @@ def main():
     before_launch = time.perf_counter()
 
     def monitor():
+        sampler_cpu = 0.0
         while not stop.wait(0.1):
+            sample_started = time.thread_time()
             rss, cpu, names = 0, 0, set()
             if sys.platform == "darwin":
                 for candidate in psutil.process_iter(["name"]):
@@ -59,7 +61,8 @@ def main():
                     names.add(child.name())
                 except psutil.Error:
                     pass
-            samples.append((phase, time.perf_counter(), rss, cpu, sorted(names)))
+            sampler_cpu += time.thread_time() - sample_started
+            samples.append((phase, time.perf_counter(), rss, cpu - sampler_cpu, sorted(names)))
 
     thread = threading.Thread(target=monitor, daemon=True)
     thread.start()
@@ -233,6 +236,7 @@ def main():
                 "screenWidth:screen.availWidth,screenHeight:screen.availHeight})"
             )
         finally:
+            phase = "closing"
             result["close_requested_at"] = time.monotonic()
             try:
                 click("#window-close")
@@ -258,6 +262,9 @@ def main():
             "not necessarily private memory; pre-existing shared services excluded"
             if sys.platform == "darwin"
             else "Application descendants"
+        )
+        result["cpu_note"] = (
+            "One-core percent; sampler thread CPU subtracted; closing is a separate phase"
         )
         result["memory"] = {}
         for name in {row[0] for row in samples}:
