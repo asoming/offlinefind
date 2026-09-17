@@ -1,8 +1,10 @@
 # Changelog / 更新记录
 
-## 0.1.0-beta.7 — 2026-09-17
+## 0.1.0-beta.8 — 2026-09-17
 
 - Fix Linux exit hanging when a WebView callback is outstanding as the window closes.
+- Preserve unvisited entries when an explicit-folder scan is interrupted by shutdown.
+- 退出中断指定目录扫描时，保留尚未访问文件的正文与收藏。
 - Cancel in-flight document parsing on close and keep unfinished documents pending for restart.
 - Drain active bridge requests before closing the index database; add shutdown regression tests and a packaged GTK close-race smoke test.
 - 修复 Linux 关闭窗口时等待界面回调、导致进程不退出的竞态。

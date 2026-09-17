@@ -260,7 +260,11 @@ class Library:
                 self.stop_event.wait(0.1)
         else:
             with self.operation:
-                if generation == self.revision:
+                if (
+                    generation == self.revision
+                    and not self.stop_event.is_set()
+                    and not self.paused()
+                ):
                     for path in inventory:
                         if path not in seen or not self.allowed(Path(path), check_file=True):
                             self.store.invalidate(path)

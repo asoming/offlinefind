@@ -137,3 +137,29 @@ def test_close_drains_rpc_before_closing_database(tmp_path):
         release.set()
         caller.join(3)
         closer.join(3)
+
+
+def test_stopping_directory_walk_does_not_withdraw_unvisited_documents(tmp_path, monkeypatch):
+    from shiwen.extract import extract
+
+    disk = tmp_path / "disk"
+    disk.mkdir()
+    note = disk / "saved.md"
+    note.write_text("retain searchable content")
+    os.utime(note, (1_700_000_000, 1_700_000_000))
+    library = Library(tmp_path / "index", extractor=extract)
+    try:
+        library.add_root(str(disk))
+        assert library.scan()
+        document = library.search(query="searchable")["items"][0]
+        library.store.bookmark(document["id"], True)
+
+        def interrupted_walk():
+            library.request_stop()
+            return iter(())
+
+        monkeypatch.setattr(library, "_files", interrupted_walk)
+        assert not library.scan()
+        assert library.search(query="searchable", saved=True)["items"][0]["id"] == document["id"]
+    finally:
+        library.close()

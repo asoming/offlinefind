@@ -80,4 +80,4 @@ Only manual update actions connect to GitHub. Startup, indexing, searching and o
 
 ## Window shutdown
 
-Closing the title-bar × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.7 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that Shiwen process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.
+Closing the title-bar × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.8 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that Shiwen process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.
