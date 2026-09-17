@@ -253,6 +253,60 @@
           <p data-i18n="indexPrivacy"></p>
         </div>
         <button id="clear-data" class="danger" data-i18n="clearData"></button>
+        <section class="updates" aria-labelledby="updates-heading">
+          <h3 id="updates-heading" data-i18n="updates"></h3>
+          <p class="setting-note" data-i18n="updatePrivacy"></p>
+          <div class="update-actions">
+            <button
+              id="check-updates"
+              class="secondary"
+              data-i18n="checkUpdates"
+            ></button>
+            <button
+              id="release-page"
+              class="text-button"
+              data-i18n="releasePage"
+            ></button>
+            <button
+              id="cancel-update"
+              class="text-button"
+              data-i18n="cancelUpdate"
+              hidden
+            ></button>
+          </div>
+          <p id="update-message" role="status" aria-live="polite"></p>
+          <progress id="update-progress" max="1" value="0" hidden></progress>
+          <label id="update-package-row" hidden
+            ><span data-i18n="updatePackage"></span
+            ><select id="update-package"></select
+          ></label>
+          <p
+            id="update-no-package"
+            class="setting-note"
+            data-i18n="updateNoPackage"
+            hidden
+          ></p>
+          <div class="update-actions">
+            <button
+              id="download-update"
+              class="primary"
+              data-i18n="downloadUpdate"
+              hidden
+            ></button>
+            <button
+              id="download-folder"
+              class="secondary"
+              data-i18n="downloadFolder"
+              hidden
+            ></button>
+          </div>
+          <code id="update-path" hidden></code>
+          <p class="setting-note" data-i18n="updateInstall"></p>
+          <details id="update-notes-box" hidden>
+            <summary data-i18n="updateNotes"></summary>
+            <pre id="update-notes"></pre>
+          </details>
+        </section>
         <p class="version">Shiwen · <span id="version"></span> · MIT</p>
       </div>
     </dialog>

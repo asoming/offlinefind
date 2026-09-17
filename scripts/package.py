@@ -65,6 +65,8 @@ def main():
         f"{notices}:licenses",
         "--collect-data",
         "webview",
+        "--collect-data",
+        "certifi",
         "--hidden-import",
         "pypdf",
         "--hidden-import",

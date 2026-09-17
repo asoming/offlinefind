@@ -12,6 +12,7 @@ Shiwen's source is MIT licensed. Dependencies retain their own licenses; this fi
 | platformdirs | OS data directories | https://github.com/tox-dev/platformdirs |
 | watchdog | Filesystem notifications | https://github.com/gorakhargosh/watchdog |
 | defusedxml | Hardened XML parsing | https://github.com/tiran/defusedxml |
+| certifi | HTTPS certificate bundle for manual updates | https://github.com/certifi/python-certifi |
 | SQLite | Local storage and FTS5 | https://www.sqlite.org/copyright.html |
 | PyInstaller | Packaging with its bootloader exception | https://pyinstaller.org/en/stable/license.html |
 

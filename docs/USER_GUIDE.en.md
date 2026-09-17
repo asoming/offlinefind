@@ -60,6 +60,14 @@ Automatic disks cannot be removed here; exclude subfolders instead. Clearing loc
 
 Default data directories are `%LOCALAPPDATA%\Shiwen` on Windows, `~/Library/Application Support/Shiwen` on macOS, and `$XDG_DATA_HOME/Shiwen` (normally `~/.local/share/Shiwen`) on Linux. Settings shows the actual path. `--data-dir` overrides it for development.
 
+## Check for updates and download
+
+Open **Settings → Software updates → Check for updates**. The app shows the latest compatible release and its notes. Choose a package (Linux offers DEB and portable tar.gz), then **Download package**. Progress and cancellation are available. A completed download must pass size and SHA-256 verification; incomplete or invalid packages are removed.
+
+Choose **Show download folder** after completion. Downloads go into a new `Shiwen-…` subfolder of your system Downloads directory, without overwriting earlier downloads. Quit Shiwen before installing the DEB or replacing the extracted application. Keep the existing data directory to preserve your index and settings. This version downloads packages but does not install or restart automatically.
+
+Only manual update actions connect to GitHub. Startup, indexing, searching and opening Settings do not check online. Documents, file paths and index contents are never sent. Beta installations follow newer beta or stable releases; stable installations ignore prereleases. Older published versions are not offered as downgrades. If networking fails, retry or use **View releases** to download through your browser.
+
 ## Troubleshooting
 
 - **No result:** check the selected folder/type, indexing progress and file status. Scanned PDFs need OCR outside Shiwen.

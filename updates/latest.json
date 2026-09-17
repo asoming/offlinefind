@@ -1,0 +1,286 @@
+[
+  {
+    "tag_name": "v0.1.0-beta.4",
+    "prerelease": true,
+    "published_at": "2026-09-17T02:57:07Z",
+    "body": "# Shiwen v0.1.0-beta.4 / 拾文 · 打开即搜\n\n## 简体中文\n\n正常启动自动扫描本机，不再要求选择文件夹，也不要求文件夹只包含文档。图片、视频、压缩包、代码和文件夹均支持名称搜索；PDF、Markdown、DOCX 继续支持离线正文检索。名称发现和正文解析独立运行，慢速文档不会阻塞文件名入库。\n\n新增“文件名 + 内容”“仅文件名”“仅文档内容”切换和文件夹筛选。文件名允许单字符，正文至少双字符。保留旧版排除规则与收藏；清除数据后暂停自动索引，可手动继续重建。\n\nWindows 发现带盘符的固定磁盘，Linux / macOS 遍历本地目录树。跳过虚拟系统目录、网络挂载、缓存 / 依赖目录、符号链接和自己的索引；权限不足时跳过，不提权。文件不会上传或修改。\n\n这是普通文件遍历实现，约 30 秒间隔核对加扫描耗时；尚未实现 Everything 的 MFT / USN 加速，不承诺同等全盘首建速度。既有 beta.3 文档基准不代表此版本全盘性能。没有 OCR、原文排版渲染、硬内存上限、数据库自动修复或重命名收藏迁移。\n\n提供 Linux x64 DEB / tar.gz、Windows x64 ZIP、macOS arm64 ZIP、源码和校验和。Linux 依赖系统 Python 3.10+、GTK 3 和 WebKit；Windows 需 WebView2。测试包没有可信发布者签名或 macOS 公证。详见仓库中的中英文安装说明和新版 PRD。\n\n## English\n\nNormal startup discovers local files automatically, with no folder picker or document-only folder requirement. Find images, videos, archives, code and folders by name; retain offline PDF, Markdown and DOCX content search. Independent discovery and parsing workers keep slow documents from blocking name indexing.\n\nAdds Names + contents, File names only, Document contents only and a Folders filter. Names accept single-character terms; content terms require two characters. Existing exclusions and bookmarks survive upgrades. Clearing data pauses indexing until resumed.\n\nWindows discovers fixed disks with drive letters; Linux/macOS traverse local directory trees. Virtual filesystems, network mounts, caches/dependencies, symlinks and the index itself are skipped. Respect account permissions without elevation. Originals are neither uploaded nor modified.\n\nThis uses ordinary traversal and approximately 30-second reconciliation intervals plus scan time, without Everything's MFT / USN acceleration or equivalent first-index speed claims. The earlier beta.3 document baseline does not establish full-disk performance. OCR, original-layout rendering, hard memory caps, automatic database repair and bookmark migration on rename remain unimplemented.\n\nIncludes Linux x64 DEB / tar.gz, Windows x64 ZIP, macOS arm64 ZIP, source distributions and checksums. Linux needs system Python 3.10+, GTK 3 and WebKit; Windows needs WebView2. Packages have no trusted publisher signature or macOS notarization. See bilingual installation guides and the revised PRD.\n",
+    "assets": [
+      {
+        "name": "Shiwen-0.1.0b4-linux-amd64.deb",
+        "size": 920312,
+        "state": "uploaded",
+        "digest": "sha256:d94cb9249aeadde6dc32565f809a11829dad8bd56f59f3865ea1b6441b836c60",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-linux-amd64.deb"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-linux-amd64.deb.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:1133d250254863f6aa6be50e991ebeff50f9ec0a088a33dc9e7146342a7c75c3",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-linux-amd64.deb.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-linux-x64.tar.gz",
+        "size": 1145917,
+        "state": "uploaded",
+        "digest": "sha256:1dacbc29db492e299b6e1661b5e81a7f9b5531c278a5fc88171e2292322e3567",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-linux-x64.tar.gz"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-linux-x64.tar.gz.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:bc4028f0d2c4f4afb00435d2e49fe96256042511bb87baa4dececb409dd6b3d7",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-linux-x64.tar.gz.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-macos-arm64.zip",
+        "size": 16831995,
+        "state": "uploaded",
+        "digest": "sha256:d57c69313af4b41e7db98fd792cdbc3f54c6ddaa4ee9538b58a17cd75bb92503",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-macos-arm64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-macos-arm64.zip.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:c6bf8f148e63b480f310b164ef5d866331256d17d1e9b2c61483c09cb645aee2",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-macos-arm64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b4-py3-none-any.whl",
+        "size": 42451,
+        "state": "uploaded",
+        "digest": "sha256:5e5c18c422514fb1146dabe0a59f5486e43fa6c5d7e28baf278d8bb133d49b62",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/shiwen-0.1.0b4-py3-none-any.whl"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-windows-x64.zip",
+        "size": 22482548,
+        "state": "uploaded",
+        "digest": "sha256:6b063456b117fd81a6be51903ea9d0d540489567b3c205dbd0810d379f2c72c2",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-windows-x64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b4-windows-x64.zip.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:5018322d007a7a56a552f472d4a9b7e2fe74827c9f84eddfdd631b020b9396b0",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/Shiwen-0.1.0b4-windows-x64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b4.tar.gz",
+        "size": 84886,
+        "state": "uploaded",
+        "digest": "sha256:7471f13bbbfd6389dfaa57df4a14052a4d5a9aed4d986a956e3cc2884c47e8c0",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.4/shiwen-0.1.0b4.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "v0.1.0-beta.3",
+    "prerelease": true,
+    "published_at": "2026-09-17T02:32:15Z",
+    "body": "# Shiwen v0.1.0-beta.3 / 拾文索引恢复与性能基准\n\n## 简体中文\n\n新增问题文档列表、单文件重试和单条排除规则撤销。修复暂停或扫描期间全库重试请求丢失的问题。提供使用真实独立解析进程的合成万文档基准脚本与性能报告。继续提供 Linux x64 DEB / tar.gz、Windows x64 和 macOS arm64 包。\n\n减少查询排序阶段的正文搬运开销；本机合成万文档测试中，三类常见查询 P95 从 418–509 ms 降至 169–281 ms。详见[实测方法、原始数据与限制](https://github.com/asoming/shiwen/blob/v0.1.0-beta.3/docs/PERFORMANCE.zh-CN.md)。\n\n离线全文检索包括：PDF / Markdown / DOCX 解析、中文双字词与英文搜索、原文高亮预览、目录范围与排除、收藏、后台更新、暂停恢复，以及中英文玻璃界面。\n\nWindows/macOS 下载 ZIP 并完整解压，包内包含 Python；Windows x64 需要预装 WebView2，macOS arm64 使用系统 WebKit。Linux 可用系统软件安装器打开 DEB，或执行 `sudo apt install ./Shiwen-*-linux-amd64.deb`；免安装 tar.gz 解压后执行 `./Shiwen/shiwen`。Linux 包复用系统 Python 3.10+、GTK 3 和 WebKit，Python 模块已随包提供。系统依赖准备好后即可离线使用。SHA-256 文件用于核对下载完整性。此版本没有可信发布者签名或 macOS 公证。\n\n已提供自动化核心测试、跨平台 CI、打包后自检。**不代表已通过所有真实桌面人工验收或 PRD 的万文档性能目标。**\n\n已知边界：不含 OCR / AI；仅提取文本预览，不还原 PDF / Word 排版；不保证外部应用页码定位；不迁移重命名后的收藏；未实现数据库自动修复、全局快捷键、硬内存限额、电池感知暂停和应用级索引加密。网络共享、移动磁盘、Intel Mac 暂无正式支持保证。\n\n文件内容不会上传，也不会被应用移动、改写或删除。索引含原文，请像保护原文件一样保护它。\n\n## English\n\nAdds a paginated problem-file list, individual retries, and removal of individual exclusion rules. Fixes lost full-library retry requests while paused or during a scan. Includes a reproducible synthetic 10,000-document benchmark using production isolated parsers and a measurement report. Linux x64 DEB / tar.gz, Windows x64 and macOS arm64 packages remain available.\n\nReduces document-body copying during query sorting. On this machine's synthetic 10,000-document corpus, P95 for three common queries decreased from 418–509 ms to 169–281 ms. See the [methodology, raw data and limitations](https://github.com/asoming/shiwen/blob/v0.1.0-beta.3/docs/PERFORMANCE.en.md).\n\nOffline full-text search includes: PDF / Markdown / DOCX extraction, Chinese two-character and English queries, highlighted original excerpts, folder scopes and exclusions, bookmarks, background updates, pause/resume, and a bilingual frosted-glass interface.\n\nFully extract the Windows/macOS ZIP; Python is included. Windows x64 needs WebView2 installed; macOS arm64 uses system WebKit. On Linux, open the DEB in your software installer or run `sudo apt install ./Shiwen-*-linux-amd64.deb`; alternatively extract the tar.gz and run `./Shiwen/shiwen`. Linux reuses system Python 3.10+, GTK 3 and WebKit, with the application Python modules included. Provision system dependencies before offline use. Verify downloads with the accompanying SHA-256 files. This beta has no trusted publisher signature or macOS notarization.\n\nAutomated core tests, cross-platform CI and packaged self-tests are included. **These do not establish complete manual desktop acceptance or the PRD's 10,000-document performance targets.**\n\nKnown limits: no OCR/AI; extracted-text previews instead of original PDF/Word layout; no guaranteed external page navigation; no bookmark migration on rename; automatic database repair, a global shortcut, hard memory limits, battery-aware pausing and application-level index encryption remain future work. Network shares, removable drives and Intel Macs have no formal support guarantee yet.\n\nDocument contents are not uploaded, and originals are never moved, modified or deleted by the app. The index contains original text; protect it accordingly.\n",
+    "assets": [
+      {
+        "name": "Shiwen-0.1.0b3-linux-amd64.deb",
+        "size": 925766,
+        "state": "uploaded",
+        "digest": "sha256:e5d1ef08a7e8853f0ee59a5369543cb6ca5bfe99139c69ce2c0fe49c6ebc4a9c",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-linux-amd64.deb"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-linux-amd64.deb.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:8f8bf5d6b67c12bbca8cdc84ec24f0bdf83a24c7638389960da606f609ba762b",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-linux-amd64.deb.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-linux-x64.tar.gz",
+        "size": 1154563,
+        "state": "uploaded",
+        "digest": "sha256:772fe4e973118cb6a65e1f9002fe3cfd820d51e76e31a951d5f10269088b9923",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-linux-x64.tar.gz"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-linux-x64.tar.gz.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:fccca3405f5ee00868c03d634a841625daf0e3da55df0a7a3a344fd501ac307e",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-linux-x64.tar.gz.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-macos-arm64.zip",
+        "size": 16820089,
+        "state": "uploaded",
+        "digest": "sha256:98f97760051047eb7065b968bd1ac40320b0723abd105a47ad4f65aa8de4fa1f",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-macos-arm64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-macos-arm64.zip.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:5d343b7181497cb2b5cd5678c16a618eda0210d6675440f349c0b36b87eb873c",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-macos-arm64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b3-py3-none-any.whl",
+        "size": 37823,
+        "state": "uploaded",
+        "digest": "sha256:8378b2f11bda0aeee16e16d8e975d9c690cee1e6d7363437db34de2ecb881548",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/shiwen-0.1.0b3-py3-none-any.whl"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-windows-x64.zip",
+        "size": 22472627,
+        "state": "uploaded",
+        "digest": "sha256:7380b443ff44a0276d59832335ec427d704af785763e7192cba8b2b74e340560",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-windows-x64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b3-windows-x64.zip.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:dbee64b5cd7c7da0f6256808982e2e2985a53a7c77b6fa38d67fe4596294ecc6",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/Shiwen-0.1.0b3-windows-x64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b3.tar.gz",
+        "size": 90438,
+        "state": "uploaded",
+        "digest": "sha256:4ba99847b18998861b1120603bdf51d7757d04b2973841ba7f8eefea18a0d042",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.3/shiwen-0.1.0b3.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "v0.1.0-beta.2",
+    "prerelease": true,
+    "published_at": "2026-09-17T02:06:57Z",
+    "body": "# Shiwen v0.1.0-beta.2 / 拾文 Linux 支持测试版\n\n## 简体中文\n\n新增 Linux x64 DEB 与免安装 tar.gz，支持 Ubuntu 22.04 / 24.04 桌面。修复 GTK 自检退出顺序，补齐中英文安装说明和应用菜单入口。\n\n离线全文检索包括：PDF / Markdown / DOCX 解析、中文双字词与英文搜索、原文高亮预览、目录范围与排除、收藏、后台更新、暂停恢复，以及中英文玻璃界面。\n\nWindows/macOS 下载 ZIP 并完整解压，包内包含 Python；Windows x64 需要预装 WebView2，macOS arm64 使用系统 WebKit。Linux 可用系统软件安装器打开 DEB，或执行 `sudo apt install ./Shiwen-*-linux-amd64.deb`；免安装 tar.gz 解压后执行 `./Shiwen/shiwen`。Linux 包复用系统 Python 3.10+、GTK 3 和 WebKit，Python 模块已随包提供。系统依赖准备好后即可离线使用。SHA-256 文件用于核对下载完整性。此版本没有可信发布者签名或 macOS 公证。\n\n已提供自动化核心测试、跨平台 CI、打包后自检。**不代表已通过所有真实桌面人工验收或 PRD 的万文档性能目标。**\n\n已知边界：不含 OCR / AI；仅提取文本预览，不还原 PDF / Word 排版；不保证外部应用页码定位；不迁移重命名后的收藏；失败重试以全库复查为单位；排除规则暂不能单独删除；未实现数据库自动修复、全局快捷键、硬内存限额、电池感知暂停和应用级索引加密。网络共享、移动磁盘、Intel Mac 暂无正式支持保证。\n\n文件内容不会上传，也不会被应用移动、改写或删除。索引含原文，请像保护原文件一样保护它。\n\n## English\n\nAdds Linux x64 DEB and portable tar.gz packages for Ubuntu 22.04 / 24.04 desktops, fixes GTK smoke-test shutdown ordering, and includes bilingual install instructions and an application-menu launcher.\n\nOffline full-text search includes: PDF / Markdown / DOCX extraction, Chinese two-character and English queries, highlighted original excerpts, folder scopes and exclusions, bookmarks, background updates, pause/resume, and a bilingual frosted-glass interface.\n\nFully extract the Windows/macOS ZIP; Python is included. Windows x64 needs WebView2 installed; macOS arm64 uses system WebKit. On Linux, open the DEB in your software installer or run `sudo apt install ./Shiwen-*-linux-amd64.deb`; alternatively extract the tar.gz and run `./Shiwen/shiwen`. Linux reuses system Python 3.10+, GTK 3 and WebKit, with the application Python modules included. Provision system dependencies before offline use. Verify downloads with the accompanying SHA-256 files. This beta has no trusted publisher signature or macOS notarization.\n\nAutomated core tests, cross-platform CI and packaged self-tests are included. **These do not establish complete manual desktop acceptance or the PRD's 10,000-document performance targets.**\n\nKnown limits: no OCR/AI; extracted-text previews instead of original PDF/Word layout; no guaranteed external page navigation; no bookmark migration on rename; retries recheck the whole library; individual exclusion removal is not implemented; automatic database repair, a global shortcut, hard memory limits, battery-aware pausing and application-level index encryption remain future work. Network shares, removable drives and Intel Macs have no formal support guarantee yet.\n\nDocument contents are not uploaded, and originals are never moved, modified or deleted by the app. The index contains original text; protect it accordingly.\n\n",
+    "assets": [
+      {
+        "name": "Shiwen-0.1.0b2-linux-amd64.deb",
+        "size": 919770,
+        "state": "uploaded",
+        "digest": "sha256:f8fd498772451a5a70be2f857217f90fd76d1d71c910904a029461dd8b012535",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-linux-amd64.deb"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-linux-amd64.deb.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:31938411cf01ee62202fac06e8ba79b242ee533f30d8610963ad043393319be2",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-linux-amd64.deb.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-linux-x64.tar.gz",
+        "size": 1143997,
+        "state": "uploaded",
+        "digest": "sha256:d75d57bc6e9c9d409c9356ce98d016632bd1191e0056fb04ea23eaf8d1798ba2",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-linux-x64.tar.gz"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-linux-x64.tar.gz.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:63e2c1198cf1d898c51cd799a26fe02c37cdb98b297b731a9e7ba30ebcc69db8",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-linux-x64.tar.gz.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-macos-arm64.zip",
+        "size": 16817884,
+        "state": "uploaded",
+        "digest": "sha256:34c6c3d18f903d8f1a1a7cf8f3a9228a63eb89b352f4edb4e00b128231d0043f",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-macos-arm64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-macos-arm64.zip.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:942d055513d5dee569fe41fee2ab715b4e8bf6f43bdf1ecf20030352c85df528",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-macos-arm64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b2-py3-none-any.whl",
+        "size": 35944,
+        "state": "uploaded",
+        "digest": "sha256:9581da0863d4c7bd10a750bed6623a187d8ba5e0801ea0d0ca30d37010f6a5b5",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/shiwen-0.1.0b2-py3-none-any.whl"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-windows-x64.zip",
+        "size": 22469807,
+        "state": "uploaded",
+        "digest": "sha256:d14a769bf4b7db8f482999033c15645e7dfaf9955e583dfebec8a9bd07d7fef1",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-windows-x64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b2-windows-x64.zip.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:97cb6236fc16492eaea2048f7c575ef3b8129ffcf9270cb70a14925103fe1091",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/Shiwen-0.1.0b2-windows-x64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b2.tar.gz",
+        "size": 76530,
+        "state": "uploaded",
+        "digest": "sha256:37b562cf5858f14adc2fd8e7ec2d33a334a01c0a234b336cbd0dc5766690476a",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.2/shiwen-0.1.0b2.tar.gz"
+      }
+    ]
+  },
+  {
+    "tag_name": "v0.1.0-beta.1",
+    "prerelease": true,
+    "published_at": "2026-09-16T10:37:32Z",
+    "body": "# Shiwen v0.1.0-beta.1 / 拾文首个公开测试版\n\n## 简体中文\n\n首个可运行的离线全文检索版本：PDF / Markdown / DOCX 解析、中文双字词与英文搜索、原文高亮预览、目录范围与排除、收藏、后台更新、暂停恢复，以及中英文玻璃界面。\n\n下载对应系统的 ZIP，完整解压后运行 Shiwen。Windows x64 需要预装 WebView2；macOS arm64 使用系统 WebKit。包内包含 Python。SHA-256 文件用于核对下载完整性。此版本没有可信发布者签名或 macOS 公证。\n\n已提供自动化核心测试、跨平台 CI、打包后自检。**不代表已通过所有真实桌面人工验收或 PRD 的万文档性能目标。**\n\n已知边界：不含 OCR / AI；仅提取文本预览，不还原 PDF / Word 排版；不保证外部应用页码定位；不迁移重命名后的收藏；失败重试以全库复查为单位；排除规则暂不能单独删除；未实现数据库自动修复、全局快捷键、硬内存限额、电池感知暂停和应用级索引加密。网络共享、移动磁盘、Intel Mac 暂无正式支持保证。\n\n文件内容不会上传，也不会被应用移动、改写或删除。索引含原文，请像保护原文件一样保护它。\n\n## English\n\nFirst runnable offline full-text search preview: PDF / Markdown / DOCX extraction, Chinese two-character and English queries, highlighted original excerpts, folder scopes and exclusions, bookmarks, background updates, pause/resume, and a bilingual frosted-glass interface.\n\nDownload and fully extract the ZIP for your platform. Windows x64 needs WebView2 already installed; macOS arm64 uses system WebKit. Python is included. Verify downloads with the accompanying SHA-256 files. This beta has no trusted publisher signature or macOS notarization.\n\nAutomated core tests, cross-platform CI and packaged self-tests are included. **These do not establish complete manual desktop acceptance or the PRD's 10,000-document performance targets.**\n\nKnown limits: no OCR/AI; extracted-text previews instead of original PDF/Word layout; no guaranteed external page navigation; no bookmark migration on rename; retries recheck the whole library; individual exclusion removal is not implemented; automatic database repair, a global shortcut, hard memory limits, battery-aware pausing and application-level index encryption remain future work. Network shares, removable drives and Intel Macs have no formal support guarantee yet.\n\nDocument contents are not uploaded, and originals are never moved, modified or deleted by the app. The index contains original text; protect it accordingly.\n\n",
+    "assets": [
+      {
+        "name": "Shiwen-0.1.0b1-macos-arm64.zip",
+        "size": 16816879,
+        "state": "uploaded",
+        "digest": "sha256:1431c8ad2236a947a61517989fdf1c6718a0ee9395c2b903dd4201ca3a85df3a",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.1/Shiwen-0.1.0b1-macos-arm64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b1-macos-arm64.zip.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:ca35fd9dd77c6c1068a4757ed84693bffa38eb33c4e1d630447d24a18b7265d5",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.1/Shiwen-0.1.0b1-macos-arm64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b1-py3-none-any.whl",
+        "size": 35750,
+        "state": "uploaded",
+        "digest": "sha256:88b04e047e4e5dee43d2044d4ce3ed043c715a5f71e69c62732357bfdcd62987",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.1/shiwen-0.1.0b1-py3-none-any.whl"
+      },
+      {
+        "name": "Shiwen-0.1.0b1-windows-x64.zip",
+        "size": 22469075,
+        "state": "uploaded",
+        "digest": "sha256:6bcc330ba6ca4b8333da28bfb4d73e73b346d5c230f48bf5e6143ad1df8bd012",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.1/Shiwen-0.1.0b1-windows-x64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b1-windows-x64.zip.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:058ff188e337c443f52f97651179f0cc78d04f8513e1a2f7ef7f100e66346f19",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.1/Shiwen-0.1.0b1-windows-x64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b1.tar.gz",
+        "size": 70564,
+        "state": "uploaded",
+        "digest": "sha256:25da63b36ae7e0554e04d8d768e1600333b2b42cbabe52d7ba4c60a9dcd8aa45",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.1/shiwen-0.1.0b1.tar.gz"
+      }
+    ]
+  }
+]

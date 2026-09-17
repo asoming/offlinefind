@@ -122,3 +122,20 @@ jobs:
               --verify-tag --prerelease --title "Shiwen $RELEASE_TAG" \
               --notes-file docs/RELEASE_NOTES.md
           fi
+      - name: Publish the update feed after packages are available
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh api 'repos/asoming/shiwen/releases?per_page=100' > /tmp/shiwen-releases.json
+          python scripts/release_feed.py /tmp/shiwen-releases.json /tmp/shiwen-update-feed.json
+          git fetch origin main
+          git checkout -B update-feed origin/main
+          mkdir -p updates
+          cp /tmp/shiwen-update-feed.json updates/latest.json
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add updates/latest.json
+          if ! git diff --cached --quiet; then
+            git commit -m 'chore: refresh published release feed'
+            git push origin HEAD:main
+          fi

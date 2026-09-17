@@ -6,7 +6,7 @@
 
 Shiwen automatically discovers local files for offline desktop search. Open it and type: no folder selection is required. Find images, archives, code and folders by name; search PDF, Markdown and DOCX contents with highlighted excerpts. The interface retains its frosted-glass appearance.
 
-**Status: v0.1.0-beta.4.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
+**Status: v0.1.0-beta.5.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
 
 ## What works
 
@@ -18,6 +18,7 @@ Shiwen automatically discovers local files for offline desktop search. Open it a
 - Read-only isolated parsers, periodic disk reconciliation, pause/resume, editable subfolder exclusions and clear-data controls.
 - Paginated problem-file lists and individual retries that stay pending across pause/restart.
 - Light/dark/system appearance, optional frosted glass, Chinese/English interface and keyboard navigation.
+- Manual update checks, platform-matched downloads, progress/cancellation and SHA-256 verification in Settings.
 - No account, telemetry, external fonts, remote document rendering or automatic updates.
 
 ## Download
@@ -68,7 +69,7 @@ Development-only browser mode (bound to loopback, authenticated per process):
 shiwen --serve --port 8765 --folder /absolute/path/to/documents
 ```
 
-`--folder` limits development tests to an explicit scope; normal launching needs no such argument. File opening uses the desktop app. Browser mode is a development convenience, not a hosted service. Runtime operation is offline; installing source dependencies requires a prepared package cache or internet access.
+`--folder` limits development tests to an explicit scope; normal launching needs no such argument. File opening uses the desktop app. Browser mode is a development convenience, not a hosted service. Indexing and searching work offline. Manual update checks/downloads connect to GitHub without sending local documents, paths or indexes; installing source dependencies requires a prepared package cache or internet access.
 
 ## Contributing and license
 

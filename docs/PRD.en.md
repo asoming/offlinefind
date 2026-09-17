@@ -65,3 +65,7 @@ Indexes contain paths and extracted text, without application-level encryption. 
 Full-disk first-index time, million-entry memory/latency, timely updates and full-GUI memory need separate measurements. The earlier document benchmark's 4-core / 8 GB environment, 40% PDF / 40% Markdown / 20% DOCX mix, at least 100 queries and cross-platform cold/warm tests remain incomplete.
 
 The [beta.3 synthetic baseline](PERFORMANCE.en.md) measures a selected document corpus, not beta.4 full-disk performance.
+
+## Optional manual updates (beta.5)
+
+Settings provides a manual release check, release notes and a matching package download. Show progress, allow cancellation, verify size and SHA-256, and reveal the completed package. Linux supports DEB and portable tar.gz. No startup/background online checks or automatic installation. Only the optional update flow accesses GitHub; offline indexing/search and the prohibition on document/path/index uploads remain unchanged. Preserve user data during application upgrades.

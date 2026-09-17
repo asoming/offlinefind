@@ -10,6 +10,7 @@ import subprocess
 import sys
 import tempfile
 import threading
+import webbrowser
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
 
@@ -17,17 +18,25 @@ from platformdirs import user_data_path
 
 from . import __version__
 from .library import Library
+from .updates import RELEASES, Updater, tls_context
 
 
 class Bridge:
     def __init__(self, library: Library):
         self._library = library
         self._window = None
+        self._updater = Updater()
 
     def call(self, method: str, args: dict | None = None) -> dict:
         args = args or {}
         library = self._library
         actions = {
+            "check_update": self._updater.check,
+            "update_status": self._updater.status,
+            "download_update": self._updater.download,
+            "cancel_update": self._updater.cancel,
+            "release_page": self._release_page,
+            "download_folder": self._download_folder,
             "status": library.status,
             "search": library.search,
             "document": library.document,
@@ -62,10 +71,25 @@ class Bridge:
                 "invalid_setting",
                 "cloud",
                 "desktop_only",
+                "update_busy",
+                "update_invalid",
             }
             return {"ok": False, "error": code if code in known else "operation_failed"}
         except (OSError, TypeError):
             return {"ok": False, "error": "operation_failed"}
+
+    def _release_page(self):
+        webbrowser.open(RELEASES)
+
+    def _download_folder(self):
+        state = self._updater.status()
+        if state["phase"] != "downloaded" or not state.get("path"):
+            raise ValueError("update_invalid")
+        folder = Path(state["path"]).parent
+        if sys.platform == "win32":
+            os.startfile(str(folder))
+        else:
+            subprocess.Popen(["open" if sys.platform == "darwin" else "xdg-open", str(folder)])
 
     def _choose_folder(self):
         if self._window is None:
@@ -179,6 +203,7 @@ def self_test(destination: Path):
 
     from .extract import extract_isolated
 
+    assert tls_context().get_ca_certs()  # The packaged updater must retain HTTPS trust roots.
     with tempfile.TemporaryDirectory(prefix="shiwen-smoke-") as temporary:
         base = Path(temporary)
         folder = base / "documents"
@@ -284,6 +309,7 @@ def main():
                 debug=False,
             )
     finally:
+        bridge._updater.close()
         library.close()
 
 

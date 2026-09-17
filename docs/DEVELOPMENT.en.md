@@ -76,3 +76,9 @@ Normal desktop startup constructs `Library(automatic=True)`; `discovery.py` disc
 Discovery commits 128 names at a time and uses `seen_scan` to reconcile only complete traversals. A separate thread reads pending documents in pages of 64 and runs isolated parsers serially. Whole-disk mode uses periodic reconciliation rather than recursive watchdog subscriptions. Tests inject `disk_provider` and do not read personal files. Legacy scoped mode remains available to the earlier document benchmark.
 
 `tests/test_automatic.py` covers setup-free discovery, mixed files/folders, names before contents, search modes, single-character names, changes/deletions, interrupted scans, exclusion migration, mount policies and native disk discovery.
+
+## Manual update service
+
+`updates.py` starts no network activity until a bridge check/download request. It reads the public `updates/latest.json` feed on the main branch, falling back to the GitHub Releases API if the feed cannot be opened. After all package checks pass and the release is published, the publish job uses `scripts/release_feed.py` to commit the published release metadata to main. The release tag remains immutable; the feed commit is separate.
+
+Version comparisons distinguish alpha, beta, release candidates and stable versions. Downloads accept only a server-selected canonical asset from this repository, validate HTTPS redirects, use system trust roots plus the bundled certifi CA bundle, and verify length and SHA-256 before renaming a temporary file. Cancellation and failures remove partial files. No automatic installer is invoked. `tests/test_updates.py` covers version/platform selection, offline startup, download integrity, cancellation, network/storage failures and bridge argument restrictions. Packaged core smoke tests also verify CA availability.

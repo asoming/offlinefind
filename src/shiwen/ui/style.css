@@ -1138,3 +1138,48 @@ input[type="checkbox"] {
   color: #8a691e;
   background: #efe4c4;
 }
+
+.updates {
+  border-top: 1px solid var(--line);
+  padding-top: 14px;
+  margin-top: 22px;
+}
+.updates h3 {
+  margin: 0;
+}
+.update-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+}
+#update-progress {
+  width: 100%;
+  accent-color: var(--accent);
+}
+#update-package-row {
+  display: block;
+}
+#update-package {
+  max-width: 100%;
+  width: 100%;
+  margin-top: 6px;
+}
+#update-path {
+  display: block;
+  overflow-wrap: anywhere;
+  font-size: 11px;
+  margin-top: 12px;
+}
+#update-notes {
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  max-height: 200px;
+  overflow: auto;
+  font: inherit;
+  font-size: 12px;
+}
+#update-notes-box summary {
+  cursor: pointer;
+  color: var(--muted);
+}

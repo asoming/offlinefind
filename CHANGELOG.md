@@ -1,5 +1,14 @@
 # Changelog / 更新记录
 
+## 0.1.0-beta.5 — 2026-09-17
+
+- Add manual update checks and release notes in Settings, with platform-matched package downloads.
+- Show progress, allow cancellation, verify size/SHA-256 and reveal completed downloads.
+- Publish a lightweight release feed to avoid anonymous API rate limits; bundle HTTPS trust roots.
+- 设置新增手动检查更新、版本说明与适合当前系统的安装包下载。
+- 支持下载进度、取消、大小 / SHA-256 校验和打开下载目录。
+- 发布轻量版本清单，避免依赖匿名 API 配额；随包提供 HTTPS 信任证书。
+
 ## 0.1.0-beta.4 — 2026-09-17
 
 - Open and search: automatically discover local disks with no folder selection.

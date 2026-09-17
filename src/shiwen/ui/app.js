@@ -2,6 +2,8 @@
 (() => {
   const $ = (id) => document.getElementById(id);
   const state = {
+    update: { phase: "idle", assets: [] },
+    updateSequence: 0,
     language: "zh",
     query: "",
     type: "all",
@@ -25,6 +27,33 @@
   };
   const words = {
     zh: {
+      updates: "软件更新",
+      checkUpdates: "检查更新",
+      updateIdle: "点击检查公开发布的新版本。",
+      updateChecking: "正在检查更新…",
+      updateAvailable: "发现新版本 {version}",
+      updateCurrent: "当前没有更新的版本",
+      updateDownloading: "正在下载 {percent}% · {received} / {total}",
+      updateDownloaded: "下载完成，SHA-256 校验通过",
+      updateCancelled: "已取消，可重新检查或下载",
+      updatePrivacy:
+        "仅在点击检查或下载时连接 GitHub；不上传文档、路径或索引。",
+      updateInstall: "下载后请自行安装或解压替换应用，当前索引会保留。",
+      updatePackage: "安装包",
+      downloadUpdate: "下载安装包",
+      cancelUpdate: "取消",
+      releasePage: "查看发布页",
+      downloadFolder: "打开下载文件夹",
+      updateNotes: "版本说明",
+      updateNoPackage: "此版本没有适合当前系统的安装包，可查看发布页。",
+      update_busy: "更新操作正在进行",
+      update_invalid: "无法识别发布信息，请查看发布页或稍后重试",
+      update_no_release: "尚未找到可用的公开版本",
+      update_integrity: "下载校验失败，未保留不完整安装包，请重试",
+      update_network: "无法连接 GitHub，请检查网络后重试",
+      update_storage: "无法保存安装包，请检查下载目录权限和磁盘空间",
+      update_rate_limit: "GitHub 暂时限制了请求，请稍后重试或查看发布页",
+
       allDocs: "全部文件",
       thisComputer: "这台电脑",
       searchMode: "搜索方式",
@@ -166,6 +195,40 @@
       partialList: "仅显示前 50 条，可继续加载",
     },
     en: {
+      updates: "Software updates",
+      checkUpdates: "Check for updates",
+      updateIdle: "Check for a new public release when you are ready.",
+      updateChecking: "Checking for updates…",
+      updateAvailable: "New version available: {version}",
+      updateCurrent: "No newer version is available",
+      updateDownloading: "Downloading {percent}% · {received} / {total}",
+      updateDownloaded: "Download complete · SHA-256 verified",
+      updateCancelled: "Cancelled; you can check or download again",
+      updatePrivacy:
+        "Connects to GitHub only when you check or download. Documents, paths and indexes are never uploaded.",
+      updateInstall:
+        "Install or extract the downloaded package yourself. Your existing index is kept.",
+      updatePackage: "Package",
+      downloadUpdate: "Download package",
+      cancelUpdate: "Cancel",
+      releasePage: "View releases",
+      downloadFolder: "Show download folder",
+      updateNotes: "Release notes",
+      updateNoPackage:
+        "No package matches this system. See the release page for other options.",
+      update_busy: "An update operation is already running",
+      update_invalid:
+        "Release information could not be read. Retry or visit the release page.",
+      update_no_release: "No public release is available yet",
+      update_integrity:
+        "Download verification failed. The incomplete package was removed; please retry.",
+      update_network:
+        "Cannot connect to GitHub. Check your connection and retry.",
+      update_storage:
+        "Cannot save the package. Check Downloads permissions and disk space.",
+      update_rate_limit:
+        "GitHub is temporarily limiting requests. Retry later or visit the release page.",
+
       allDocs: "All files",
       thisComputer: "This computer",
       searchMode: "Search mode",
@@ -438,6 +501,80 @@
     for (const name of ["language", "theme", "resource"])
       $(name).value = settings[name];
     $("glass").checked = settings.glass;
+    drawUpdate();
+  }
+  function drawUpdate() {
+    const update = state.update;
+    const busy = ["checking", "downloading"].includes(update.phase);
+    $("check-updates").disabled = busy;
+    $("cancel-update").hidden = !busy;
+    $("download-update").disabled = busy;
+    $("update-package").disabled = busy;
+    const assets = update.assets || [];
+    const select = $("update-package");
+    const signature = JSON.stringify(assets);
+    if (select.dataset.assets !== signature) {
+      const previous = select.value;
+      select.replaceChildren();
+      for (const asset of assets) {
+        const option = make(
+          "option",
+          "",
+          `${asset.name} · ${size(asset.size)}`,
+        );
+        option.value = asset.name;
+        select.append(option);
+      }
+      if (assets.some((a) => a.name === previous)) select.value = previous;
+      select.dataset.assets = signature;
+    }
+    $("update-package-row").hidden = !assets.length;
+    $("download-update").hidden = !assets.length;
+    $("download-folder").hidden = update.phase !== "downloaded";
+    $("update-progress").hidden = update.phase !== "downloading";
+    $("update-progress").value = update.total
+      ? update.received / update.total
+      : 0;
+    const key = {
+      idle: "updateIdle",
+      checking: "updateChecking",
+      available: "updateAvailable",
+      current: "updateCurrent",
+      downloading: "updateDownloading",
+      downloaded: "updateDownloaded",
+      cancelled: "updateCancelled",
+      error: update.error,
+    }[update.phase];
+    $("update-message").textContent = t(key, {
+      version: update.version,
+      percent: update.total
+        ? Math.floor((update.received / update.total) * 100)
+        : 0,
+      received: size(update.received || 0),
+      total: size(update.total || 0),
+    });
+    $("update-no-package").hidden =
+      !["available", "current"].includes(update.phase) || assets.length > 0;
+    $("update-path").hidden = !update.path;
+    $("update-path").textContent = update.path || "";
+    $("update-notes-box").hidden = !update.notes;
+    $("update-notes").textContent = update.notes || "";
+  }
+  async function refreshUpdate() {
+    const sequence = ++state.updateSequence;
+    const update = await api("update_status");
+    if (sequence !== state.updateSequence) return;
+    state.update = update;
+    drawUpdate();
+  }
+  async function updateAction(method, args = {}) {
+    try {
+      state.update = await api(method, args);
+      state.updateSequence++;
+      drawUpdate();
+    } catch (error) {
+      $("update-message").textContent = t(error.message);
+    }
   }
   function drawFolders() {
     $("folders").replaceChildren();
@@ -893,7 +1030,26 @@
     translate();
     run(() => search());
   };
-  $("settings-button").onclick = () => $("settings-dialog").showModal();
+  $("settings-button").onclick = () => {
+    $("settings-dialog").showModal();
+    run(refreshUpdate);
+  };
+  $("check-updates").onclick = () => updateAction("check_update");
+  $("download-update").onclick = () =>
+    updateAction("download_update", { name: $("update-package").value });
+  $("cancel-update").onclick = () => updateAction("cancel_update");
+  for (const [id, method] of [
+    ["release-page", "release_page"],
+    ["download-folder", "download_folder"],
+  ]) {
+    $(id).onclick = async () => {
+      try {
+        await api(method);
+      } catch (error) {
+        $("update-message").textContent = t(error.message);
+      }
+    };
+  }
   $("index-status").onclick = () => {
     state.issueOffset = 0;
     state.issueSnapshot = "";
@@ -1024,6 +1180,7 @@
         state.busy = true;
         refreshStatus()
           .then((changed) => {
+            if ($("settings-dialog").open) run(refreshUpdate);
             if ($("status-dialog").open) run(() => refreshIssues());
             if (changed && !state.composing) return search();
           })
