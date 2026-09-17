@@ -1,5 +1,83 @@
 [
   {
+    "tag_name": "v0.1.0-beta.8",
+    "prerelease": true,
+    "published_at": "2026-09-17T03:39:37Z",
+    "body": "# Shiwen v0.1.0-beta.8 / 拾文 · 关闭窗口修复\n\n## 简体中文\n\n修复 Linux 上点击标题栏 × 后应用可能无法完全退出的问题：窗口销毁时，尚未返回的 WebView 回调可能使界面请求线程永久等待。现在关闭窗口会解除这些等待，并停止接收新请求。\n\n关闭时主动取消文档解析子进程，不再等待长文档的完整解析超时。未完成的文档保留待处理状态，下次启动继续；已完成的索引与收藏保留。数据库会在已有界面请求和索引任务结束后再关闭，避免退出时访问已关闭数据库。\n\n新增退出回归测试和安装包级 GTK 关闭竞态自检。保留 beta.5 的手动检查更新、下载进度、取消和 SHA-256 校验，以及自动发现本机文件的搜索流程。\n\nLinux x64 提供 DEB / tar.gz，Windows x64 和 macOS Apple Silicon 提供 ZIP。测试版仍无可信发布者签名或 macOS 公证。退出期间正在进行的联网操作仍受网络超时影响；关闭窗口不等待界面回调。原文件不会修改或上传。\n\n## English\n\nFixes a Linux exit hang after clicking the title-bar ×. Destroying the WebView with an outstanding JavaScript callback could leave a non-daemon request thread waiting forever. Closing now releases these waits and rejects new requests.\n\nIn-flight document parser processes are cancelled instead of waiting for the full document timeout. Unfinished documents remain pending for the next launch; completed indexes and bookmarks are preserved. The database stays open until existing bridge requests and indexing tasks finish.\n\nAdds shutdown regression tests and a packaged GTK close-race smoke test. Retains beta.5 manual update checks, download progress/cancellation, SHA-256 verification and automatic local-file discovery.\n\nIncludes Linux x64 DEB / tar.gz, Windows x64 ZIP and macOS Apple Silicon ZIP. Beta packages still lack trusted publisher signing and macOS notarization. An in-flight network operation remains subject to its network timeout during cleanup; closing the window no longer waits for UI callbacks. Originals are neither modified nor uploaded.\n",
+    "assets": [
+      {
+        "name": "Shiwen-0.1.0b8-linux-amd64.deb",
+        "size": 1057476,
+        "state": "uploaded",
+        "digest": "sha256:8090405521ab824236743473344d782d665c28f4a63928882bffc2b885503c2b",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-linux-amd64.deb"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-linux-amd64.deb.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:2b7835f75c21359d5a4e43499da3886dd8b3203ee4dfebb12b3cfcf00bd47eb7",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-linux-amd64.deb.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-linux-x64.tar.gz",
+        "size": 1294228,
+        "state": "uploaded",
+        "digest": "sha256:baed58657d01ed89908fda7557844d594f5cf0a7478c3e8806e20bb888763677",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-linux-x64.tar.gz"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-linux-x64.tar.gz.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:eef499de4b3401fbb44c1392c398df69d32d7db879926954d454a42a94ce7e35",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-linux-x64.tar.gz.sha256"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-macos-arm64.zip",
+        "size": 16980902,
+        "state": "uploaded",
+        "digest": "sha256:d2480ef16ff61f7b0a37808df0317840c7796ddd8241efe7e80ffef50ce29453",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-macos-arm64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-macos-arm64.zip.sha256",
+        "size": 97,
+        "state": "uploaded",
+        "digest": "sha256:40cbe24ab1d34049d6c30f9779231165862a8a5a57984d6c717da7bfbb98fc30",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-macos-arm64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b8-py3-none-any.whl",
+        "size": 49862,
+        "state": "uploaded",
+        "digest": "sha256:bbac444546a81fc77958b79d6e4d1a385b9f549b169ee874447082f55683c5f4",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/shiwen-0.1.0b8-py3-none-any.whl"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-windows-x64.zip",
+        "size": 22631498,
+        "state": "uploaded",
+        "digest": "sha256:9e65828878238bb7f9d8f14fc0f0be3da54bb6cec5d14063eb1961546153c298",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-windows-x64.zip"
+      },
+      {
+        "name": "Shiwen-0.1.0b8-windows-x64.zip.sha256",
+        "size": 98,
+        "state": "uploaded",
+        "digest": "sha256:ee8f93476124db9247f82c7a48cad965454c7f0310a4a21bd8ca35adc24deeaf",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/Shiwen-0.1.0b8-windows-x64.zip.sha256"
+      },
+      {
+        "name": "shiwen-0.1.0b8.tar.gz",
+        "size": 99696,
+        "state": "uploaded",
+        "digest": "sha256:f6dabbd76440d91a80d3fc652507a5487758404470fe58ef64666b22769073fe",
+        "browser_download_url": "https://github.com/asoming/shiwen/releases/download/v0.1.0-beta.8/shiwen-0.1.0b8.tar.gz"
+      }
+    ]
+  },
+  {
     "tag_name": "v0.1.0-beta.5",
     "prerelease": true,
     "published_at": "2026-09-17T03:17:09Z",
