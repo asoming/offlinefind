@@ -18,6 +18,9 @@
     previewSequence: 0,
     composing: false,
     busy: false,
+    issueOffset: 0,
+    issueSequence: 0,
+    issueSnapshot: "",
   };
   const words = {
     zh: {
@@ -67,7 +70,18 @@
       folderNote:
         "只读取选定目录；跳过隐藏目录、依赖目录和符号链接。移除范围不会删除原文件。",
       indexState: "索引状态",
-      retry: "重新检查与重试",
+      retry: "重新检查全部",
+      retryFile: "重试此文档",
+      needsAttention: "需要处理的文档",
+      noIssues: "当前没有需要处理的文档。",
+      retryQueued: "已安排重试此文档",
+      retryPaused: "已安排重试，继续索引后处理",
+      previousPage: "上一页",
+      nextPage: "下一页",
+      issuePage: "第 {n} 页",
+      restoreFolder: "恢复索引",
+      restoreLabel: "恢复索引：{path}",
+      restoredFolder: "排除规则已撤销，将在下一轮索引时检查该目录",
       statusNote:
         "扫描版 PDF 需要 OCR，当前版本仅检索可提取的文字。未能解析的文档仍可按文件名查找。",
       cancel: "取消",
@@ -189,7 +203,19 @@
       folderNote:
         "Only selected folders are read. Hidden folders, dependencies and symlinks are skipped. Removing a scope never deletes original files.",
       indexState: "Index status",
-      retry: "Recheck and retry",
+      retry: "Recheck all documents",
+      retryFile: "Retry this document",
+      needsAttention: "Documents needing attention",
+      noIssues: "No documents need attention right now.",
+      retryQueued: "Document retry scheduled",
+      retryPaused: "Retry queued; resume indexing to continue",
+      previousPage: "Previous page",
+      nextPage: "Next page",
+      issuePage: "Page {n}",
+      restoreFolder: "Restore indexing",
+      restoreLabel: "Restore indexing: {path}",
+      restoredFolder:
+        "Exclusion removed; this folder will be checked in the next scan",
       statusNote:
         "Scanned PDFs need OCR, which is not included in this version. Documents without extractable text can still be found by name.",
       cancel: "Cancel",
@@ -328,6 +354,10 @@
     return path.split(/[\\/]/).filter(Boolean).pop() || path;
   }
   function toast(message) {
+    if ($("status-dialog").open) {
+      $("issue-feedback").textContent = message;
+      $("issue-feedback").hidden = false;
+    }
     $("toast").textContent = message;
     $("toast").hidden = false;
     clearTimeout(toast.timer);
@@ -414,14 +444,28 @@
         make("p", "", root.path),
       );
       if (!root.available) panel.append(make("p", "", t("disconnected")));
-      if (root.excluded.length)
-        panel.append(
-          make(
-            "div",
-            "exclusion-list",
-            t("excluded") + root.excluded.join(", "),
-          ),
-        );
+      if (root.excluded.length) {
+        const exclusions = make("div", "exclusion-list");
+        exclusions.append(make("span", "", t("excluded")));
+        for (const relative of root.excluded) {
+          const row = make("div", "exclusion-row");
+          const restore = make("button", "secondary", t("restoreFolder"));
+          restore.setAttribute(
+            "aria-label",
+            t("restoreLabel", { path: relative }),
+          );
+          restore.onclick = () =>
+            run(async () => {
+              await api("remove_exclusion", { root_id: root.id, relative });
+              await refreshStatus();
+              await search();
+              toast(t("restoredFolder"));
+            });
+          row.append(make("code", "", relative), restore);
+          exclusions.append(row);
+        }
+        panel.append(exclusions);
+      }
       const actions = make("div", "folder-actions"),
         exclude = make("button", "secondary", t("exclude")),
         remove = make("button", "danger", t("remove"));
@@ -533,6 +577,49 @@
       drawResults(t(error.message));
       await select(null, false);
     }
+  }
+  async function refreshIssues() {
+    const sequence = ++state.issueSequence;
+    const result = await api("issues", { offset: state.issueOffset });
+    if (sequence !== state.issueSequence || !$("status-dialog").open) return;
+    if (!result.items.length && state.issueOffset > 0) {
+      state.issueOffset = Math.max(0, state.issueOffset - 20);
+      return refreshIssues();
+    }
+    const snapshot = JSON.stringify([result, state.language]);
+    if (state.issueSnapshot === snapshot) return;
+    state.issueSnapshot = snapshot;
+    $("issue-list").replaceChildren();
+    if (!result.items.length)
+      $("issue-list").append(make("p", "muted", t("noIssues")));
+    for (const item of result.items) {
+      const row = make("article", "issue-card");
+      const details = make("div", "issue-details");
+      details.append(
+        make("strong", "", item.name),
+        make("span", "issue-reason", t(item.status)),
+        make("code", "issue-path", item.path),
+      );
+      const retry = make("button", "secondary", t("retryFile"));
+      retry.disabled = item.status === "pending";
+      retry.onclick = () => run(() => retryDocument(item.id));
+      row.append(details, retry);
+      $("issue-list").append(row);
+    }
+    $("issue-pagination").hidden = state.issueOffset === 0 && !result.has_more;
+    $("issues-previous").disabled = state.issueOffset === 0;
+    $("issues-next").disabled = !result.has_more;
+    $("issue-page").textContent = t("issuePage", {
+      n: state.issueOffset / 20 + 1,
+    });
+  }
+  async function retryDocument(document_id) {
+    await api("retry_document", { document_id });
+    await refreshStatus();
+    if ($("status-dialog").open) await refreshIssues();
+    await search();
+    const message = t(state.status.paused ? "retryPaused" : "retryQueued");
+    toast(message);
   }
   function drawResults(message) {
     $("results").replaceChildren();
@@ -652,6 +739,8 @@
     $("document-path").textContent = document.path;
     $("document-status").textContent =
       document.status === "ready" ? "" : t(document.status);
+    $("retry-document").hidden = document.status === "ready";
+    $("retry-document").disabled = document.status === "pending";
     drawBlock();
     if (show) $("workspace").classList.add("show-preview");
   }
@@ -749,7 +838,21 @@
     drawFolders();
   };
   $("settings-button").onclick = () => $("settings-dialog").showModal();
-  $("index-status").onclick = () => $("status-dialog").showModal();
+  $("index-status").onclick = () => {
+    state.issueOffset = 0;
+    state.issueSnapshot = "";
+    $("issue-feedback").hidden = true;
+    $("status-dialog").showModal();
+    run(() => refreshIssues());
+  };
+  $("issues-previous").onclick = () => {
+    state.issueOffset = Math.max(0, state.issueOffset - 20);
+    run(() => refreshIssues());
+  };
+  $("issues-next").onclick = () => {
+    state.issueOffset += 20;
+    run(() => refreshIssues());
+  };
   $("search-form").onsubmit = (event) => {
     event.preventDefault();
     clearTimeout(search.timer);
@@ -795,6 +898,7 @@
     });
   $("open-document").onclick = () =>
     run(() => api("open", { document_id: state.selected }));
+  $("retry-document").onclick = () => run(() => retryDocument(state.selected));
   $("reveal").onclick = () =>
     run(() => api("open", { document_id: state.selected, reveal: true }));
   $("prev-hit").onclick = () => moveHit(-1);
@@ -809,7 +913,8 @@
   $("retry").onclick = () =>
     run(async () => {
       await api("retry");
-      toast(t("retrying"));
+      const message = t(state.status.paused ? "retryPaused" : "retrying");
+      toast(message);
     });
   for (const key of ["theme", "language", "glass", "resource"])
     $(key).onchange = () =>
@@ -863,6 +968,7 @@
         state.busy = true;
         refreshStatus()
           .then((changed) => {
+            if ($("status-dialog").open) run(() => refreshIssues());
             if (changed && !state.composing) return search();
           })
           .catch(() => {})

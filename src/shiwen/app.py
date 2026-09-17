@@ -34,9 +34,12 @@ class Bridge:
             "choose_folder": self._choose_folder,
             "remove_root": library.remove_root,
             "exclude": library.exclude,
+            "remove_exclusion": library.remove_exclusion,
+            "issues": library.issues,
             "bookmark": library.store.bookmark,
             "pause": library.pause,
-            "retry": self._retry,
+            "retry": library.retry_all,
+            "retry_document": library.retry_document,
             "setting": self._setting,
             "clear": library.clear,
             "open": self._open,
@@ -73,10 +76,6 @@ class Bridge:
         if paths:
             return self._library.add_root(paths[0])
         return None
-
-    def _retry(self):
-        self._library.store.set_setting("retry", True)
-        self._library.wake.set()
 
     def _setting(self, key: str, value):
         valid = {

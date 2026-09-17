@@ -228,6 +228,21 @@ def test_paginated_results(collection):
     assert not {i["id"] for i in first["items"]} & {i["id"] for i in second["items"]}
 
 
+def test_pagination_verifies_candidates_before_counting_results(collection):
+    library, folder = collection
+    for index in range(115):
+        # Newer false candidates must not consume the page or its lookahead item.
+        text = "甲乙，然后乙丙，再来丙丁" if index < 60 else "完整短语甲乙丙丁"
+        path = write(folder / f"{index:03}.md", text)
+        os.utime(path, (1_700_000_000 - index, 1_700_000_000 - index))
+    library.scan()
+    first = library.search(query="甲乙丙丁", sort="date")
+    second = library.search(query="甲乙丙丁", sort="date", offset=50)
+    assert first["has_more"] and not second["has_more"]
+    assert [i["name"] for i in first["items"]] == [f"{i:03}.md" for i in range(60, 110)]
+    assert [i["name"] for i in second["items"]] == [f"{i:03}.md" for i in range(110, 115)]
+
+
 def test_replacing_scope_during_parse_cannot_restore_removed_content(collection):
     library, folder = collection
     write(folder / "note.md", "敏感内容")

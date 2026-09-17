@@ -1,5 +1,18 @@
 # Changelog / 更新记录
 
+## 0.1.0-beta.3 — 2026-09-17
+
+- Added paginated problem-file details and per-document retries, preserving bookmarks and pending work across pause/restart.
+- Added individual exclusion removal; other overlapping exclusions remain effective.
+- Fixed full-library retry requests lost while paused or during another scan.
+- Added a reproducible mixed-format 10,000-document benchmark and bilingual performance documentation.
+- Reduced query-sort overhead by loading document bodies after candidate sorting; exact matching and pagination remain intact.
+- 新增问题文档详情、分页与单文件重试；保留收藏，暂停与重启后继续待处理工作。
+- 支持逐条撤销目录排除，继续遵守其他范围的排除规则。
+- 修复暂停和扫描期间提交的全库重试请求丢失的问题。
+- 新增混合格式万文档基准脚本与中英文性能说明。
+- 搜索先排序候选文档，再按需读取正文，减少排序开销并保留精确匹配和分页行为。
+
 ## 0.1.0-beta.2 — 2026-09-16
 
 - Added Linux x64 DEB and portable tar.gz packages using system Python / GTK / WebKit.
@@ -21,4 +34,3 @@
 - 新增目录排除、更新核对、独立解析、收藏和安全文本预览。
 - 新增中英文玻璃界面、主题、资源设置、状态反馈与本地数据清除。
 - 新增双语文档、测试、跨平台 CI 和通过检查后发布的二进制测试版。
-

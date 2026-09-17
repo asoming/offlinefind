@@ -6,7 +6,7 @@
 
 Shiwen is an offline desktop search app for PDF, Markdown and DOCX documents. Choose your folders, type a phrase, and read the matching passage before opening the original file. A frosted-glass interface keeps the navigation quiet and the document text readable.
 
-**Status: v0.1.0-beta.2.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
+**Status: v0.1.0-beta.3.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
 
 ## What works
 
@@ -14,7 +14,8 @@ Shiwen is an offline desktop search app for PDF, Markdown and DOCX documents. Ch
 - Literal phrase queries, space-separated AND conditions, type/folder filters and bookmarks.
 - Real excerpts with highlights; PDF page, Markdown line and DOCX paragraph references.
 - Local SQLite FTS5 bigram index, followed by exact text verification to reject false positives.
-- Read-only isolated parsers, file watcher plus reconciliation, pause/resume, subfolder exclusions and clear-data controls.
+- Read-only isolated parsers, file watcher plus reconciliation, pause/resume, editable subfolder exclusions and clear-data controls.
+- Paginated problem-file lists and individual retries that stay pending across pause/restart.
 - Light/dark/system appearance, optional frosted glass, Chinese/English interface and keyboard navigation.
 - No account, telemetry, external fonts, remote document rendering or automatic updates.
 
@@ -42,7 +43,7 @@ Files are never moved, renamed or modified. The local index contains extracted d
 
 Scanned pages need OCR, which is not included. Password-protected files, unsupported encodings, parser errors and size limits are shown explicitly. File names may remain searchable when their contents cannot be parsed. Default limits: 100 MiB per file, 1,000 PDF pages and 10 MiB of extracted text. DOCX previews contain ordinary paragraphs and table text, not original Word pagination.
 
-The PRD’s 10,000-document latency and memory budgets are targets, **not measured claims for this beta**. See the [roadmap](docs/ROADMAP.md).
+The synthetic measurements below do not establish the PRD’s complete desktop latency and memory budgets. See the [roadmap](docs/ROADMAP.md).
 
 ## Run from source
 
@@ -71,3 +72,7 @@ Folder selection and native file opening belong to the desktop app. Browser mode
 Read the [development guide](docs/DEVELOPMENT.en.md) and [contributing notes](CONTRIBUTING.md). Please use synthetic or explicitly shareable examples in bug reports; do not upload private documents or indexes.
 
 MIT © 2026 asoming. See [LICENSE](LICENSE) and [third-party notices](THIRD_PARTY_NOTICES.md).
+
+## Performance measurements
+
+The [benchmark script](scripts/benchmark.py) builds a synthetic 10,000-document corpus and runs the production isolated parsers. See the [measurement report](docs/PERFORMANCE.en.md) for reproducible commands, results and limits. Full desktop memory, OS-cold queries and cross-platform performance targets remain unverified.

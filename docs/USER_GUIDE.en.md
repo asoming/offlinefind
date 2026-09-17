@@ -48,11 +48,11 @@ Click a result to see the extracted text. Use arrows in the preview to visit mat
 
 **Open original** uses the operating system's default app. Double-clicking a result or pressing Enter in the result list does the same. **Show in folder** reveals the original location. External opening does not promise a page or paragraph jump.
 
-Files without extracted text show the reason: OCR may be required, the document is encrypted, encoding is unsupported, or a parser limit was reached. For this beta, recheck retries the whole selected library; per-file retry is planned.
+Files without extracted text show the reason: OCR may be required, the document is encrypted, encoding is unsupported, or a parser limit was reached. Open the sidebar indexing status to browse a paginated list of problem files with their paths and reasons. Fix the original file or permissions, then choose **Retry this document** there or in its preview. Only that document is reparsed, preserving its bookmark; stale extracted text is withdrawn while it is pending. Paused retries wait for resume and survive restart. **Recheck all documents** still covers the whole library and retains requests made while paused or during another scan.
 
 ## Manage data
 
-**Manage folders → Exclude subfolder** accepts a relative path such as `archive/private`. Exclusions override overlapping inclusions. Exclusions cannot currently be removed individually; remove and re-add the scope to reset its rules.
+**Manage folders → Exclude subfolder** accepts a relative path such as `archive/private`. Exclusions override overlapping inclusions. Choose **Restore indexing** beside a rule to remove just that exclusion. The next scan rediscovers its contents; exclusions on other scopes still apply. Previously removed bookmark references are not restored when the derived index is recreated.
 
 Removing a scope drops its derived search data unless another remaining scope still includes the file. Clearing all local data removes the index, bookmarks, scopes and settings. Neither action changes the original files. SQLite free space is compacted, but no forensic secure-erasure guarantee is made for SSDs.
 

@@ -1,0 +1,62 @@
+{
+  "version": "0.1.0b3",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "machine": "x86_64",
+  "logical_cpus": 32,
+  "python": "3.10.12",
+  "corpus": {
+    "documents": 10000,
+    "formats": {
+      "md": 7000,
+      "docx": 2000,
+      "pdf": 1000
+    },
+    "source_text_bytes": 102950000
+  },
+  "parser": "production: one isolated spawned process per document",
+  "indexing_seconds": 708.6509030019952,
+  "first_50_indexed_seconds_sampled": 4.099599355999089,
+  "index_bytes": 256323584,
+  "engine_and_parser_tree_peak_rss_bytes_sampled": 98734080,
+  "engine_rss_bytes_after_queries": 70135808,
+  "reopened_connection_first_query_ms": 420.51444800017634,
+  "queries": {
+    "离线部署": {
+      "samples": 10,
+      "first_ms": 427.48423800367163,
+      "median_ms": 418.4897009981796,
+      "p95_ms": 443.95148199691903
+    },
+    "\"offline deployment\"": {
+      "samples": 10,
+      "first_ms": 504.3318609968992,
+      "median_ms": 501.9177660033165,
+      "p95_ms": 508.83446599618765
+    },
+    "预算 审批": {
+      "samples": 10,
+      "first_ms": 413.959193007031,
+      "median_ms": 415.4829009967216,
+      "p95_ms": 418.43082099512685
+    },
+    "SHIWENID009999": {
+      "samples": 10,
+      "first_ms": 32.45671399781713,
+      "median_ms": 32.79714400196099,
+      "p95_ms": 33.19403200293891
+    },
+    "不存在的基准短语": {
+      "samples": 10,
+      "first_ms": 0.18376100342720747,
+      "median_ms": 0.22422150141210295,
+      "p95_ms": 0.4535240004770458
+    }
+  },
+  "limitations": [
+    "Synthetic repetitive text, not representative user documents",
+    "Headless engine and parser memory only; excludes native GUI/WebKit",
+    "50 ms RSS samples can miss short peaks",
+    "No OS cache eviction; cold-search latency not measured",
+    "Queries retrieve the first page (up to 50 documents)"
+  ]
+}

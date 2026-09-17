@@ -180,6 +180,12 @@
                 </div>
               </article>
               <div id="document-status" class="document-status"></div>
+              <button
+                id="retry-document"
+                class="secondary retry-document"
+                data-i18n="retryFile"
+                hidden
+              ></button>
               <p id="document-path" class="document-path"></p>
               <button id="open-document" class="secondary open-document">
                 <span data-icon="external"></span
@@ -274,6 +280,24 @@
         ><button id="retry" class="secondary" data-i18n="retry"></button>
       </div>
       <div id="status-counts"></div>
+      <section class="issue-section" aria-labelledby="issue-heading">
+        <h3 id="issue-heading" data-i18n="needsAttention"></h3>
+        <p id="issue-feedback" class="setting-note" role="status" hidden></p>
+        <div id="issue-list" aria-live="polite"></div>
+        <div id="issue-pagination" class="issue-pagination" hidden>
+          <button
+            id="issues-previous"
+            class="secondary"
+            data-i18n="previousPage"
+          ></button>
+          <span id="issue-page"></span>
+          <button
+            id="issues-next"
+            class="secondary"
+            data-i18n="nextPage"
+          ></button>
+        </div>
+      </section>
       <p class="setting-note" data-i18n="statusNote"></p>
     </dialog>
     <dialog id="confirm-dialog">

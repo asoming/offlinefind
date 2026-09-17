@@ -163,6 +163,36 @@ class Store:
                     self.connection.execute("DELETE FROM documents WHERE id=?", (row["id"],))
         self.compact()
 
+    def remove_exclusion(self, root_id: int, relative: str):
+        root = next((r for r in self.roots() if r["id"] == root_id), None)
+        if root is None:
+            raise ValueError("invalid_folder")
+        if relative not in root["excluded"]:
+            raise ValueError("invalid_exclusion")
+        remaining = [rule for rule in root["excluded"] if rule != relative]
+        with self.lock, self.connection:
+            self.connection.execute(
+                "UPDATE roots SET excluded=? WHERE id=?", (json.dumps(remaining), root_id)
+            )
+
+    def issues(self, offset: int = 0, allowed=None):
+        offset = max(0, min(int(offset), 100000))
+        items, skipped = [], 0
+        with self.lock:
+            rows = self.connection.execute(
+                "SELECT id,name,path,type,status FROM documents WHERE status != 'ready' ORDER BY id"
+            )
+            for row in rows:
+                if allowed and not allowed(Path(row["path"])):
+                    continue
+                if skipped < offset:
+                    skipped += 1
+                    continue
+                if len(items) == 20:
+                    return {"items": items, "has_more": True, "offset": offset}
+                items.append(dict(row))
+        return {"items": items, "has_more": False, "offset": offset}
+
     def compact(self):
         with self.lock:
             self.connection.execute("PRAGMA wal_checkpoint(TRUNCATE)")
@@ -233,16 +263,23 @@ class Store:
             if sort == "date" or not terms
             else ("bm25(search_index,5.0,1.0),d.mtime_ns DESC,d.id")
         )
-        sql = f"SELECT d.* FROM documents d{join} WHERE {' AND '.join(conditions)} ORDER BY {order}"
+        # Sort lightweight candidates, then load text only as needed for literal verification.
+        sql = (
+            f"SELECT d.id,d.path FROM documents d{join} "
+            f"WHERE {' AND '.join(conditions)} ORDER BY {order}"
+        )
         items, skipped = [], 0
         with self.lock:
             cursor = self.connection.execute(sql, params)
-            for row in cursor:
-                path = Path(row["path"])
+            for candidate in cursor:
+                path = Path(candidate["path"])
                 if root and not path.is_relative_to(root["path"]):
                     continue
                 if allowed and not allowed(path, check_file=True):
                     continue
+                row = self.connection.execute(
+                    "SELECT * FROM documents WHERE id=?", (candidate["id"],)
+                ).fetchone()
                 title, body = normalize(row["name"]), normalize(row["body"])
                 if not all(term in title or term in body for term in terms):
                     continue

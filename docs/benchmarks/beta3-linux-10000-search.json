@@ -1,0 +1,48 @@
+{
+  "version": "0.1.0b3",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "corpus": {
+    "documents": 10000,
+    "formats": {
+      "md": 7000,
+      "docx": 2000,
+      "pdf": 1000
+    },
+    "source_text_bytes": 102950000
+  },
+  "mode": "queries only, existing production index; no reindexing or OS cache eviction",
+  "reopened_connection_first_query_ms": 171.54840999864973,
+  "queries": {
+    "离线部署": {
+      "samples": 10,
+      "first_ms": 170.5738959935843,
+      "median_ms": 170.57024749738048,
+      "p95_ms": 176.3669040010427
+    },
+    "\"offline deployment\"": {
+      "samples": 10,
+      "first_ms": 256.3134899974102,
+      "median_ms": 266.245713999524,
+      "p95_ms": 280.9556620049989
+    },
+    "预算 审批": {
+      "samples": 10,
+      "first_ms": 165.99225800018758,
+      "median_ms": 166.34119849913986,
+      "p95_ms": 168.52506900613662
+    },
+    "SHIWENID009999": {
+      "samples": 10,
+      "first_ms": 31.15590599918505,
+      "median_ms": 31.386350499815308,
+      "p95_ms": 31.6998380003497
+    },
+    "不存在的基准短语": {
+      "samples": 10,
+      "first_ms": 0.24311200104421005,
+      "median_ms": 0.20541550111374818,
+      "p95_ms": 0.31442000181414187
+    }
+  }
+}

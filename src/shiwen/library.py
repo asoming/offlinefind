@@ -4,6 +4,7 @@ import os
 import sqlite3
 import threading
 import time
+import uuid
 from pathlib import Path
 
 from .extract import MAX_FILE, SUPPORTED, extract_isolated
@@ -96,6 +97,26 @@ class Library:
             self.progress = {"phase": "idle", "processed": 0, "discovered": 0, "error": None}
         self._watch()
 
+    def remove_exclusion(self, root_id: int, relative: str):
+        with self.operation:
+            self.store.remove_exclusion(root_id, relative)
+            self.revision += 1
+        self.wake.set()
+
+    def retry_document(self, document_id: int):
+        with self.operation:
+            path = self.verified_path(document_id)
+            self.store.invalidate(str(path), "pending")
+        self.wake.set()
+
+    def retry_all(self):
+        with self.operation:
+            self.store.set_setting("retry", uuid.uuid4().hex)
+        self.wake.set()
+
+    def issues(self, offset: int = 0):
+        return self.store.issues(offset=offset, allowed=self.allowed)
+
     def paused(self):
         return self.store.setting("paused", False)
 
@@ -138,11 +159,12 @@ class Library:
     def scan(self, force: bool = False):
         with self.operation:
             if self.paused() or self.stop_event.is_set():
-                return
+                return False
             generation = self.revision
             inventory = self.store.inventory()
             self.progress = {"phase": "scanning", "processed": 0, "discovered": 0, "error": None}
         seen = set()
+        completed = False
         for path in self._files():
             if self.stop_event.is_set() or self.paused() or generation != self.revision:
                 break
@@ -203,14 +225,20 @@ class Library:
                     for path in inventory:
                         if path not in seen or not self.allowed(Path(path), check_file=True):
                             self.store.invalidate(path)
+                    completed = True
         self.progress["phase"] = "paused" if self.paused() else "idle"
+        return completed
 
     def _run(self):
         while not self.stop_event.is_set():
             self.wake.clear()
             try:
-                self.scan(force=self.store.setting("retry", False))
-                self.store.set_setting("retry", False)
+                request = self.store.setting("retry", False)
+                completed = self.scan(force=bool(request))
+                if completed and request:
+                    with self.operation:
+                        if self.store.setting("retry", False) == request:
+                            self.store.set_setting("retry", False)
             except (sqlite3.Error, OSError):
                 self.progress.update(phase="error", error="storage_error")
             self.wake.wait(30)

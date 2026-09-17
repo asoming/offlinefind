@@ -864,6 +864,69 @@ input[type="checkbox"] {
   margin-bottom: 10px;
   overflow-wrap: anywhere;
 }
+.exclusion-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  margin-top: 8px;
+}
+.exclusion-row code {
+  overflow-wrap: anywhere;
+  min-width: 0;
+}
+.exclusion-row button,
+.issue-card button {
+  flex-shrink: 0;
+  font-size: 11px;
+  padding: 6px 9px;
+}
+.issue-section {
+  border-top: 1px solid var(--line);
+  margin-top: 20px;
+  padding-top: 8px;
+}
+.issue-section h3 {
+  font-size: 13px;
+}
+#issue-list {
+  max-height: 280px;
+  overflow-y: auto;
+}
+.issue-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 12px 0;
+  border-bottom: 1px solid var(--line);
+}
+.issue-details {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  font-size: 12px;
+}
+.issue-reason {
+  color: var(--muted);
+}
+.issue-path {
+  font-size: 10px;
+  color: var(--muted);
+  overflow-wrap: anywhere;
+}
+.issue-pagination {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 12px;
+  font-size: 11px;
+}
+.retry-document {
+  margin: 0 24px 10px;
+}
 .dialog-actions {
   display: flex;
   gap: 10px;

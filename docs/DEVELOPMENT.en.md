@@ -62,3 +62,9 @@ On Linux, `scripts/package.py` delegates to `scripts/package_linux.py`. Build on
 
 Top-level runtime dependencies are pinned. Transitive/platform-specific dependencies are resolved on the build runner; this is not a fully hermetic build. Keep dependency updates explicit and re-run the platform matrix.
 
+
+## Recovery and benchmark checks
+
+`tests/test_recovery.py` covers individual retry persistence, bookmark preservation, inaccessible/out-of-scope targets, issue pagination, overlapping exclusions, and full-library retry races. Single-file retries reuse the persistent `pending` status; no database schema migration is required. Full-library requests carry an identity and are acknowledged only after a complete scan if no newer request has replaced them.
+
+Run `python scripts/benchmark.py /tmp/shiwen-benchmark` in a new directory for the 10,000-document benchmark, or add `--documents 100 --rounds 3` for a quick check. See [performance methodology](PERFORMANCE.en.md). The benchmark generates synthetic files only, uses the production spawned parser for each file and verifies known search results. It is not run as a 10,000-file workload in every CI job.

@@ -64,3 +64,9 @@ python scripts/package.py
 ## Linux 打包
 
 在 Ubuntu 22.04 上使用 Python 3.10+ 虚拟环境，安装系统依赖 `python3-gi`、`python3-gi-cairo`、`gir1.2-gtk-3.0`、`gir1.2-webkit2-4.1`、`xdg-utils` 和 `desktop-file-utils`，执行同一个 `python scripts/package.py`。它调用 `scripts/package_linux.py`，将应用和 Python 依赖打为 DEB 与 tar.gz。启动器通过 `-I` 使用隔离的系统 Python，GTK/WebKit 由系统维护，不捆绑整套浏览器。核心和原生桥接自检通过后才归档；CI 还会在 Ubuntu 22.04 与 24.04 真正安装 DEB 并运行核心和 GUI 检查。无显示器的 CI 使用 `xvfb-run`，本机使用当前桌面。包中不含用户文档数据库。
+
+## 恢复机制与性能检查
+
+`tests/test_recovery.py` 覆盖单文件重试持久化、收藏保留、不可访问或越界目标、问题列表分页、重叠排除和全库重试竞态。单文件重试复用持久化的 `pending` 状态，无需数据库迁移。全库请求带独立标识，只有完整扫描结束且请求未被更新时才确认消费。
+
+执行 `python scripts/benchmark.py /tmp/shiwen-benchmark`，在一个新目录内运行万文档基准；加 `--documents 100 --rounds 3` 可快速检查。详见[性能测量方法](PERFORMANCE.zh-CN.md)。基准仅生成合成文件，逐文件使用正式的独立解析进程，并核对已知搜索结果。CI 不在每个任务中重复万文档工作量。

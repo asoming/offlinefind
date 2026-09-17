@@ -41,4 +41,4 @@ On a documented 4-core / 8 GB / SSD reference machine, with 10,000 files and aro
 3. Add recovery, scope management, usability and accessibility.
 4. Verify offline installation, target-platform packages, performance and user task completion.
 
-The current Python/WebView beta implements a subset. Atomic rebuilds, stable rename identity, resource hard limits, per-file recovery and comprehensive performance acceptance remain explicitly tracked in the [roadmap](ROADMAP.md).
+The current Python/WebView beta implements a subset. beta.3 adds per-file recovery and removable exclusions. Atomic rebuilds, stable rename identity, resource hard limits and comprehensive performance acceptance remain explicitly tracked in the [roadmap](ROADMAP.md).

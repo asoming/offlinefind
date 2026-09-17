@@ -6,11 +6,10 @@ This is a staged implementation of the [original PRD](PRD.zh-CN.md), not a compl
 
 | Next work / 后续工作 | Purpose / 目的 |
 | --- | --- |
-| Fixed 10,000-document benchmark / 固定万文档基准 | Measure latency, indexing time, disk and memory instead of guessing / 用测量验证轻量目标 |
+| Representative corpus and full desktop benchmarks / 真实语料与完整桌面基准 | Extend the synthetic baseline to GUI memory, cold cache and Windows/macOS / 补充 GUI 内存、冷缓存及 Windows/macOS 测量 |
 | Ranking and Unicode offset evaluation / 排序与 Unicode 高亮评估 | Improve relevance and complex normalization mappings / 改善相关性和复杂字符映射 |
-| Native GUI smoke automation and signed releases / 原生界面测试与签名 | Verify OS dialogs, WebViews and trusted installation / 验证原生交互与安装体验 |
+| Native dialog acceptance and signed releases / 原生对话框验收与签名 | Extend existing native bridge smoke checks to OS dialogs and trusted installation / 在现有原生桥接检查基础上完善系统对话框与安装体验 |
 | Stable file identity / 稳定文件身份 | Preserve bookmarks on rename / 重命名后保留收藏 |
-| Per-file errors and retry, editable exclusions / 单文件错误重试与排除编辑 | Better recovery / 更方便地排查漏搜 |
 | Atomic rebuild and corruption repair / 原子重建与损坏修复 | Improve index reliability / 提升索引可靠性 |
 | Hard resource budgets and power awareness / 硬资源限制与电源感知 | Make background usage predictable / 控制后台负担 |
 | Optional offline OCR / 可选离线 OCR | Search scanned pages without uploading / 离线检索扫描件 |
@@ -20,3 +19,7 @@ AI chat, document editing, automatic renaming and cloud synchronization are outs
 
 AI 问答、文档编辑、自动重命名、云同步不属于首版主线。
 
+
+beta.3 delivers per-file retries, issue pagination and removable exclusions, plus a synthetic performance baseline. This does not complete the PRD’s full performance acceptance.
+
+beta.3 已交付单文件重试、问题列表分页与排除撤销，并建立合成性能基线；PRD 的完整性能验收仍未完成。
