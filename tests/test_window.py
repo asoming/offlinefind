@@ -1,3 +1,4 @@
+import os
 import threading
 from types import SimpleNamespace
 from unittest.mock import Mock
@@ -53,7 +54,7 @@ def test_software_rendering_fallback_preserves_explicit_preference(monkeypatch):
     monkeypatch.setattr("shiwen.desktop.os.access", lambda *_: False)
     monkeypatch.delenv("WEBKIT_DISABLE_COMPOSITING_MODE", raising=False)
     configure_linux_rendering()
-    assert __import__("os").environ["WEBKIT_DISABLE_COMPOSITING_MODE"] == "1"
+    assert os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] == "1"
     monkeypatch.setenv("WEBKIT_DISABLE_COMPOSITING_MODE", "0")
     configure_linux_rendering()
-    assert __import__("os").environ["WEBKIT_DISABLE_COMPOSITING_MODE"] == "0"
+    assert os.environ["WEBKIT_DISABLE_COMPOSITING_MODE"] == "0"

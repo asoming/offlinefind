@@ -410,7 +410,10 @@ def run_application(args, instance):
                         time.sleep(0.2)
                         result["close_requested_at"] = time.monotonic()
                         gui_result.write_text(json.dumps(result), encoding="utf-8")
-                    window.evaluate_js("document.getElementById('window-close').click()")
+                    if args.gui_close_smoke:
+                        window.destroy()
+                    else:
+                        window.evaluate_js("document.getElementById('window-close').click()")
 
             webview.start(
                 func=smoke,

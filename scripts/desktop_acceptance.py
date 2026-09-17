@@ -35,13 +35,21 @@ def main():
     }
     samples, stop = [], threading.Event()
     process = psutil.Process()
+    initial_pids = set(psutil.pids())
+    webkit_services = {}
     phase = "startup"
     before_launch = time.perf_counter()
 
     def monitor():
         while not stop.wait(0.1):
             rss, cpu, names = 0, 0, set()
-            for child in [process, *process.children(recursive=True)]:
+            if sys.platform == "darwin":
+                for candidate in psutil.process_iter(["name"]):
+                    if candidate.pid not in initial_pids and "WebKit" in candidate.info["name"]:
+                        webkit_services[candidate.pid] = candidate
+            members = {p.pid: p for p in [process, *process.children(recursive=True)]}
+            members.update(webkit_services)
+            for child in members.values():
                 try:
                     rss += child.memory_info().rss
                     times = child.cpu_times()
@@ -153,9 +161,9 @@ def main():
             wait("window.qa('#window-maximize').getAttribute('aria-pressed') === 'false'")
             result["checks"].append("native minimize, maximize and restore from custom buttons")
             window.evaluate_js(
-                "window.pywebview.api.call('window',{action:'resize',width:1100,height:760,edge:'se'})"
+                "window.pywebview.api.call('window',{action:'resize',width:900,height:620,edge:'se'})"
             )
-            wait("innerWidth === 1100 && innerHeight === 760")
+            wait("innerWidth === 900 && innerHeight === 620")
             result["checks"].append("frameless resize")
             # Exercise the actual pywebview drag-region handler with a bounded displacement.
             x, y = window.x, window.y
@@ -207,8 +215,10 @@ def main():
             change("#theme", "light")
             wait("document.documentElement.dataset.theme === 'light'")
             click("[data-close='settings-dialog']")
-            window.resize(1220, 820)
-            wait("innerWidth === 1220")
+            width = min(1220, int(window.evaluate_js("screen.availWidth")))
+            height = min(820, int(window.evaluate_js("screen.availHeight")))
+            window.resize(width, height)
+            wait(f"innerWidth === {width}")
             capture("desktop-light.png")
             result["checks"].append("settings dialog, Chinese/English, dark/light layouts")
             phase = "idle"
@@ -216,6 +226,10 @@ def main():
             result["ok"] = True
         except Exception as error:
             result["error"] = str(error)
+            result["geometry"] = window.evaluate_js(
+                "({width:innerWidth,height:innerHeight,dpr:devicePixelRatio,"
+                "screenWidth:screen.availWidth,screenHeight:screen.availHeight})"
+            )
         finally:
             result["close_requested_at"] = time.monotonic()
             try:
@@ -237,6 +251,12 @@ def main():
             "close_requested_at", time.monotonic()
         )
         result["ok"] = result["ok"] and result["close_seconds"] < 15
+        result["webkit_service_sampling"] = (
+            "New WebKit XPC processes on this otherwise isolated CI desktop; "
+            "not necessarily private memory; pre-existing shared services excluded"
+            if sys.platform == "darwin"
+            else "Application descendants"
+        )
         result["memory"] = {}
         for name in {row[0] for row in samples}:
             group = [row for row in samples if row[0] == name]
