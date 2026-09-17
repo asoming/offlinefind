@@ -114,7 +114,7 @@ jobs:
         with:
           path: release-assets
           merge-multiple: true
-      - name: Publish tested prerelease
+      - name: Publish tested release
         env:
           GH_TOKEN: ${{ github.token }}
           RELEASE_TAG: ${{ github.ref_name }}
@@ -122,8 +122,13 @@ jobs:
           if gh release view "$RELEASE_TAG" >/dev/null 2>&1; then
             echo "Release already exists; preserving its published assets."
           else
+            if [[ "$RELEASE_TAG" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+              release_kind=--latest
+            else
+              release_kind=--prerelease
+            fi
             gh release create "$RELEASE_TAG" release-assets/* \
-              --verify-tag --prerelease --title "Shiwen $RELEASE_TAG" \
+              --verify-tag "$release_kind" --title "Shiwen $RELEASE_TAG" \
               --notes-file docs/RELEASE_NOTES.md
           fi
       - name: Publish the update feed after packages are available

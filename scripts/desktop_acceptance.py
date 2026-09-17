@@ -45,7 +45,9 @@ def main():
             rss, cpu, names = 0, 0, set()
             if sys.platform == "darwin":
                 for candidate in psutil.process_iter(["name"]):
-                    if candidate.pid not in initial_pids and "WebKit" in candidate.info["name"]:
+                    if candidate.pid not in initial_pids and "WebKit" in (
+                        candidate.info["name"] or ""
+                    ):
                         webkit_services[candidate.pid] = candidate
             members = {p.pid: p for p in [process, *process.children(recursive=True)]}
             members.update(webkit_services)

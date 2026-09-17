@@ -257,3 +257,19 @@ def test_replacing_scope_during_parse_cannot_restore_removed_content(collection)
     library.scan()
     assert not library.store.inventory()
     assert not library.store.roots()
+
+
+def test_literal_prefilter_still_checks_permissions_before_returning(collection):
+    library, folder = collection
+    write(folder / "false.md", "甲乙，乙丙，丙丁")
+    write(folder / "real.md", "甲乙丙丁")
+    library.scan()
+    checked = []
+
+    def denied(path, check_file=False):
+        assert check_file
+        checked.append(path.name)
+        return False
+
+    assert library.store.search("甲乙丙丁", allowed=denied)["items"] == []
+    assert checked == ["real.md"]

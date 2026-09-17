@@ -176,10 +176,10 @@ def test_network_failures_can_be_retried(error, code):
     def failed(url):
         raise error
 
-    updater = Updater(opener=failed)
+    updater = Updater(current="0.1.0", opener=failed)
     updater.check()
     assert finish(updater)["error"] == code
-    updater.opener = lambda url: io.BytesIO(json.dumps([release()]).encode())
+    updater.opener = lambda url: io.BytesIO(json.dumps([release("v0.1.0", "0.1.0")]).encode())
     updater.check()
     assert finish(updater)["phase"] in {"available", "current"}
 
@@ -219,9 +219,9 @@ def test_missing_feed_falls_back_to_releases_api():
         calls.append(url)
         if url == MANIFEST:
             raise HTTPError(url, 404, "missing", {}, None)
-        return io.BytesIO(json.dumps([release()]).encode())
+        return io.BytesIO(json.dumps([release("v0.1.0", "0.1.0")]).encode())
 
-    updater = Updater(opener=opener)
+    updater = Updater(current="0.1.0", opener=opener)
     updater.check()
     assert finish(updater)["phase"] == "current"
     assert calls == [MANIFEST, API]

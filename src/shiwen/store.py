@@ -371,23 +371,26 @@ class Store:
                 path = Path(candidate["path"])
                 if root and not path.is_relative_to(root["path"]):
                     continue
-                if allowed and not allowed(path, check_file=True):
-                    continue
-                row = self.connection.execute(
-                    "SELECT * FROM documents WHERE id=?", (candidate["id"],)
+                fields = "name" if mode == "name" else "name,body"
+                text = self.connection.execute(
+                    f"SELECT {fields} FROM documents WHERE id=?", (candidate["id"],)
                 ).fetchone()
-                title, body = normalize(row["name"]), normalize(row["body"])
-                if mode == "name":
-                    body = ""
-                elif mode == "content":
-                    title = ""
+                title = "" if mode == "content" else normalize(text["name"])
+                body = "" if mode == "name" else normalize(text["body"])
                 if not all(term in title or term in body for term in terms):
+                    continue
+                # Reject gram false positives before expensive filesystem checks.
+                # Every returned item still passes the same scope/permission verification.
+                if allowed and not allowed(path, check_file=True):
                     continue
                 if skipped < offset:
                     skipped += 1
                     continue
                 if len(items) == 50:
                     return {"items": items, "has_more": True, "terms": terms, "offset": offset}
+                row = self.connection.execute(
+                    "SELECT * FROM documents WHERE id=?", (candidate["id"],)
+                ).fetchone()
                 matches = [
                     b
                     for b in json.loads(row["blocks"])
