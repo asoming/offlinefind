@@ -1,0 +1,30 @@
+{
+  "version": "0.1.0",
+  "scope": "Final query code on the existing generated corpus; no reindexing or cache eviction",
+  "queries": {
+    "topic": {
+      "samples": 25,
+      "median_ms": 265.11292198847514,
+      "p95_ms": 301.12609299249016,
+      "max_ms": 306.2599809927633
+    },
+    "unique": {
+      "samples": 25,
+      "median_ms": 747.2418089892017,
+      "p95_ms": 761.8979580001906,
+      "max_ms": 763.1172429973958
+    },
+    "phrase_and": {
+      "samples": 25,
+      "median_ms": 422.6944200054277,
+      "p95_ms": 545.0223259977065,
+      "max_ms": 577.6175959908869
+    },
+    "absent": {
+      "samples": 25,
+      "median_ms": 0.3874849935527891,
+      "p95_ms": 0.46194600872695446,
+      "max_ms": 0.48263200733345
+    }
+  }
+}

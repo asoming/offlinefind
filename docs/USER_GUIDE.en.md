@@ -89,4 +89,11 @@ Only manual update actions connect to GitHub. Startup, indexing, searching and o
 
 ## Window shutdown
 
-Closing the title-bar × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.8 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that Shiwen process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.
+Clicking the integrated upper-right × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.8 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that Shiwen process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.
+
+
+## Frameless window controls
+
+The system title bar is hidden. Use the upper-right buttons to minimize, maximize/restore and close. Drag the heading or brand area to move the window; double-click that area to maximize/restore. Drag any edge or corner to resize. The minimum window size is 780 × 580. Closing exits the application; it does not hide to a tray. Browser development mode cannot control a native window.
+
+Full desktop memory can be several hundred MiB, and broad searches may take seconds. See the [measured performance](PERFORMANCE.en.md). When upgrading, quit the running old window and reopen from the application menu; installing a new version does not replace an already-running process.

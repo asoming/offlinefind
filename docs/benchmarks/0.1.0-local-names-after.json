@@ -1,0 +1,51 @@
+{
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "scope": "Fresh automatic local-disk name discovery; no content parsing; no source paths included",
+  "discovery_seconds": 305.14770493499236,
+  "counts": {
+    "total": 739334,
+    "by_status": {
+      "metadata": 711747,
+      "pending": 27587
+    },
+    "saved": 0
+  },
+  "queries": {
+    "empty": {
+      "samples": 10,
+      "median_ms": 18.67386300000362,
+      "p95_ms": 19.605970999691635,
+      "max_ms": 19.605970999691635,
+      "returned": 50
+    },
+    "common_filename": {
+      "samples": 10,
+      "median_ms": 38.30669949820731,
+      "p95_ms": 44.18754299695138,
+      "max_ms": 44.18754299695138,
+      "returned": 50
+    },
+    "single_character": {
+      "samples": 10,
+      "median_ms": 69.22886149550322,
+      "p95_ms": 71.62991500808857,
+      "max_ms": 71.62991500808857,
+      "returned": 50
+    },
+    "extension": {
+      "samples": 10,
+      "median_ms": 40.819785004714504,
+      "p95_ms": 41.912661006790586,
+      "max_ms": 41.912661006790586,
+      "returned": 50
+    },
+    "absent": {
+      "samples": 10,
+      "median_ms": 0.3533709968905896,
+      "p95_ms": 0.781868991907686,
+      "max_ms": 0.781868991907686,
+      "returned": 0
+    }
+  },
+  "index_bytes": 535393376
+}

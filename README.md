@@ -6,7 +6,7 @@
 
 Shiwen automatically discovers local files for offline desktop search. Open it and type: no folder selection is required. Find images, archives, code and folders by name; search PDF, Markdown and DOCX contents with highlighted excerpts. The interface retains its frosted-glass appearance.
 
-**Status: v0.1.0-beta.9.** This is an early public preview, not a claim that every requirement in the PRD is complete. See [release notes and limitations](docs/RELEASE_NOTES.md).
+**Stable release: v0.1.0.** Supports automatic local discovery and offline search within the documented limits. See [release notes and limitations](docs/RELEASE_NOTES.md).
 
 ## What works
 
@@ -17,6 +17,7 @@ Shiwen automatically discovers local files for offline desktop search. Open it a
 - Local SQLite FTS5 bigram index, followed by exact text verification to reject false positives.
 - Read-only isolated parsers, periodic disk reconciliation, pause/resume, editable subfolder exclusions and clear-data controls.
 - Paginated problem-file lists and individual retries that stay pending across pause/restart.
+- Frameless window with integrated minimize/maximize/close, drag regions and edge resizing.
 - Light/dark/system appearance, optional frosted glass, Chinese/English interface and keyboard navigation.
 - Manual update checks, platform-matched downloads, progress/cancellation and SHA-256 verification in Settings.
 - One running instance per index; reopening activates its window. Linux portable bundles include a user installer.
@@ -27,8 +28,8 @@ Shiwen automatically discovers local files for offline desktop search. Open it a
 Get the package for your platform from [GitHub Releases](https://github.com/asoming/shiwen/releases): Windows x64 ZIP, macOS Apple Silicon ZIP, or Linux x64 DEB / tar.gz. Extract the entire archive before launching **Shiwen**. Windows/macOS packages include Python; Linux reuses the system runtime.
 
 - **Windows 11 x64:** uses Microsoft Edge WebView2. The runtime must already be installed; Shiwen does not silently download it. Most Windows 11 installations include it. Air-gapped machines need the runtime provisioned separately.
-- **macOS 14+ Apple Silicon:** uses the system WebKit. The beta is not notarized and has no developer signing certificate. macOS may require approval through System Settings → Privacy & Security after the first launch attempt.
-- These beta binaries are unsigned (macOS packaging may apply an ad-hoc signature). Verify the published SHA-256 checksum. Do not disable system-wide security settings.
+- **macOS 14+ Apple Silicon:** uses the system WebKit. The application is not notarized and has no developer signing certificate. macOS may require approval through System Settings → Privacy & Security after the first launch attempt.
+- These binaries are unsigned (macOS packaging may apply an ad-hoc signature). Verify the published SHA-256 checksum. Do not disable system-wide security settings.
 - **Ubuntu 22.04 / 24.04 x64:** install the `.deb` through your software installer or `sudo apt install ./Shiwen-*-linux-amd64.deb`. Search **Shiwen** in the application menu. The portable tar.gz runs with `./Shiwen/shiwen`; see the [Linux guide](docs/USER_GUIDE.en.md#linux-installation). Both use system Python 3.10+, GTK 3 and WebKit; Python modules are included, so no pip setup is needed.
 
 ## First search
@@ -48,7 +49,7 @@ Automatic indexing skips virtual filesystems, network mounts, cache/dependency d
 
 Scanned pages need OCR, which is not included. Password-protected files, unsupported encodings, parser errors and size limits are shown explicitly. File names may remain searchable when their contents cannot be parsed. Default limits: 100 MiB per file, 1,000 PDF pages and 10 MiB of extracted text. DOCX previews contain ordinary paragraphs and table text, not original Word pagination.
 
-The synthetic measurements below do not establish the PRD’s complete desktop latency and memory budgets. See the [roadmap](docs/ROADMAP.md).
+Full desktop memory and some searches exceed the original PRD budgets; see the measurements below. See the [roadmap](docs/ROADMAP.md).
 
 ## Run from source
 
@@ -80,4 +81,4 @@ MIT © 2026 asoming. See [LICENSE](LICENSE) and [third-party notices](THIRD_PART
 
 ## Performance measurements
 
-The [benchmark script](scripts/benchmark.py) builds a synthetic 10,000-document corpus and runs the production isolated parsers. See the [measurement report](docs/PERFORMANCE.en.md) for reproducible commands, results and limits. Full desktop memory, OS-cold queries and cross-platform performance targets remain unverified.
+The [acceptance benchmark](scripts/acceptance_benchmark.py) covers 10,000 mixed documents, 100 queries and one million synthetic names. Full local desktop idle RSS was **574 MiB**; some document queries took **0.4–0.8 seconds**, and a broad million-name query took **2.7 seconds**. Native desktop checks run on Windows, macOS and Linux. Read the [measurements, raw reports and remaining limits](docs/PERFORMANCE.en.md); cold-cache and original low-memory targets are not claimed.

@@ -1,0 +1,99 @@
+{
+  "version": "0.1.0",
+  "platform": "macOS-14.8.9-arm64-arm-64bit",
+  "python": "3.12.10",
+  "logical_cpus": 3,
+  "memory_bytes": 7516192768,
+  "limitations": [
+    "Generated corpus, not private real-world documents",
+    "No OS cache eviction: reopen measurements are not cold-cache results",
+    "Benchmark-controller and parser RSS; desktop measured separately"
+  ],
+  "corpus": {
+    "count": 1000,
+    "formats": {
+      "pdf": 400,
+      "md": 400,
+      "docx": 200
+    },
+    "file_bytes": 11910649,
+    "docx": "Complete OOXML generated with python-docx; paragraphs and tables",
+    "pdf": "CJK text PDFs, three pages each"
+  },
+  "name_discovery_seconds": 0.109019749999959,
+  "content_index_seconds": 113.880320375,
+  "name_search_during_parsing": {
+    "samples": 186,
+    "median_ms": 25.97570799997584,
+    "p95_ms": 47.66979199996513,
+    "max_ms": 168.30362499996454
+  },
+  "queries": {
+    "topic": {
+      "samples": 25,
+      "median_ms": 94.62429200004863,
+      "p95_ms": 120.64108300000953,
+      "max_ms": 129.12112500004014
+    },
+    "unique": {
+      "samples": 25,
+      "median_ms": 90.62962499996274,
+      "p95_ms": 111.72016700004406,
+      "max_ms": 120.45050000000401
+    },
+    "phrase_and": {
+      "samples": 25,
+      "median_ms": 110.71170799999663,
+      "p95_ms": 135.18049999998993,
+      "max_ms": 239.321958000005
+    },
+    "absent": {
+      "samples": 25,
+      "median_ms": 0.18099999999776628,
+      "p95_ms": 0.3993330000184869,
+      "max_ms": 0.5234999999856882
+    }
+  },
+  "index_bytes": 22795376,
+  "reopened_first_query_ms": 82.7352919999953,
+  "metadata": {
+    "entries": 100000,
+    "build_seconds": 8.189828792000014,
+    "queries": {
+      "empty": {
+        "samples": 5,
+        "median_ms": 0.8154589999662676,
+        "p95_ms": 1.3854590000050848,
+        "max_ms": 1.3854590000050848
+      },
+      "File": {
+        "samples": 5,
+        "median_ms": 309.8816250000027,
+        "p95_ms": 356.02179199997863,
+        "max_ms": 356.02179199997863
+      },
+      "0099999": {
+        "samples": 5,
+        "median_ms": 18.55770799994616,
+        "p95_ms": 21.343208000018876,
+        "max_ms": 21.343208000018876
+      },
+      "f": {
+        "samples": 5,
+        "median_ms": 0.765750000027765,
+        "p95_ms": 1.139458000011473,
+        "max_ms": 1.139458000011473
+      },
+      "notfound": {
+        "samples": 5,
+        "median_ms": 0.09341700001641584,
+        "p95_ms": 0.18929200001593927,
+        "max_ms": 0.18929200001593927
+      }
+    },
+    "index_bytes": 58742792,
+    "scope": "Synthetic metadata only, no real filesystem permission checks or traversal"
+  },
+  "controller_and_parser_peak_rss_bytes": 288112640,
+  "ok": true
+}

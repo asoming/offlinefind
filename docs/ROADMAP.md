@@ -1,46 +1,33 @@
 # Roadmap / 路线图
 
-This is a staged implementation of the [original PRD](PRD.zh-CN.md), not a completed PRD claim.
+0.1.0 is a stable release within its documented scope. The current interface is retained with published performance limits; unmet PRD budgets are deferred explicitly, not marked as achieved. / 0.1.0 按公开范围正式发布，保留当前界面并披露性能限制；未达标的 PRD 预算明确延期，不标为完成。
 
-本项目分阶段实现[原始 PRD](PRD.zh-CN.md)，测试版发布不代表所有 P0 验收项已经完成。
+## Delivered in 0.1.0 / 已交付
 
-| Next work / 后续工作 | Purpose / 目的 |
+- [x] Automatic local disk discovery without folder selection; names before independently extracted PDF/Markdown/DOCX contents. / 无需选文件夹，自动发现磁盘，名称优先、正文独立解析。
+- [x] Offline search, exact verification, previews, bookmarks, retry/exclusion controls, bilingual glass UI and integrated frameless controls. / 离线搜索、精确核对、预览、收藏、重试排除、中英文玻璃界面及无边框窗口操作。
+- [x] Manual update download/checksum, single instance, Linux user installer and shutdown fixes. / 手动更新下载校验、单实例、Linux 用户安装与关闭修复。
+- [x] 10,000 mixed documents, 100 queries, names searched during parsing, 739,334 real local name entries and one million synthetic names. / 万份混合文档、100 条查询、边解析边搜名称、73.9 万真实本机名称与百万合成名称测量。
+- [x] Full desktop RSS/CPU samples and native automated interactions on Windows/macOS/Linux. / 三平台完整桌面 RSS / CPU 采样与原生自动操作验收。
+- [x] Public bilingual performance evidence and explicit release limits. / 公开双语性能证据及版本限制。
+
+See [English measurements](PERFORMANCE.en.md) / [中文测量报告](PERFORMANCE.zh-CN.md). Automated CI is not comprehensive manual OS acceptance. / CI 自动检查不等同完整人工系统验收。
+
+## Next work / 后续
+
+| Work / 工作 | Purpose / 目的 |
 | --- | --- |
-| Representative corpus and full desktop benchmarks / 真实语料与完整桌面基准 | Extend the synthetic baseline to GUI memory, cold cache and Windows/macOS / 补充 GUI 内存、冷缓存及 Windows/macOS 测量 |
-| Ranking and Unicode offset evaluation / 排序与 Unicode 高亮评估 | Improve relevance and complex normalization mappings / 改善相关性和复杂字符映射 |
-| Native dialog acceptance and signed releases / 原生对话框验收与签名 | Extend existing native bridge smoke checks to OS dialogs and trusted installation / 在现有原生桥接检查基础上完善系统对话框与安装体验 |
-| Stable file identity / 稳定文件身份 | Preserve bookmarks on rename / 重命名后保留收藏 |
+| Lower desktop idle memory and CPU / 降低桌面空闲内存与 CPU | Original sub-100 MiB target is unmet / 原定低于 100 MiB 未达成 |
+| Broad-match search and ranking / 大量匹配查询与排序 | Some searches exceed 300 ms, million-name broad query ~2.7s / 部分查询超过 300 ms，百万名称大量匹配约 2.7 秒 |
+| NTFS MFT/USN, platform journals and cheaper reconciliation / 文件变更日志与低成本核对 | Faster discovery and updates / 加快发现与更新 |
+| Strict cold-cache and reference hardware testing / 严格冷缓存与参考硬件 | 4-core / 8 GB, representative complex documents, long-duration power / 4 核 8 GB、复杂真实文档与长期功耗 |
+| Physical-machine native-dialog, permission and recovery acceptance / 实体机系统对话框、权限与恢复验收 | Extend automated bridge checks / 补充自动桥接检查 |
+| Trusted signing and notarization / 可信签名与公证 | Improve installation trust / 改善安装信任体验 |
+| Stable file identity / 稳定文件身份 | Preserve bookmarks on rename / 重命名保留收藏 |
 | Atomic rebuild and corruption repair / 原子重建与损坏修复 | Improve index reliability / 提升索引可靠性 |
-| Hard resource budgets and power awareness / 硬资源限制与电源感知 | Make background usage predictable / 控制后台负担 |
-| Optional offline OCR / 可选离线 OCR | Search scanned pages without uploading / 离线检索扫描件 |
-| Global search shortcut / 全局唤起快捷键 | Reach search from another application / 随时唤起搜索 |
+| Unicode offset evaluation / Unicode 高亮评估 | Complex normalization mappings / 复杂字符映射 |
+| Hard resource budgets and power awareness / 硬资源限制与电源感知 | Predictable background usage / 控制后台负担 |
+| Optional offline OCR / 可选离线 OCR | Search scanned pages locally / 本地检索扫描件 |
+| Global search shortcut / 全局唤起快捷键 | Reach search from other apps / 从其他应用唤起 |
 
-AI chat, document editing, automatic renaming and cloud synchronization are outside the initial product scope.
-
-AI 问答、文档编辑、自动重命名、云同步不属于首版主线。
-
-
-beta.3 delivers per-file retries, issue pagination and removable exclusions, plus a synthetic performance baseline. This does not complete the PRD’s full performance acceptance.
-
-beta.3 已交付单文件重试、问题列表分页与排除撤销，并建立合成性能基线；PRD 的完整性能验收仍未完成。
-
-## Automatic discovery follow-up / 自动发现后续
-
-Beta.4 replaces folder onboarding with automatic disk discovery and independent name/content indexing. Next: NTFS MFT / USN or platform change journals, larger file-library benchmarks, and lower-cost incremental reconciliation.
-
-beta.4 已取消文件夹选择前置步骤，自动发现磁盘，名称与正文独立索引。后续关注 NTFS MFT / USN 或平台变更日志、大型文件库基准和增量核对成本。
-
-## Stable release gates / 正式版发布门槛
-
-Beta.9 completes per-index single-instance protection and repeatable Linux user installation. These fix startup/upgrade friction; they do not finish performance acceptance.
-
-beta.9 已完成同索引单实例保护和可重复执行的 Linux 用户级安装，解决启动与升级入口问题，尚未完成性能验收。
-
-- [ ] Measure representative whole-disk filename and mixed-content search, including concurrent indexing and cold starts. / 测量真实全盘名称与混合正文检索、边索引边搜索及冷启动。
-- [ ] Record full process-tree desktop memory (WebView and parser included), background CPU and index size on supported platforms against the PRD. / 对照 PRD 测量各平台完整进程树内存（含 WebView 与解析器）、后台 CPU 和索引体积。
-- [ ] Complete manual Windows/macOS/Linux acceptance for native dialogs, permissions, install/upgrade, restart and recovery. / 完成 Windows、macOS、Linux 的原生对话框、权限、安装升级、重启与恢复人工验收。
-- [ ] Resolve release-blocking findings and document any deliberately deferred PRD requirements before choosing a stable version. / 修复阻断问题，明确延期的 PRD 项后再确定正式版。
-
-Existing automated core, native bridge, activation and Linux close checks remain release gates. A passing package build alone does not satisfy the items above.
-
-现有核心、原生桥接、窗口唤起及 Linux 关闭检查继续作为发布门槛；打包通过不等于上述验收已完成。
+AI chat, editing, automatic renaming and cloud synchronization remain outside the initial scope. / AI 问答、编辑、自动重命名和云同步仍不属于首版主线。

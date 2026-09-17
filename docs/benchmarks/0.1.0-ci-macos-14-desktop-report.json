@@ -1,0 +1,83 @@
+{
+  "version": "0.1.0",
+  "platform": "macOS-14.8.9-arm64-arm-64bit",
+  "ok": true,
+  "checks": [
+    "production automatic discovery and integrated controls",
+    "native minimize, maximize and restore from custom buttons",
+    "frameless resize",
+    "drag region moves native window",
+    "content search, preview highlights and bookmark",
+    "PDF, Markdown and complete DOCX filters",
+    "settings dialog, Chinese/English, dark/light layouts"
+  ],
+  "memory_scope": "Application/descendant RSS including WebView and parser; shared pages can be counted twice",
+  "first_results_seconds": 6.287146582999981,
+  "close_requested_at": 485.533236916,
+  "close_seconds": 0.2710951669999986,
+  "webkit_service_sampling": "New WebKit XPC processes on this otherwise isolated CI desktop; not necessarily private memory; pre-existing shared services excluded",
+  "cpu_note": "One-core percent; sampler thread CPU subtracted; closing is a separate phase",
+  "memory": {
+    "indexing": {
+      "samples": 11,
+      "rss_peak_bytes": 245547008,
+      "rss_last_bytes": 245547008,
+      "process_names": [
+        "Python",
+        "com.apple.WebKit.Networking",
+        "com.apple.WebKit.WebContent"
+      ]
+    },
+    "closing": {
+      "samples": 1,
+      "rss_peak_bytes": 248233984,
+      "rss_last_bytes": 248233984,
+      "process_names": [
+        "Python",
+        "com.apple.WebKit.Networking",
+        "com.apple.WebKit.WebContent"
+      ]
+    },
+    "interaction": {
+      "samples": 7,
+      "rss_peak_bytes": 210321408,
+      "rss_last_bytes": 210321408,
+      "process_names": [
+        "Python",
+        "com.apple.WebKit.Networking",
+        "com.apple.WebKit.WebContent"
+      ]
+    },
+    "ready_before_interaction": {
+      "samples": 41,
+      "rss_peak_bytes": 209469440,
+      "rss_last_bytes": 207831040,
+      "process_names": [
+        "Python",
+        "com.apple.WebKit.Networking",
+        "com.apple.WebKit.WebContent"
+      ]
+    },
+    "startup": {
+      "samples": 26,
+      "rss_peak_bytes": 208732160,
+      "rss_last_bytes": 208732160,
+      "process_names": [
+        "Python",
+        "com.apple.WebKit.Networking",
+        "com.apple.WebKit.WebContent"
+      ]
+    },
+    "idle": {
+      "samples": 44,
+      "rss_peak_bytes": 247447552,
+      "rss_last_bytes": 247414784,
+      "process_names": [
+        "Python",
+        "com.apple.WebKit.Networking",
+        "com.apple.WebKit.WebContent"
+      ]
+    }
+  },
+  "idle_cpu_percent_one_core": 3.4158819346544216
+}

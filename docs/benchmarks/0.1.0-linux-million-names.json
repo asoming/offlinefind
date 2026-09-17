@@ -1,0 +1,38 @@
+{
+  "version": "0.1.0",
+  "entries": 1000000,
+  "scope": "Final query code on the existing synthetic metadata index, without filesystem traversal or permission checks",
+  "queries": {
+    "empty": {
+      "samples": 5,
+      "median_ms": 0.9700390073703602,
+      "p95_ms": 1.4495719951810315,
+      "max_ms": 1.4495719951810315
+    },
+    "File": {
+      "samples": 5,
+      "median_ms": 2689.3808059976436,
+      "p95_ms": 2700.582477002172,
+      "max_ms": 2700.582477002172
+    },
+    "0999999": {
+      "samples": 5,
+      "median_ms": 149.34972299670335,
+      "p95_ms": 154.41489100339822,
+      "max_ms": 154.41489100339822
+    },
+    "f": {
+      "samples": 5,
+      "median_ms": 0.987580991932191,
+      "p95_ms": 1.2062360037816688,
+      "max_ms": 1.2062360037816688
+    },
+    "notfound": {
+      "samples": 5,
+      "median_ms": 0.09550098911859095,
+      "p95_ms": 0.26500600506551564,
+      "max_ms": 0.26500600506551564
+    }
+  },
+  "index_bytes": 559668768
+}

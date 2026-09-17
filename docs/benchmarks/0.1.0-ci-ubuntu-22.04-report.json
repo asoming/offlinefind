@@ -1,0 +1,99 @@
+{
+  "version": "0.1.0",
+  "platform": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "logical_cpus": 4,
+  "memory_bytes": 16765415424,
+  "limitations": [
+    "Generated corpus, not private real-world documents",
+    "No OS cache eviction: reopen measurements are not cold-cache results",
+    "Benchmark-controller and parser RSS; desktop measured separately"
+  ],
+  "corpus": {
+    "count": 1000,
+    "formats": {
+      "pdf": 400,
+      "md": 400,
+      "docx": 200
+    },
+    "file_bytes": 11910649,
+    "docx": "Complete OOXML generated with python-docx; paragraphs and tables",
+    "pdf": "CJK text PDFs, three pages each"
+  },
+  "name_discovery_seconds": 0.0837009239999702,
+  "content_index_seconds": 80.71963116400002,
+  "name_search_during_parsing": {
+    "samples": 155,
+    "median_ms": 22.6682320000009,
+    "p95_ms": 40.28102099999842,
+    "max_ms": 87.36736199995221
+  },
+  "queries": {
+    "topic": {
+      "samples": 25,
+      "median_ms": 87.03544200000124,
+      "p95_ms": 94.57127199999604,
+      "max_ms": 116.33387099999482
+    },
+    "unique": {
+      "samples": 25,
+      "median_ms": 82.75083000000905,
+      "p95_ms": 88.3294729999875,
+      "max_ms": 89.17047099998854
+    },
+    "phrase_and": {
+      "samples": 25,
+      "median_ms": 105.80779899999015,
+      "p95_ms": 112.74972699999353,
+      "max_ms": 117.83750800003645
+    },
+    "absent": {
+      "samples": 25,
+      "median_ms": 0.19654599998375488,
+      "p95_ms": 0.2561160000027485,
+      "max_ms": 0.2802129999963654
+    }
+  },
+  "index_bytes": 23234992,
+  "reopened_first_query_ms": 98.79063200003202,
+  "metadata": {
+    "entries": 100000,
+    "build_seconds": 10.691458895999972,
+    "queries": {
+      "empty": {
+        "samples": 5,
+        "median_ms": 0.9430509999788228,
+        "p95_ms": 1.1842050000154813,
+        "max_ms": 1.1842050000154813
+      },
+      "File": {
+        "samples": 5,
+        "median_ms": 257.5230049999959,
+        "p95_ms": 259.9665089999803,
+        "max_ms": 259.9665089999803
+      },
+      "0099999": {
+        "samples": 5,
+        "median_ms": 15.019889000029707,
+        "p95_ms": 16.782155999976567,
+        "max_ms": 16.782155999976567
+      },
+      "f": {
+        "samples": 5,
+        "median_ms": 1.0134070000162865,
+        "p95_ms": 1.1374439999940478,
+        "max_ms": 1.1374439999940478
+      },
+      "notfound": {
+        "samples": 5,
+        "median_ms": 0.10120199999619217,
+        "p95_ms": 0.16069200000856654,
+        "max_ms": 0.16069200000856654
+      }
+    },
+    "index_bytes": 58742792,
+    "scope": "Synthetic metadata only, no real filesystem permission checks or traversal"
+  },
+  "controller_and_parser_peak_rss_bytes": 246996992,
+  "ok": true
+}

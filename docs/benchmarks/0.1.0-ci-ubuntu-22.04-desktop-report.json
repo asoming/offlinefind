@@ -1,0 +1,83 @@
+{
+  "version": "0.1.0",
+  "platform": "Linux-6.8.0-1064-azure-x86_64-with-glibc2.35",
+  "ok": true,
+  "checks": [
+    "production automatic discovery and integrated controls",
+    "native minimize, maximize and restore from custom buttons",
+    "frameless resize",
+    "drag region moves native window",
+    "content search, preview highlights and bookmark",
+    "PDF, Markdown and complete DOCX filters",
+    "settings dialog, Chinese/English, dark/light layouts"
+  ],
+  "memory_scope": "Application/descendant RSS including WebView and parser; shared pages can be counted twice",
+  "first_results_seconds": 25.654608205999978,
+  "close_requested_at": 457.944896022,
+  "close_seconds": 0.21305830799997239,
+  "webkit_service_sampling": "Application descendants",
+  "cpu_note": "One-core percent; sampler thread CPU subtracted; closing is a separate phase",
+  "memory": {
+    "indexing": {
+      "samples": 19,
+      "rss_peak_bytes": 461770752,
+      "rss_last_bytes": 461770752,
+      "process_names": [
+        "WebKitNetworkProcess",
+        "WebKitWebProcess",
+        "python"
+      ]
+    },
+    "closing": {
+      "samples": 2,
+      "rss_peak_bytes": 452227072,
+      "rss_last_bytes": 452096000,
+      "process_names": [
+        "WebKitNetworkProcess",
+        "WebKitWebProcess",
+        "python"
+      ]
+    },
+    "startup": {
+      "samples": 247,
+      "rss_peak_bytes": 404754432,
+      "rss_last_bytes": 404754432,
+      "process_names": [
+        "WebKitNetworkProcess",
+        "WebKitWebProcess",
+        "python"
+      ]
+    },
+    "idle": {
+      "samples": 96,
+      "rss_peak_bytes": 457760768,
+      "rss_last_bytes": 452235264,
+      "process_names": [
+        "WebKitNetworkProcess",
+        "WebKitWebProcess",
+        "python"
+      ]
+    },
+    "ready_before_interaction": {
+      "samples": 97,
+      "rss_peak_bytes": 423944192,
+      "rss_last_bytes": 419258368,
+      "process_names": [
+        "WebKitNetworkProcess",
+        "WebKitWebProcess",
+        "python"
+      ]
+    },
+    "interaction": {
+      "samples": 5,
+      "rss_peak_bytes": 431464448,
+      "rss_last_bytes": 428920832,
+      "process_names": [
+        "WebKitNetworkProcess",
+        "WebKitWebProcess",
+        "python"
+      ]
+    }
+  },
+  "idle_cpu_percent_one_core": 5.59595474258983
+}

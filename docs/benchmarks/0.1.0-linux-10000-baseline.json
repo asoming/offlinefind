@@ -1,0 +1,99 @@
+{
+  "version": "0.1.0b9",
+  "platform": "Linux-6.8.0-138-generic-x86_64-with-glibc2.35",
+  "python": "3.10.12",
+  "logical_cpus": 32,
+  "memory_bytes": 16454504448,
+  "limitations": [
+    "Generated corpus, not private real-world documents",
+    "No OS cache eviction: reopen measurements are not cold-cache results",
+    "Benchmark-controller and parser RSS; desktop measured separately"
+  ],
+  "corpus": {
+    "count": 10000,
+    "formats": {
+      "pdf": 4000,
+      "md": 4000,
+      "docx": 2000
+    },
+    "file_bytes": 119439763,
+    "docx": "Complete OOXML generated with python-docx; paragraphs and tables",
+    "pdf": "CJK text PDFs, three pages each"
+  },
+  "name_discovery_seconds": 1.0058917149872286,
+  "content_index_seconds": 980.1088948240067,
+  "name_search_during_parsing": {
+    "samples": 1565,
+    "median_ms": 124.90552999952342,
+    "p95_ms": 204.8833479930181,
+    "max_ms": 252.79317100648768
+  },
+  "queries": {
+    "topic": {
+      "samples": 25,
+      "median_ms": 363.9241940109059,
+      "p95_ms": 450.64717599598225,
+      "max_ms": 467.11192099610344
+    },
+    "unique": {
+      "samples": 25,
+      "median_ms": 1901.5568780014291,
+      "p95_ms": 1928.4312340023462,
+      "max_ms": 1936.6139519988792
+    },
+    "phrase_and": {
+      "samples": 25,
+      "median_ms": 533.1028389919084,
+      "p95_ms": 921.2251819990342,
+      "max_ms": 985.8516660024179
+    },
+    "absent": {
+      "samples": 25,
+      "median_ms": 0.46395399840548635,
+      "p95_ms": 0.6045729969628155,
+      "max_ms": 0.6124919891590253
+    }
+  },
+  "index_bytes": 190462960,
+  "reopened_first_query_ms": 2196.209734000149,
+  "metadata": {
+    "entries": 1000000,
+    "build_seconds": 73.25181456300197,
+    "queries": {
+      "empty": {
+        "samples": 5,
+        "median_ms": 361.8098419974558,
+        "p95_ms": 417.4989400053164,
+        "max_ms": 417.4989400053164
+      },
+      "File": {
+        "samples": 5,
+        "median_ms": 2586.8308509961935,
+        "p95_ms": 2593.2165419944795,
+        "max_ms": 2593.2165419944795
+      },
+      "0999999": {
+        "samples": 5,
+        "median_ms": 204.62138099537697,
+        "p95_ms": 206.83870499487966,
+        "max_ms": 206.83870499487966
+      },
+      "f": {
+        "samples": 5,
+        "median_ms": 844.6609030070249,
+        "p95_ms": 854.6128519956255,
+        "max_ms": 854.6128519956255
+      },
+      "notfound": {
+        "samples": 5,
+        "median_ms": 0.09849799971561879,
+        "p95_ms": 0.3609220002545044,
+        "max_ms": 0.3609220002545044
+      }
+    },
+    "index_bytes": 526336072,
+    "scope": "Synthetic metadata only, no real filesystem permission checks or traversal"
+  },
+  "controller_and_parser_peak_rss_bytes": 415076352,
+  "ok": true
+}

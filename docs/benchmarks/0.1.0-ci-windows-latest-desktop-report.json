@@ -1,0 +1,77 @@
+{
+  "version": "0.1.0",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "ok": true,
+  "checks": [
+    "production automatic discovery and integrated controls",
+    "native minimize, maximize and restore from custom buttons",
+    "frameless resize",
+    "drag region moves native window",
+    "content search, preview highlights and bookmark",
+    "PDF, Markdown and complete DOCX filters",
+    "settings dialog, Chinese/English, dark/light layouts"
+  ],
+  "memory_scope": "Application/descendant RSS including WebView and parser; shared pages can be counted twice",
+  "first_results_seconds": 5.1498957999999675,
+  "close_requested_at": 459.328,
+  "close_seconds": 0.4530000000000314,
+  "webkit_service_sampling": "Application descendants",
+  "cpu_note": "One-core percent; sampler thread CPU subtracted; closing is a separate phase",
+  "memory": {
+    "startup": {
+      "samples": 44,
+      "rss_peak_bytes": 437317632,
+      "rss_last_bytes": 437317632,
+      "process_names": [
+        "msedgewebview2.exe",
+        "python.exe"
+      ]
+    },
+    "ready_before_interaction": {
+      "samples": 93,
+      "rss_peak_bytes": 448946176,
+      "rss_last_bytes": 436879360,
+      "process_names": [
+        "msedgewebview2.exe",
+        "python.exe"
+      ]
+    },
+    "indexing": {
+      "samples": 14,
+      "rss_peak_bytes": 516788224,
+      "rss_last_bytes": 516788224,
+      "process_names": [
+        "msedgewebview2.exe",
+        "python.exe"
+      ]
+    },
+    "idle": {
+      "samples": 94,
+      "rss_peak_bytes": 524738560,
+      "rss_last_bytes": 487501824,
+      "process_names": [
+        "msedgewebview2.exe",
+        "python.exe"
+      ]
+    },
+    "closing": {
+      "samples": 4,
+      "rss_peak_bytes": 487825408,
+      "rss_last_bytes": 225492992,
+      "process_names": [
+        "msedgewebview2.exe",
+        "python.exe"
+      ]
+    },
+    "interaction": {
+      "samples": 8,
+      "rss_peak_bytes": 474644480,
+      "rss_last_bytes": 472756224,
+      "process_names": [
+        "msedgewebview2.exe",
+        "python.exe"
+      ]
+    }
+  },
+  "idle_cpu_percent_one_core": 2.207313730974722
+}

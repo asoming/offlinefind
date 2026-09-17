@@ -4,7 +4,7 @@
 
 ## Architecture
 
-The desktop is Python + pywebview using WebView2 on Windows and WKWebView on macOS, and GTK 3 / WebKitGTK on Linux. The UI is bundled vanilla HTML/CSS/JavaScript with no build step or CDN dependencies. This beta chooses a testable Python implementation over the PRD's tentative Rust option; that option was not a committed requirement.
+The desktop is Python + pywebview using WebView2 on Windows and WKWebView on macOS, and GTK 3 / WebKitGTK on Linux. The UI is bundled vanilla HTML/CSS/JavaScript with no build step or CDN dependencies. This release chooses a testable Python implementation over the PRD's tentative Rust option; that option was not a committed requirement.
 
 | File | Responsibility |
 | --- | --- |
@@ -56,7 +56,7 @@ python scripts/package.py
 
 The script builds a PyInstaller directory bundle, runs its packaged `--self-test`, then archives it and writes a SHA-256 checksum. On macOS it uses `ditto` to preserve application-bundle links. Signing and notarization are not configured; do not label these binaries signed.
 
-The `Tests` workflow covers three operating systems. The `Release` workflow runs tests, builds Windows x64, macOS arm64 and Linux x64 packages, checks the frozen executable, builds Python source/wheel distributions, and publishes a prerelease **only after all required jobs pass**. A manual workflow run builds artifacts without publishing. Version tags must match `pyproject.toml`, `__version__` and the bilingual release notes.
+The `Tests` workflow covers three operating systems. The `Release` workflow runs tests, builds Windows x64, macOS arm64 and Linux x64 packages, checks the frozen executable, builds Python source/wheel distributions, and publishes a stable release for `vX.Y.Z` tags (a prerelease for suffixed tags) **only after all required jobs pass**. A manual workflow run builds artifacts without publishing. Version tags must match `pyproject.toml`, `__version__` and the bilingual release notes.
 
 On Linux, `scripts/package.py` delegates to `scripts/package_linux.py`. Build on Ubuntu 22.04 with Python 3.10+ in a virtual environment; install system `python3-gi`, `python3-gi-cairo`, `gir1.2-gtk-3.0`, `gir1.2-webkit2-4.1`, `xdg-utils` and `desktop-file-utils`. It vendors the application and Python dependencies into a DEB and a tar.gz; the launcher uses isolated system Python (`-I`) and OS-maintained GTK/WebKit. It does not bundle an entire browser. Core and native bridge smoke tests run before archiving. CI also installs the actual DEB and runs its core/GUI checks on Ubuntu 22.04 and 24.04. Headless CI uses `xvfb-run`; desktop builds use the current display. No document databases are packaged.
 
@@ -88,3 +88,12 @@ Version comparisons distinguish alpha, beta, release candidates and stable versi
 `desktop.guard_evaluation` wraps GTK `evaluate_js` and `run_js` waits with the window closing event. The underlying WebKit call runs on a daemon thread because GTK can discard the completion callback when its event loop is destroyed; bridge callers are released on close. No process-wide forced exit is used. Bridge requests drain before database cleanup. The isolated parser polls a cancellation event and terminates/reaps its child, leaving interrupted documents pending.
 
 `tests/test_shutdown.py` covers callback results/errors, lost callbacks, real parser cancellation and restart, and active RPC/database shutdown ordering. `--gui-close-smoke RESULT_JSON` closes a native window while JavaScript is still executing; the subprocess must exit successfully within 15 seconds of requesting close, excluding WebKit startup. Linux packaging and installed DEB checks on Ubuntu 22.04 / 24.04 run this regression in addition to the normal GUI smoke test.
+
+
+## Desktop acceptance and release measurements
+
+`python scripts/acceptance_benchmark.py /tmp/acceptance --documents 1000 --metadata 100000` creates a new synthetic mixed corpus and validates queries. Then run `python scripts/desktop_acceptance.py /tmp/acceptance --existing-index` in a graphical session. Install `.[dev]` first. Linux needs system GTK/WebKit bindings; an isolated venv may use `PYTHONPATH=/usr/lib/python3/dist-packages` only for native desktop tests. CI uses Xvfb plus Openbox. See [full methodology and limits](PERFORMANCE.en.md).
+
+`desktop.WindowControls` owns native button actions, restored bounds and edge anchoring. Bridge actions are allowlisted. Regression tests verify that exact candidate filtering never bypasses accessibility checks. Native GUI smoke clicks the custom close control; close-race smoke destroys the window while evaluation is outstanding.
+
+On Linux without a readable/writable GPU device, `configure_linux_rendering` defaults `WEBKIT_DISABLE_COMPOSITING_MODE=1` before WebView startup. An explicit value is preserved. This is a software-rendering fallback, not a universal low-memory guarantee. Idle sampling excludes the closing phase and subtracts the sampler thread CPU; macOS includes newly created WebKit XPC services in the isolated runner, since they may be owned by launchd.

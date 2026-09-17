@@ -4,7 +4,7 @@
 
 ## 架构
 
-桌面使用 Python + pywebview，Windows 使用 WebView2，macOS 使用 WKWebView，Linux 使用 GTK 3 / WebKitGTK。HTML/CSS/JavaScript 随包分发，无前端构建步骤和 CDN。PRD 中的 Rust 只是候选方案；本测试版选择更易验证和交付的 Python 实现。
+桌面使用 Python + pywebview，Windows 使用 WebView2，macOS 使用 WKWebView，Linux 使用 GTK 3 / WebKitGTK。HTML/CSS/JavaScript 随包分发，无前端构建步骤和 CDN。PRD 中的 Rust 只是候选方案；本版本选择更易验证和交付的 Python 实现。
 
 | 文件 | 职责 |
 | --- | --- |
@@ -56,7 +56,7 @@ python scripts/package.py
 
 脚本创建 PyInstaller 目录包，运行打包后程序的 `--self-test`，成功后归档并生成 SHA-256。macOS 用 `ditto` 保留应用包链接。尚未配置可信证书签名与公证，不能声称已签名。
 
-`Tests` 工作流在三个系统运行。`Release` 工作流依次测试、构建 Windows x64 / macOS arm64 / Linux x64、检查冻结后的可执行文件、构建 Python 源码包与 wheel，**全部成功后**才发布 prerelease。手动运行仅生成构建产物。版本标签必须与 `pyproject.toml`、`__version__`、中英文发布说明保持一致。
+`Tests` 工作流在三个系统运行。`Release` 工作流依次测试、构建 Windows x64 / macOS arm64 / Linux x64、检查冻结后的可执行文件、构建 Python 源码包与 wheel，**全部成功后**才发布版本（`vX.Y.Z` 为正式版，带后缀标签为预发行版）。手动运行仅生成构建产物。版本标签必须与 `pyproject.toml`、`__version__`、中英文发布说明保持一致。
 
 直接运行依赖已固定版本；传递依赖和平台依赖在 runner 上解析，尚不属于完全封闭可复现构建。升级依赖时需显式提交并重跑平台矩阵。
 
@@ -90,3 +90,14 @@ python scripts/package.py
 `desktop.guard_evaluation` 为 GTK 的 `evaluate_js` 和 `run_js` 等待绑定窗口关闭事件。底层 WebKit 调用放在守护线程，因为 GTK 事件循环销毁后可能不再发回完成回调；关闭时释放桥接调用线程。不使用强制退出整个进程的方式。已有桥接请求结束后才关闭数据库。独立解析器轮询取消事件，终止并回收子进程，中断文档保持待处理。
 
 `tests/test_shutdown.py` 覆盖回调结果 / 异常、回调丢失、真实解析子进程取消及重启续处理、请求与数据库关闭顺序。`--gui-close-smoke RESULT_JSON` 在 JavaScript 尚未返回时关闭原生窗口，要求发出关闭请求后 15 秒内正常退出，单独排除 WebKit 启动耗时。Linux 打包与 Ubuntu 22.04 / 24.04 的已安装 DEB 检查均执行此回归，并保留普通 GUI 自检。
+
+
+## 桌面验收与发布测量
+
+先安装 `.[dev]`，执行 `python scripts/acceptance_benchmark.py /tmp/acceptance --documents 1000 --metadata 100000` 在新目录生成混合语料并验证查询，再在桌面会话执行 `python scripts/desktop_acceptance.py /tmp/acceptance --existing-index`。Linux 需要系统 GTK / WebKit 绑定，隔离 venv 可仅在原生桌面测试时设置 `PYTHONPATH=/usr/lib/python3/dist-packages`；CI 使用 Xvfb + Openbox。详见[测量方法与限制](PERFORMANCE.zh-CN.md)。
+
+`desktop.WindowControls` 管理原生按钮、还原尺寸及缩放锚点；桥接动作使用白名单。回归测试确保精确候选过滤不会绕过可访问性检查。普通 GUI 自检点击自绘关闭按钮；关闭竞态自检在脚本执行期间销毁原生窗口。
+
+Linux 无可读写 GPU 设备时，`configure_linux_rendering` 在 WebView 启动前默认设置 `WEBKIT_DISABLE_COMPOSITING_MODE=1`，保留用户显式值。这只是软件渲染回退，不保证所有环境低内存。空闲采样排除关闭阶段并扣除采样线程 CPU；macOS 在独立 CI 环境纳入新建的 WebKit XPC 服务，因其可能归 launchd 所有。
+
+Release 对 `vX.Y.Z` 标签发布正式版，对带后缀标签发布预发行版；所有必需打包与自检任务成功后才公开发布。

@@ -1,0 +1,99 @@
+{
+  "version": "0.1.0",
+  "platform": "Windows-2025Server-10.0.26100-SP0",
+  "python": "3.12.10",
+  "logical_cpus": 4,
+  "memory_bytes": 17174360064,
+  "limitations": [
+    "Generated corpus, not private real-world documents",
+    "No OS cache eviction: reopen measurements are not cold-cache results",
+    "Benchmark-controller and parser RSS; desktop measured separately"
+  ],
+  "corpus": {
+    "count": 1000,
+    "formats": {
+      "pdf": 400,
+      "md": 400,
+      "docx": 200
+    },
+    "file_bytes": 11943449,
+    "docx": "Complete OOXML generated with python-docx; paragraphs and tables",
+    "pdf": "CJK text PDFs, three pages each"
+  },
+  "name_discovery_seconds": 0.2181077999999843,
+  "content_index_seconds": 171.966823,
+  "name_search_during_parsing": {
+    "samples": 312,
+    "median_ms": 45.6499000000008,
+    "p95_ms": 69.91490000001477,
+    "max_ms": 130.62719999999217
+  },
+  "queries": {
+    "topic": {
+      "samples": 25,
+      "median_ms": 134.31650000001127,
+      "p95_ms": 147.8189000000043,
+      "max_ms": 156.7684999999983
+    },
+    "unique": {
+      "samples": 25,
+      "median_ms": 125.10589999999411,
+      "p95_ms": 135.21229999997786,
+      "max_ms": 135.32969999999978
+    },
+    "phrase_and": {
+      "samples": 25,
+      "median_ms": 155.03019999999879,
+      "p95_ms": 158.63059999998086,
+      "max_ms": 159.31710000000976
+    },
+    "absent": {
+      "samples": 25,
+      "median_ms": 0.21509999999125284,
+      "p95_ms": 0.2319999999826905,
+      "max_ms": 0.26170000001002336
+    }
+  },
+  "index_bytes": 22388624,
+  "reopened_first_query_ms": 143.50719999998773,
+  "metadata": {
+    "entries": 100000,
+    "build_seconds": 11.528031399999975,
+    "queries": {
+      "empty": {
+        "samples": 5,
+        "median_ms": 1.0950999999863598,
+        "p95_ms": 1.3291999999864856,
+        "max_ms": 1.3291999999864856
+      },
+      "File": {
+        "samples": 5,
+        "median_ms": 377.642700000024,
+        "p95_ms": 387.9714999999919,
+        "max_ms": 387.9714999999919
+      },
+      "0099999": {
+        "samples": 5,
+        "median_ms": 17.495199999984834,
+        "p95_ms": 19.291100000032202,
+        "max_ms": 19.291100000032202
+      },
+      "f": {
+        "samples": 5,
+        "median_ms": 1.3187000000129956,
+        "p95_ms": 1.512800000000425,
+        "max_ms": 1.512800000000425
+      },
+      "notfound": {
+        "samples": 5,
+        "median_ms": 0.13030000002345332,
+        "p95_ms": 0.2251000000228487,
+        "max_ms": 0.2251000000228487
+      }
+    },
+    "index_bytes": 58549032,
+    "scope": "Synthetic metadata only, no real filesystem permission checks or traversal"
+  },
+  "controller_and_parser_peak_rss_bytes": 208969728,
+  "ok": true
+}

@@ -2,7 +2,7 @@
 
 [简体中文](PRD.zh-CN.md)
 
-Version v0.2, September 17, 2026. This revision supersedes the earlier manual document-folder selection workflow.
+Version v0.3, September 17, 2026. This revision supersedes the earlier manual document-folder selection workflow.
 
 ## 1. Goal
 
@@ -43,7 +43,7 @@ Commit discovered names to SQLite in batches without loading a full-disk invento
 
 Reconcile new, changed and disappeared files periodically. Interrupted or paused traversals must not mark unvisited records as deleted. Withdraw stale extracted text before replacing it. Individual retries preserve bookmarks; exclusions immediately affect queries.
 
-Beta.4 uses ordinary traversal and approximately 30-second reconciliation intervals plus scan duration, without recursive whole-disk watchers. MFT / USN, change journals and larger-library performance improvements remain future work.
+0.1.0 uses ordinary traversal and approximately 30-second reconciliation intervals plus scan duration, without recursive whole-disk watchers. MFT / USN, change journals and larger-library performance improvements remain future work.
 
 ## 6. Document and privacy boundaries
 
@@ -60,11 +60,11 @@ Indexes contain paths and extracted text, without application-level encryption. 
 5. Windows, macOS and Linux builds and native bridge checks pass; public releases include checksums and bilingual documentation.
 6. Verify legacy-index migration and exclusion preservation, and document hidden-file / inaccessible-location behavior.
 
-## 8. Performance acceptance remains open
+## 8. Stable 0.1.0 acceptance scope
 
-Full-disk first-index time, million-entry memory/latency, timely updates and full-GUI memory need separate measurements. The earlier document benchmark's 4-core / 8 GB environment, 40% PDF / 40% Markdown / 20% DOCX mix, at least 100 queries and cross-platform cold/warm tests remain incomplete.
+Retain the current glass interface and publish measured performance and limits. Provide frameless integrated minimize/maximize/restore/close controls, title-region drag/double-click and edge resize, with working shutdown.
 
-The [beta.3 synthetic baseline](PERFORMANCE.en.md) measures a selected document corpus, not beta.4 full-disk performance.
+The mixed 10,000-document corpus, 100-query workload, real local name discovery, million synthetic names and full desktop process measurements are recorded in the [performance report](PERFORMANCE.en.md). Native automated desktop checks cover all three platforms. The original sub-100 MiB full-desktop and universal sub-300 ms targets are unmet and deferred; strict cold caches, a 4-core / 8 GB reference environment, representative complex documents and comprehensive physical-machine manual OS-dialog checks remain open. Release 0.1.0 with these explicit limits, rather than claiming full completion of the original performance requirements.
 
 ## Optional manual updates (beta.5)
 

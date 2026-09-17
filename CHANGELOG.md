@@ -1,5 +1,17 @@
 # Changelog / 更新记录
 
+## 0.1.0 — 2026-09-17
+
+- First stable release with documented scope and measured performance limits.
+- Frameless integrated window controls, drag/double-click and edge resizing; Linux software-rendering fallback.
+- Optimize recent-file queries and literal candidate checks without bypassing permissions.
+- Add mixed-document, million-name and three-platform native desktop acceptance; publish raw aggregate evidence.
+- Retain offline discovery, manual verified update downloads, single-instance and installation/shutdown fixes.
+- 首个正式版，公开支持范围与实测性能限制；原定低内存与全部查询延迟预算未达标，明确延期。
+- 无边框窗口操作融入界面，支持拖动、双击与边缘缩放；Linux 无 GPU 环境自动回退。
+- 优化最近文件与候选核对，保留权限检查；新增混合语料、百万名称及三平台桌面验收与原始汇总。
+- 保留离线自动发现、校验下载更新、单实例、安装与关闭修复。详见 [release notes](docs/RELEASE_NOTES.md)。
+
 ## 0.1.0-beta.9 — 2026-09-17
 
 - Keep one process per index and activate the existing window on repeated launches; OS locks recover after a crash.
