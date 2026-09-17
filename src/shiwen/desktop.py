@@ -1,6 +1,7 @@
 """Keep GTK WebView callbacks from holding the process open after window close."""
 
 import threading
+from sys import platform
 
 
 def guard_evaluation(window, closing):
@@ -38,3 +39,69 @@ def _until_closed(evaluate, closing):
         return result[0] if result else None
 
     return evaluate_until_closed
+
+
+class WindowControls:
+    """A narrow command surface for the app's own frameless window."""
+
+    def __init__(self, window):
+        self.window = window
+        self.maximized = False
+        self.restore_bounds = None
+        window.events.maximized += lambda: self._set_maximized(True)
+        window.events.restored += lambda: self._set_maximized(False)
+
+    def _set_maximized(self, value):
+        self.maximized = value
+
+    def state(self):
+        return {"maximized": self.maximized}
+
+    def action(self, action, width=None, height=None, edge="se"):
+        if action == "minimize":
+            self.window.minimize()
+        elif action == "maximize":
+            target = not self.maximized
+            if target:
+                self.restore_bounds = (
+                    self.window.width,
+                    self.window.height,
+                    self.window.x,
+                    self.window.y,
+                )
+                self.window.maximize()
+            elif platform == "linux":
+                # GTK's pywebview restore only deiconifies; it does not unmaximize.
+                from gi.repository import GLib
+
+                GLib.idle_add(self.window.native.unmaximize)
+            elif platform == "darwin" and self.restore_bounds:
+                # Cocoa's restore also only deminiaturizes.
+                width, height, x, y = self.restore_bounds
+                self.window.resize(width, height)
+                self.window.move(x, y)
+            else:
+                self.window.restore()
+            self.maximized = target
+        elif action == "close":
+            # Return the RPC before the native WebView is destroyed.
+            closer = threading.Timer(0.05, self.window.destroy)
+            closer.daemon = True
+            closer.start()
+        elif action == "resize":
+            if edge not in {"n", "ne", "e", "se", "s", "sw", "w", "nw"}:
+                raise ValueError("invalid_setting")
+            if type(width) is not int or type(height) is not int:
+                raise ValueError("invalid_setting")
+            if not self.maximized:
+                from webview.window import FixPoint
+
+                anchor = (FixPoint.EAST if "w" in edge else FixPoint.WEST) | (
+                    FixPoint.SOUTH if "n" in edge else FixPoint.NORTH
+                )
+                self.window.resize(
+                    max(780, min(width, 16384)), max(580, min(height, 16384)), anchor
+                )
+        elif action != "state":
+            raise ValueError("invalid_setting")
+        return self.state()

@@ -19,7 +19,7 @@ from pathlib import Path
 from platformdirs import user_data_path
 
 from . import __version__
-from .desktop import guard_evaluation
+from .desktop import WindowControls, guard_evaluation
 from .instance import Instance
 from .library import Library
 from .updates import RELEASES, Updater, tls_context
@@ -29,6 +29,7 @@ class Bridge:
     def __init__(self, library: Library):
         self._library = library
         self._window = None
+        self._controls = None
         self._updater = Updater()
         self._closing = threading.Event()
         self._calls = threading.Condition()
@@ -75,7 +76,8 @@ class Bridge:
             "cancel_update": self._updater.cancel,
             "release_page": self._release_page,
             "download_folder": self._download_folder,
-            "status": library.status,
+            "status": self._status,
+            "window": self._window_action,
             "search": library.search,
             "document": library.document,
             "choose_folder": self._choose_folder,
@@ -115,6 +117,16 @@ class Bridge:
             return {"ok": False, "error": code if code in known else "operation_failed"}
         except (OSError, TypeError, sqlite3.Error):
             return {"ok": False, "error": "operation_failed"}
+
+    def _status(self):
+        return self._library.status() | {
+            "window": self._controls.state() if self._controls else None
+        }
+
+    def _window_action(self, **args):
+        if self._controls is None:
+            raise ValueError("desktop_only")
+        return self._controls.action(**args)
 
     def _release_page(self):
         webbrowser.open(RELEASES)
@@ -334,8 +346,12 @@ def run_application(args, instance):
                 background_color="#f5f7fa",
                 text_select=True,
                 hidden=bool(gui_result),
+                frameless=True,
+                easy_drag=False,
+                resizable=True,
             )
             bridge._window = window
+            bridge._controls = WindowControls(window)
 
             activated_event = threading.Event()
 
@@ -393,7 +409,7 @@ def run_application(args, instance):
                         time.sleep(0.2)
                         result["close_requested_at"] = time.monotonic()
                         gui_result.write_text(json.dumps(result), encoding="utf-8")
-                    window.destroy()
+                    window.evaluate_js("document.getElementById('window-close').click()")
 
             webview.start(
                 func=smoke,

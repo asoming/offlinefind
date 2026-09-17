@@ -1183,3 +1183,126 @@ input[type="checkbox"] {
   cursor: pointer;
   color: var(--muted);
 }
+
+/* Window chrome shares the search header, without an extra title bar. */
+.heading-drag {
+  flex: 1;
+  align-self: stretch;
+  display: flex;
+  align-items: center;
+  min-width: 0;
+}
+.pywebview-drag-region {
+  user-select: none;
+  -webkit-user-select: none;
+  cursor: default;
+}
+.heading-drag h1 {
+  pointer-events: none;
+}
+.window-controls {
+  display: flex;
+  align-items: center;
+  gap: 3px;
+  flex-shrink: 0;
+  margin-right: -14px;
+  margin-left: 5px;
+}
+.window-controls button {
+  width: 34px;
+  height: 32px;
+  display: grid;
+  place-items: center;
+  border-radius: 9px;
+  color: var(--muted);
+}
+.window-controls .icon {
+  width: 15px;
+  height: 15px;
+  stroke-width: 1.5;
+}
+.window-controls button:hover {
+  color: var(--ink);
+  background: color-mix(in srgb, var(--paper) 78%, transparent);
+  box-shadow: inset 0 0 0 1px var(--line);
+}
+.window-controls #window-close:hover {
+  color: #fff;
+  background: #c65363;
+  box-shadow: none;
+}
+.window-controls button:active {
+  transform: translateY(1px);
+}
+.resize-edges i {
+  position: fixed;
+  z-index: 20;
+  touch-action: none;
+}
+.resize-edges [data-edge="n"],
+.resize-edges [data-edge="s"] {
+  height: 5px;
+  left: 10px;
+  right: 10px;
+  cursor: ns-resize;
+}
+.resize-edges [data-edge="n"] {
+  top: 0;
+}
+.resize-edges [data-edge="s"] {
+  bottom: 0;
+}
+.resize-edges [data-edge="e"],
+.resize-edges [data-edge="w"] {
+  width: 5px;
+  top: 10px;
+  bottom: 10px;
+  cursor: ew-resize;
+}
+.resize-edges [data-edge="e"] {
+  right: 0;
+}
+.resize-edges [data-edge="w"] {
+  left: 0;
+}
+.resize-edges [data-edge="ne"],
+.resize-edges [data-edge="se"],
+.resize-edges [data-edge="sw"],
+.resize-edges [data-edge="nw"] {
+  width: 10px;
+  height: 10px;
+}
+.resize-edges [data-edge="ne"] {
+  top: 0;
+  right: 0;
+  cursor: nesw-resize;
+}
+.resize-edges [data-edge="nw"] {
+  top: 0;
+  left: 0;
+  cursor: nwse-resize;
+}
+.resize-edges [data-edge="se"] {
+  bottom: 0;
+  right: 0;
+  cursor: nwse-resize;
+}
+.resize-edges [data-edge="sw"] {
+  bottom: 0;
+  left: 0;
+  cursor: nesw-resize;
+}
+body.window-maximized .resize-edges {
+  display: none;
+}
+@media (max-width: 1050px) {
+  .page-heading {
+    gap: 10px;
+  }
+  .page-heading .private-badge {
+    display: none;
+  }
+  .page-heading h1 {
+    font-size: 19px;
+  }
+}

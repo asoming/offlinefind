@@ -15,7 +15,7 @@
   <body>
     <div class="app">
       <aside class="sidebar">
-        <div class="brand">
+        <div class="brand pywebview-drag-region">
           <span class="brand-icon" data-icon="book"></span>
           <div><strong>拾文</strong><small>SHIWEN</small></div>
           <span class="beta">BETA</span>
@@ -56,10 +56,27 @@
       <main>
         <header class="search-area">
           <div class="page-heading">
-            <h1 data-i18n="tagline"></h1>
+            <div class="heading-drag pywebview-drag-region">
+              <h1 data-i18n="tagline"></h1>
+            </div>
             <span class="private-badge"
               ><span data-icon="shield"></span><span data-i18n="offline"></span
             ></span>
+            <div class="window-controls" id="window-controls" hidden>
+              <button id="window-minimize" data-title="minimizeWindow">
+                <span data-icon="minimize"></span>
+              </button>
+              <button
+                id="window-maximize"
+                data-title="maximizeWindow"
+                aria-pressed="false"
+              >
+                <span data-icon="maximize"></span>
+              </button>
+              <button id="window-close" data-title="closeWindow">
+                <span data-icon="x"></span>
+              </button>
+            </div>
           </div>
           <form id="search-form" class="search-box">
             <span data-icon="search"></span
@@ -211,6 +228,11 @@
           ><span id="footer-note" data-i18n="noAccount"></span>
         </footer>
       </main>
+    </div>
+    <div class="resize-edges" id="resize-edges" hidden aria-hidden="true">
+      <i data-edge="n"></i><i data-edge="ne"></i><i data-edge="e"></i
+      ><i data-edge="se"></i> <i data-edge="s"></i><i data-edge="sw"></i
+      ><i data-edge="w"></i><i data-edge="nw"></i>
     </div>
     <div id="toast" role="status" hidden></div>
     <dialog id="settings-dialog">

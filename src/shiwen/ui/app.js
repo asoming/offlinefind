@@ -27,6 +27,10 @@
   };
   const words = {
     zh: {
+      minimizeWindow: "最小化",
+      maximizeWindow: "最大化",
+      restoreWindow: "还原窗口",
+      closeWindow: "关闭应用",
       updates: "软件更新",
       checkUpdates: "检查更新",
       updateIdle: "点击检查公开发布的新版本。",
@@ -195,6 +199,10 @@
       partialList: "仅显示前 50 条，可继续加载",
     },
     en: {
+      minimizeWindow: "Minimize",
+      maximizeWindow: "Maximize",
+      restoreWindow: "Restore window",
+      closeWindow: "Close app",
       updates: "Software updates",
       checkUpdates: "Check for updates",
       updateIdle: "Check for a new public release when you are ready.",
@@ -385,6 +393,9 @@
     return text;
   }
   const paths = {
+    minimize: "M5 12h14",
+    maximize: "M5 5h14v14H5z",
+    restore: "M8 5V3h13v13h-2M3 8h13v13H3z",
     book: "M12 5v15M3 4h4c2 0 4 1 5 2 1-1 3-2 5-2h4v15h-4c-2 0-4 1-5 2-1-1-3-2-5-2H3z",
     files: "M8 3h8l4 4v13H8zM16 3v5h4M4 7v14",
     bookmark: "M6 3h12v18l-6-4-6 4z",
@@ -502,6 +513,7 @@
       $(name).value = settings[name];
     $("glass").checked = settings.glass;
     drawUpdate();
+    if (state.status?.window) drawWindow(state.status.window);
   }
   function drawUpdate() {
     const update = state.update;
@@ -1167,10 +1179,83 @@
   });
   $("version").textContent = window.SHIWEN_BOOT.version;
   if (/Mac/.test(navigator.platform)) $("search-key").textContent = "⌘ K";
+  function drawWindow(info) {
+    document.body.classList.toggle("window-maximized", info.maximized);
+    const button = $("window-maximize");
+    button.dataset.title = info.maximized ? "restoreWindow" : "maximizeWindow";
+    button.title = t(button.dataset.title);
+    button.setAttribute("aria-label", button.title);
+    button.setAttribute("aria-pressed", String(info.maximized));
+    button.replaceChildren(icon(info.maximized ? "restore" : "maximize"));
+  }
+  async function windowAction(action, args = {}) {
+    drawWindow(await api("window", { action, ...args }));
+  }
+  for (const action of ["minimize", "maximize", "close"])
+    $("window-" + action).onclick = () => run(() => windowAction(action));
+  document.querySelectorAll(".pywebview-drag-region").forEach((region) => {
+    region.addEventListener("dblclick", () => {
+      if (window.pywebview?.api) run(() => windowAction("maximize"));
+    });
+  });
+  document.querySelectorAll("[data-edge]").forEach((handle) => {
+    let drag = null,
+      next = null,
+      sending = false;
+    async function flush() {
+      if (sending) return;
+      sending = true;
+      try {
+        while (next) {
+          const size = next;
+          next = null;
+          await windowAction("resize", size);
+        }
+      } finally {
+        sending = false;
+      }
+    }
+    handle.onpointerdown = (event) => {
+      if (event.button !== 0) return;
+      handle.setPointerCapture(event.pointerId);
+      drag = {
+        x: event.screenX,
+        y: event.screenY,
+        width: innerWidth,
+        height: innerHeight,
+      };
+      event.preventDefault();
+    };
+    handle.onpointermove = (event) => {
+      if (!drag) return;
+      const edge = handle.dataset.edge;
+      const dx = event.screenX - drag.x,
+        dy = event.screenY - drag.y;
+      next = {
+        edge,
+        width: Math.round(
+          drag.width + (edge.includes("w") ? -dx : edge.includes("e") ? dx : 0),
+        ),
+        height: Math.round(
+          drag.height +
+            (edge.includes("n") ? -dy : edge.includes("s") ? dy : 0),
+        ),
+      };
+      run(flush);
+    };
+    handle.onpointerup =
+      handle.onpointercancel =
+      handle.onlostpointercapture =
+        () => {
+          drag = null;
+        };
+  });
   let started = false;
   async function start() {
     if (started) return;
     started = true;
+    $("window-controls").hidden = !window.pywebview?.api;
+    $("resize-edges").hidden = !window.pywebview?.api;
     try {
       await refreshStatus();
       await search();
