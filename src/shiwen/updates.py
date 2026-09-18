@@ -19,10 +19,11 @@ from platformdirs import user_downloads_path
 
 from . import __version__
 
-REPOSITORY = "https://github.com/asoming/shiwen"
+REPOSITORY = "https://github.com/asoming/offlinefind"
+LEGACY_REPOSITORY = "https://github.com/asoming/shiwen"
 RELEASES = REPOSITORY + "/releases"
-API = "https://api.github.com/repos/asoming/shiwen/releases?per_page=100"
-MANIFEST = "https://raw.githubusercontent.com/asoming/shiwen/main/updates/latest.json"
+API = "https://api.github.com/repos/asoming/offlinefind/releases?per_page=100"
+MANIFEST = "https://raw.githubusercontent.com/asoming/offlinefind/main/updates/latest.json"
 MAX_PACKAGE = 512 * 1024 * 1024
 
 
@@ -69,7 +70,7 @@ def tls_context():
 def open_url(url):
     if not allowed_url(url):
         raise ValueError("update_invalid")
-    request = Request(url, headers={"User-Agent": f"Shiwen/{__version__}", "Accept": "*/*"})
+    request = Request(url, headers={"User-Agent": f"OfflineFind/{__version__}", "Accept": "*/*"})
     return build_opener(GitHubRedirects(), HTTPSHandler(context=tls_context())).open(
         request, timeout=15
     )
@@ -100,18 +101,24 @@ def release_info(releases, current, system, machine):
     by_name = {a["name"]: a for a in release.get("assets", []) if a.get("state") == "uploaded"}
     choices = []
     for suffix in suffixes.get((system, arch), []):
-        name = f"Shiwen-{package}-{suffix}"
+        name = f"OfflineFind-{package}-{suffix}"
+        if name not in by_name:
+            name = f"Shiwen-{package}-{suffix}"
         asset = by_name.get(name)
         if not asset or not 0 < asset.get("size", 0) <= MAX_PACKAGE:
             continue
         url = f"{REPOSITORY}/releases/download/{release['tag_name']}/{name}"
-        if asset.get("browser_download_url") != url:
+        legacy_url = f"{LEGACY_REPOSITORY}/releases/download/{release['tag_name']}/{name}"
+        if asset.get("browser_download_url") not in {url, legacy_url}:
             continue
         digest = asset.get("digest") or ""
         checksum = by_name.get(name + ".sha256")
         if re.fullmatch(r"sha256:[0-9a-fA-F]{64}", digest):
             checksum_url = None
-        elif checksum and checksum.get("browser_download_url") == url + ".sha256":
+        elif checksum and checksum.get("browser_download_url") in {
+            url + ".sha256",
+            legacy_url + ".sha256",
+        }:
             checksum_url = url + ".sha256"
             digest = ""
         else:
@@ -213,7 +220,7 @@ class Updater:
             expected = match[1].lower()
         base = Path(self.downloads) if self.downloads else user_downloads_path()
         base.mkdir(parents=True, exist_ok=True)
-        destination = Path(tempfile.mkdtemp(prefix="Shiwen-", dir=base))
+        destination = Path(tempfile.mkdtemp(prefix="OfflineFind-", dir=base))
         partial = destination / (asset["name"] + ".part")
         target = destination / asset["name"]
         self._set(total=asset["size"])

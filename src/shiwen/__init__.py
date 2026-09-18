@@ -1,3 +1,3 @@
-"""Shiwen: local documents, searchable words."""
+"""OfflineFind: offline file and full-text search."""
 
-__version__ = "0.1.0"
+__version__ = "0.1.1"

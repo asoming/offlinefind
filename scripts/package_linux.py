@@ -1,6 +1,5 @@
 """Build small Linux packages using the system Python and GTK/WebKit runtime."""
 
-import hashlib
 import json
 import os
 import shutil
@@ -10,6 +9,8 @@ import tarfile
 import tempfile
 import time
 from pathlib import Path
+
+from release_assets import finish_archive
 
 from shiwen import __version__
 
@@ -26,7 +27,7 @@ def main():
     output.mkdir(exist_ok=True)
     staging = ROOT / "build" / "linux"
     shutil.rmtree(staging, ignore_errors=True)
-    bundle = staging / "Shiwen"
+    bundle = staging / "OfflineFind"
     bundle.mkdir(parents=True)
     vendor = bundle / "vendor"
     subprocess.run(
@@ -51,12 +52,13 @@ def main():
     for name in ["shiwen", "launch.py", "shiwen.svg", "install-user", "install.py"]:
         shutil.copy2(ROOT / "packaging" / "linux" / name, bundle / name)
     (bundle / "shiwen").chmod(0o755)
+    shutil.copy2(bundle / "shiwen", bundle / "offlinefind")
     (bundle / "install-user").chmod(0o755)
     for name in ["LICENSE", "THIRD_PARTY_NOTICES.md", "README.md", "README.zh-CN.md"]:
         shutil.copy2(ROOT / name, bundle / name)
     shutil.copytree(ROOT / "docs", bundle / "docs")
     shutil.copy2(ROOT / "packaging" / "linux" / "README.txt", bundle / "START-HERE.txt")
-    executable = bundle / "shiwen"
+    executable = bundle / "offlinefind"
     environment = {**os.environ, "PYTHONDONTWRITEBYTECODE": "1"}
     for flag, filename in [
         ("--self-test", "linux-core.json"),
@@ -85,7 +87,7 @@ def main():
             timeout=30,
             env=environment,
         )
-        entry = prefix / "bin/shiwen-app"
+        entry = prefix / "bin/offlinefind"
         installed_version = subprocess.check_output([str(entry), "--version"], text=True).strip()
         if installed_version != __version__:
             raise RuntimeError("Installed entry point selected the wrong version")
@@ -98,15 +100,16 @@ def main():
     # Smoke tests may generate bytecode. Exclude it from the distributed source modules.
     for cache in vendor.rglob("__pycache__"):
         shutil.rmtree(cache)
-    portable = output / f"Shiwen-{__version__}-linux-x64.tar.gz"
+    portable = output / f"OfflineFind-{__version__}-linux-x64.tar.gz"
     with tarfile.open(portable, "w:gz") as archive:
-        archive.add(bundle, arcname="Shiwen")
+        archive.add(bundle, arcname="OfflineFind")
 
     deb_root = staging / "deb"
     shutil.copytree(bundle, deb_root / "opt" / "shiwen")
     binaries = deb_root / "usr" / "bin"
     binaries.mkdir(parents=True)
     (binaries / "shiwen").symlink_to("/opt/shiwen/shiwen")
+    (binaries / "offlinefind").symlink_to("/opt/shiwen/offlinefind")
     applications = deb_root / "usr" / "share" / "applications"
     applications.mkdir(parents=True)
     shutil.copy2(ROOT / "packaging" / "linux" / "shiwen.desktop", applications)
@@ -124,19 +127,18 @@ def main():
         "Section: utils\nPriority: optional\n"
         "Depends: python3 (>= 3.10), python3-gi, python3-gi-cairo, gir1.2-gtk-3.0, "
         "gir1.2-webkit2-4.1 | gir1.2-webkit2-4.0, xdg-utils\n"
-        f"Installed-Size: {size}\nHomepage: https://github.com/asoming/shiwen\n"
+        f"Installed-Size: {size}\nHomepage: https://github.com/asoming/offlinefind\n"
         "Description: Offline full-text document search\n"
         " Search PDF, Markdown and DOCX locally with a bilingual desktop interface.\n"
         " Document contents and indexes stay on your computer.\n",
         encoding="utf-8",
     )
-    deb = output / f"Shiwen-{__version__}-linux-amd64.deb"
+    deb = output / f"OfflineFind-{__version__}-linux-amd64.deb"
     subprocess.run(
         ["dpkg-deb", "--root-owner-group", "--build", str(deb_root), str(deb)], check=True
     )
     for archive in [portable, deb]:
-        digest = hashlib.sha256(archive.read_bytes()).hexdigest()
-        Path(f"{archive}.sha256").write_text(f"{digest}  {archive.name}\n", encoding="utf-8")
+        finish_archive(archive)
         print(f"Built and smoke-tested {archive.name} ({archive.stat().st_size:,} bytes)")
 
 

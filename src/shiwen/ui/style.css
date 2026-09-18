@@ -118,6 +118,7 @@ p {
   margin-bottom: 12px;
 }
 .brand-icon {
+  flex-shrink: 0;
   width: 39px;
   height: 42px;
   border-radius: 12px;
@@ -144,7 +145,20 @@ p {
 .brand small {
   color: var(--muted);
   font-size: 9px;
-  letter-spacing: 2.5px;
+  letter-spacing: 1.2px;
+}
+html[lang="en"] .brand {
+  padding: 0;
+  gap: 8px;
+}
+html[lang="en"] .brand strong {
+  font-family: inherit;
+  font-size: 18px;
+  letter-spacing: -0.4px;
+}
+html[lang="en"] .brand small {
+  font-size: 8px;
+  letter-spacing: 0.6px;
 }
 .beta {
   align-self: flex-start;

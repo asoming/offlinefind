@@ -1,12 +1,14 @@
-# 拾文 · Shiwen
+# 拾文 · OfflineFind
+
+**离线文件名与全文检索，支持 PDF、Markdown、DOCX。**
 
 **记得内容，就找得到。**
 
-[English](README.md) · [下载 Releases](https://github.com/asoming/shiwen/releases) · [使用说明](docs/USER_GUIDE.zh-CN.md) · [开发说明](docs/DEVELOPMENT.zh-CN.md)
+[English](README.md) · [下载 Releases](https://github.com/asoming/offlinefind/releases) · [使用说明](docs/USER_GUIDE.zh-CN.md) · [开发说明](docs/DEVELOPMENT.zh-CN.md)
 
 拾文是一款自动扫描本机的离线文件检索工具。打开即可搜索，无需选择文件夹：图片、压缩包、代码和文件夹都可按名称找到，PDF、Markdown、DOCX 还支持正文检索和命中预览。界面保留轻磨砂玻璃效果。
 
-**当前正式版：v0.1.0。** 支持自动发现本机文件与离线搜索，使用范围和性能边界已公开。请先阅读[版本说明与限制](docs/RELEASE_NOTES.md)。
+**当前正式版：v0.1.1。** 支持自动发现本机文件与离线搜索，使用范围和性能边界已公开。请先阅读[版本说明与限制](docs/RELEASE_NOTES.md)。
 
 ## 已实现
 
@@ -26,12 +28,12 @@
 
 ## 下载与安装
 
-前往 [GitHub Releases](https://github.com/asoming/shiwen/releases)，下载 Windows x64 ZIP、macOS Apple Silicon ZIP，或 Linux x64 DEB / tar.gz。压缩包需**完整解压**后运行。Windows/macOS 包含 Python；Linux 复用系统运行时。
+前往 [GitHub Releases](https://github.com/asoming/offlinefind/releases)，下载 Windows x64 ZIP、macOS Apple Silicon ZIP，或 Linux x64 DEB / tar.gz。压缩包需**完整解压**后运行。Windows/macOS 包含 Python；Linux 复用系统运行时。
 
 - **Windows 11 x64：** 使用 Edge WebView2，需要电脑已安装该运行时；应用不会偷偷联网下载。大部分 Windows 11 环境已提供，隔离网络机器需提前准备。
 - **macOS 14+ Apple Silicon：** 使用系统 WebKit。应用没有开发者证书签名和公证，首次启动可能需要在“系统设置 → 隐私与安全性”中批准。
 - 安装包没有可信发布者签名（macOS 打包可能带临时签名），可核对 Release 中的 SHA-256。无需关闭系统整体安全功能。
-- **Ubuntu 22.04 / 24.04 x64：** 用系统软件安装器打开 `.deb`，或执行 `sudo apt install ./Shiwen-*-linux-amd64.deb`，然后在应用菜单搜索“拾文”。免安装压缩包解压后执行 `./Shiwen/shiwen`。两者复用系统 Python 3.10+、GTK 3 与 WebKit，已带齐 Python 模块，无需手动配置 pip。详见 [Linux 安装说明](docs/USER_GUIDE.zh-CN.md#linux-安装)。
+- **Ubuntu 22.04 / 24.04 x64：** 用系统软件安装器打开 `.deb`，或执行 `sudo apt install ./OfflineFind-*-linux-amd64.deb`，然后在应用菜单搜索“拾文”。免安装压缩包解压后执行 `./OfflineFind/offlinefind`。两者复用系统 Python 3.10+、GTK 3 与 WebKit，已带齐 Python 模块，无需手动配置 pip。详见 [Linux 安装说明](docs/USER_GUIDE.zh-CN.md#linux-安装)。
 
 ## 第一次搜索
 
@@ -57,19 +59,19 @@
 需要 Python 3.10+，Windows/macOS Release 使用 Python 3.12 构建；Linux 使用系统 Python 3.10+。
 
 ```bash
-git clone https://github.com/asoming/shiwen.git
-cd shiwen
+git clone https://github.com/asoming/offlinefind.git
+cd offlinefind
 python -m venv .venv
 # Windows: .venv\Scripts\activate
 source .venv/bin/activate
 python -m pip install -e '.[dev]'
-shiwen
+offlinefind
 ```
 
 开发预览：
 
 ```bash
-shiwen --serve --port 8765 --folder /你的/本地文档目录
+offlinefind --serve --port 8765 --folder /你的/本地文档目录
 ```
 
 浏览器模式只监听本机回环地址，带每次启动生成的请求令牌，不是云端服务。`--folder` 仅用于开发时限制测试范围；正常启动不需要此参数。系统应用打开功能以桌面版为准。索引与搜索可离线；手动检查更新和下载时连接 GitHub，不发送本机文档、路径或索引；源码安装依赖需联网或事先准备包缓存。
@@ -80,3 +82,7 @@ shiwen --serve --port 8765 --folder /你的/本地文档目录
 
 MIT © 2026 asoming。参见 [LICENSE](LICENSE) 与[第三方依赖说明](THIRD_PARTY_NOTICES.md)。
 
+
+## 英文名与升级兼容
+
+英文产品名改为 **OfflineFind**，强调离线查找；中文仍为“拾文”，仓库为 `asoming/offlinefind`。升级保留索引、收藏与排除规则。Python 模块、DEB 包标识、应用身份与旧数据目录保留兼容，新主命令为 `offlinefind`。请下载 `OfflineFind-*` 安装包；Release 中的 `Shiwen-*` 为供旧更新器使用的相同内容兼容副本。

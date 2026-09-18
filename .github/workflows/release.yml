@@ -32,6 +32,8 @@ jobs:
         with:
           name: shiwen-${{ matrix.label }}
           path: |
+            dist/OfflineFind-*.zip
+            dist/OfflineFind-*.sha256
             dist/Shiwen-*.zip
             dist/Shiwen-*.sha256
           if-no-files-found: error
@@ -53,7 +55,7 @@ jobs:
       - run: xvfb-run -a .venv/bin/python scripts/package.py
       - name: Test installed Debian package
         run: |
-          sudo apt-get install -y ./dist/Shiwen-*-linux-amd64.deb
+          sudo apt-get install -y ./dist/OfflineFind-*-linux-amd64.deb
           shiwen --self-test /tmp/shiwen-deb-core.json
           timeout 90s xvfb-run -a shiwen --gui-smoke /tmp/shiwen-deb-gui.json --data-dir /tmp/shiwen-deb-data
           timeout 90s xvfb-run -a shiwen --gui-close-smoke /tmp/shiwen-deb-close.json --data-dir /tmp/shiwen-deb-data
@@ -63,6 +65,9 @@ jobs:
         with:
           name: shiwen-linux-x64
           path: |
+            dist/OfflineFind-*.deb
+            dist/OfflineFind-*.tar.gz
+            dist/OfflineFind-*.sha256
             dist/Shiwen-*.deb
             dist/Shiwen-*.tar.gz
             dist/Shiwen-*.sha256
@@ -78,7 +83,7 @@ jobs:
       - name: Install package on Ubuntu 24.04
         run: |
           sudo apt-get update
-          sudo apt-get install -y ./Shiwen-*-linux-amd64.deb xvfb
+          sudo apt-get install -y ./OfflineFind-*-linux-amd64.deb xvfb
       - name: Check core and native desktop bridge
         run: |
           shiwen --self-test /tmp/shiwen-core.json
@@ -128,14 +133,14 @@ jobs:
               release_kind=--prerelease
             fi
             gh release create "$RELEASE_TAG" release-assets/* \
-              --verify-tag "$release_kind" --title "Shiwen $RELEASE_TAG" \
+              --verify-tag "$release_kind" --title "OfflineFind $RELEASE_TAG" \
               --notes-file docs/RELEASE_NOTES.md
           fi
       - name: Publish the update feed after packages are available
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
-          gh api 'repos/asoming/shiwen/releases?per_page=100' > /tmp/shiwen-releases.json
+          gh api 'repos/asoming/offlinefind/releases?per_page=100' > /tmp/shiwen-releases.json
           python scripts/release_feed.py /tmp/shiwen-releases.json /tmp/shiwen-update-feed.json
           git fetch origin main
           git checkout -B update-feed origin/main

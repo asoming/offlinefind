@@ -27,6 +27,8 @@
   };
   const words = {
     zh: {
+      brandName: "拾文",
+      brandCaption: "OFFLINEFIND",
       minimizeWindow: "最小化",
       maximizeWindow: "最大化",
       restoreWindow: "还原窗口",
@@ -199,6 +201,8 @@
       partialList: "仅显示前 50 条，可继续加载",
     },
     en: {
+      brandName: "OfflineFind",
+      brandCaption: "FILE & TEXT SEARCH",
       minimizeWindow: "Minimize",
       maximizeWindow: "Maximize",
       restoreWindow: "Restore window",
@@ -353,7 +357,7 @@
       retrying: "Recheck scheduled",
       noFolders: "Discovering disks automatically",
       connectionError:
-        "Cannot connect to the local search service. Please restart Shiwen.",
+        "Cannot connect to the local search service. Please restart OfflineFind.",
       unavailable: "File or folder is unavailable",
       partial: "Some pages have no extractable text",
       no_text: "No text extracted; OCR may be needed",
@@ -374,7 +378,7 @@
       unclosed_quote: "Close the quotation marks around your phrase",
       invalid_folder: "Folder is invalid or unavailable",
       folder_too_broad:
-        "Choose a document folder, not an entire drive or a parent of Shiwen’s data directory",
+        "Choose a document folder, not an entire drive or a parent of OfflineFind’s data directory",
       invalid_exclusion: "Enter a valid subfolder within this scope",
       invalid_setting: "Invalid setting",
       operation_failed:
@@ -482,6 +486,7 @@
       .catch((error) => toast(t(error.message)));
   }
   function translate() {
+    document.title = `${t("brandName")} · Offline file & full-text search`;
     $("search-caption").textContent = t(
       { all: "modeAll", name: "modeName", content: "modeContent" }[state.mode],
     );

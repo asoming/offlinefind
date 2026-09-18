@@ -7,11 +7,11 @@
 支持 Ubuntu 22.04 / 24.04 x64 桌面。下载 `.deb` 后用系统软件安装器打开，或执行：
 
 ```bash
-sudo apt install ./Shiwen-*-linux-amd64.deb
-shiwen
+sudo apt install ./OfflineFind-*-linux-amd64.deb
+offlinefind
 ```
 
-安装后可在应用菜单找到“拾文”。免安装版解压 tar.gz，进入 Shiwen 文件夹运行 `./shiwen`。它依赖系统 Python 3.10+、GTK 3 与 WebKit；若缺少依赖，先执行：
+安装后可在应用菜单找到“拾文”。免安装版解压 tar.gz，进入 OfflineFind 文件夹运行 `./offlinefind`。它依赖系统 Python 3.10+、GTK 3 与 WebKit；若缺少依赖，先执行：
 
 ```bash
 sudo apt install python3 python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.1 xdg-utils
@@ -21,7 +21,7 @@ Ubuntu 22.04 已有 `gir1.2-webkit2-4.0` 时也可以使用。Python 应用依�
 
 ## 免管理员安装与重复启动
 
-Linux 压缩包解压后，进入 `Shiwen` 目录运行 `./install-user`。安装位置为 `~/.local/share/shiwen/<版本>`，自动创建 `~/.local/bin/shiwen-app` 和应用菜单入口，并原子更新 `current` 链接。以后从下载的新版目录再次执行即可升级。应用安装无需管理员权限，但仍需系统运行时依赖。DEB 用户请继续使用系统包管理器升级。
+Linux 压缩包解压后，进入 `OfflineFind` 目录运行 `./install-user`。安装位置为 `~/.local/share/shiwen/<版本>`，自动创建 `~/.local/bin/offlinefind` 并保留 `shiwen-app` 别名 和应用菜单入口，并原子更新 `current` 链接。以后从下载的新版目录再次执行即可升级。应用安装无需管理员权限，但仍需系统运行时依赖。DEB 用户请继续使用系统包管理器升级。
 
 安装目录下旧版本的绝对启动路径会跟随当前版本，启动脚本备份为 `launch.py.before-upgrade`。默认索引 `~/.local/share/Shiwen` 保留。安装前退出旧应用：beta.9 以前的版本没有单实例协议，安装器不会强制停止运行中的进程。
 
@@ -73,7 +73,7 @@ Windows 自动发现盘符式固定磁盘；Linux / macOS 从本地目录树扫�
 
 打开 **设置 → 软件更新 → 检查更新**，查看新版本和说明。选择安装包（Linux 可选 DEB 与免安装 tar.gz），点击 **下载安装包**。支持查看下载进度和取消；下载完成前会核对大小与 SHA-256，不完整或校验失败的包会删除。
 
-完成后点击 **打开下载文件夹**。安装包保存在系统下载目录中新建的 `Shiwen-…` 子目录，不覆盖之前的下载。退出拾文后安装 DEB，或解压替换应用；保留原数据目录即可保留索引和设置。当前版本负责下载，不自动安装或重启。
+完成后点击 **打开下载文件夹**。安装包保存在系统下载目录中新建的 `OfflineFind-…` 子目录，不覆盖之前的下载。退出拾文后安装 DEB，或解压替换应用；保留原数据目录即可保留索引和设置。当前版本负责下载，不自动安装或重启。
 
 仅手动更新操作连接 GitHub；启动、索引、搜索和打开设置均不会自动检查网络。文档、文件路径和索引内容不会上传。测试版可检查后续测试版或正式版；正式版忽略预发布版本；不会提供降级包。网络失败时可重试，或点击 **查看发布页** 使用浏览器下载。
 
@@ -97,3 +97,10 @@ Windows 自动发现盘符式固定磁盘；Linux / macOS 从本地目录树扫�
 系统标题栏已隐藏，右上角的三个按钮用于最小化、最大化 / 还原和关闭。拖动标题或品牌区域移动窗口；双击该区域最大化 / 还原。拖动窗口边缘或四角调整大小，最小尺寸为 780 × 580。关闭会退出应用，不是缩到托盘。开发用浏览器模式不能控制原生窗口。
 
 完整桌面可能占用数百 MiB 内存，大量匹配查询可能耗时数秒，详见[实测性能](PERFORMANCE.zh-CN.md)。升级后请退出仍运行的旧窗口，再从应用菜单重开；安装新版不会替换正在运行的旧进程。
+
+
+## 0.1.1 英文名变更
+
+英文名为 OfflineFind，中文仍叫“拾文”。下载 `OfflineFind-*` 包，压缩包内目录为 `OfflineFind`；Windows 运行 `OfflineFind.exe`，macOS 运行 `OfflineFind.app`，Linux 运行 `./offlinefind`。Linux 用户安装器创建 `~/.local/bin/offlinefind`，保留 `shiwen-app` 与旧启动路径。含 `Shiwen` 的旧数据目录及 DEB 包标识 `shiwen` 保持不变。Python 分发包名为 `offlinefind`，内部导入模块仍为 `shiwen`。
+
+旧版手动更新器仍可找到改名后的版本；`Shiwen-*` 是相同内容的兼容副本，并非另一个应用。历史版本保留当时的名称。

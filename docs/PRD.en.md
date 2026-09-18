@@ -1,4 +1,4 @@
-# Shiwen · Product requirements
+# OfflineFind · Product requirements
 
 [简体中文](PRD.zh-CN.md)
 

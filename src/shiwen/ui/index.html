@@ -7,7 +7,7 @@
       http-equiv="Content-Security-Policy"
       content="default-src 'none'; script-src 'unsafe-inline' 'unsafe-eval'; style-src 'unsafe-inline'; img-src data:; connect-src 'self'; object-src 'none'; base-uri 'none'; form-action 'none'"
     />
-    <title>拾文 · Shiwen</title>
+    <title>拾文 · OfflineFind</title>
     <style>
       /*__STYLE__*/
     </style>
@@ -17,7 +17,10 @@
       <aside class="sidebar">
         <div class="brand pywebview-drag-region">
           <span class="brand-icon" data-icon="book"></span>
-          <div><strong>拾文</strong><small>SHIWEN</small></div>
+          <div>
+            <strong data-i18n="brandName">拾文</strong
+            ><small data-i18n="brandCaption">OFFLINEFIND</small>
+          </div>
         </div>
         <nav class="navigation" aria-label="Navigation">
           <button data-view="all" class="nav-item active">
@@ -201,7 +204,7 @@
                 <div id="paper-location" class="paper-location"></div>
                 <div id="paper-text" class="paper-text"></div>
                 <div class="paper-footer">
-                  <span>SHIWEN / LOCAL DOCUMENT</span
+                  <span>OFFLINEFIND / LOCAL DOCUMENT</span
                   ><span id="paper-number"></span>
                 </div>
               </article>
@@ -328,7 +331,7 @@
             <pre id="update-notes"></pre>
           </details>
         </section>
-        <p class="version">Shiwen · <span id="version"></span> · MIT</p>
+        <p class="version">OfflineFind · <span id="version"></span> · MIT</p>
       </div>
     </dialog>
     <dialog id="folders-dialog">

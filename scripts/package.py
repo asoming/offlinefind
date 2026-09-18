@@ -1,6 +1,5 @@
 """Build and smoke-test a native release on the host OS."""
 
-import hashlib
 import importlib.metadata
 import json
 import os
@@ -9,6 +8,8 @@ import shutil
 import subprocess
 import sys
 from pathlib import Path
+
+from release_assets import finish_archive
 
 from shiwen import __version__
 
@@ -33,7 +34,7 @@ def collect_notices() -> Path:
         json.dumps(dependencies, indent=2), encoding="utf-8"
     )
     shutil.copy2(ROOT / "THIRD_PARTY_NOTICES.md", destination)
-    shutil.copy2(ROOT / "LICENSE", destination / "SHIWEN-LICENSE")
+    shutil.copy2(ROOT / "LICENSE", destination / "OFFLINEFIND-LICENSE")
     for candidate in [Path(sys.base_prefix) / "LICENSE.txt", Path(sys.base_prefix) / "LICENSE"]:
         if candidate.is_file():
             shutil.copy2(candidate, destination / "PYTHON-LICENSE")
@@ -56,7 +57,7 @@ def main():
         "--clean",
         "--onedir",
         "--name",
-        "Shiwen",
+        "OfflineFind",
         "--paths",
         "src",
         "--add-data",
@@ -80,12 +81,12 @@ def main():
         args.extend(["--osx-bundle-identifier", "io.github.asoming.shiwen"])
     subprocess.run([*args, "launcher.py"], check=True)
     if sys.platform == "darwin":
-        bundle = output / "Shiwen.app"
-        executable = bundle / "Contents" / "MacOS" / "Shiwen"
+        bundle = output / "OfflineFind.app"
+        executable = bundle / "Contents" / "MacOS" / "OfflineFind"
         label = "macos-arm64" if platform.machine() == "arm64" else "macos-x64"
     else:
-        bundle = output / "Shiwen"
-        executable = bundle / ("Shiwen.exe" if sys.platform == "win32" else "Shiwen")
+        bundle = output / "OfflineFind"
+        executable = bundle / ("OfflineFind.exe" if sys.platform == "win32" else "OfflineFind")
         label = "windows-x64" if sys.platform == "win32" else "linux-x64"
     result = output / "smoke-result.json"
     subprocess.run([str(executable), "--self-test", str(result)], check=True, timeout=120)
@@ -97,7 +98,7 @@ def main():
         timeout=60,
     )
     assert json.loads(gui_result.read_text(encoding="utf-8"))["ok"]
-    name = f"Shiwen-{__version__}-{label}"
+    name = f"OfflineFind-{__version__}-{label}"
     archive = output / f"{name}.zip"
     if sys.platform == "darwin":
         subprocess.run(
@@ -106,8 +107,7 @@ def main():
         )
     else:
         shutil.make_archive(str(output / name), "zip", output, bundle.name)
-    checksum = hashlib.sha256(archive.read_bytes()).hexdigest()
-    archive.with_suffix(".zip.sha256").write_text(f"{checksum}  {archive.name}\n", encoding="utf-8")
+    finish_archive(archive)
     print(f"Built and smoke-tested {archive.name}")
 
 

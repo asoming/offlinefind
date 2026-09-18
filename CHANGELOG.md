@@ -1,5 +1,13 @@
 # Changelog / 更新记录
 
+## 0.1.1 — 2026-09-18
+
+- Rename the English product to OfflineFind and the public repository to `asoming/offlinefind`; retain 拾文 in Chinese.
+- Update interface branding, application bundles, commands, documentation and repository links.
+- Preserve existing data/application identities and legacy launchers; publish compatible asset aliases/feed URLs so older updaters can upgrade.
+- 英文产品名改为 OfflineFind，突出离线文件与正文查找，中文名保留“拾文”；仓库同步改名。
+- 更新英文界面、安装包、命令、文档与链接；保留旧数据目录及启动入口，兼容旧版检查更新和下载。
+
 ## 0.1.0 — 2026-09-17
 
 - First stable release with documented scope and measured performance limits.

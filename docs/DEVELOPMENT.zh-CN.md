@@ -40,7 +40,7 @@ python -m build
 
 ```bash
 python scripts/demo_documents.py /tmp/shiwen-fixtures
-shiwen --serve --folder /tmp/shiwen-fixtures --data-dir /tmp/shiwen-index
+offlinefind --serve --folder /tmp/shiwen-fixtures --data-dir /tmp/shiwen-index
 ```
 
 开发服务仅绑定 `127.0.0.1`，校验 Host / Origin、使用启动时随机请求令牌，并限制请求体积。不要公开托管或穿透到外网。系统文件夹选择器仅由桌面桥接调用。

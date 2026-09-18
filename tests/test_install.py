@@ -31,7 +31,12 @@ def test_install_upgrade_and_old_absolute_entry_follow_current(tmp_path):
     old = install_bundle(bundle(tmp_path / "sources", "0.1.0b8"), prefix)
     new = install_bundle(bundle(tmp_path / "sources", "0.1.0b9"), prefix)
     assert (prefix / "share/shiwen/current").resolve() == new
-    for entry in [old / "shiwen", prefix / "bin/shiwen-app", new / "shiwen"]:
+    for entry in [
+        old / "shiwen",
+        prefix / "bin/shiwen-app",
+        prefix / "bin/offlinefind",
+        new / "shiwen",
+    ]:
         assert subprocess.check_output([str(entry), "--version"], text=True).strip() == "0.1.0b9"
     assert (
         subprocess.check_output(
@@ -44,7 +49,9 @@ def test_install_upgrade_and_old_absolute_entry_follow_current(tmp_path):
     menu = prefix / "share/applications/io.github.asoming.shiwen.desktop"
     if shutil.which("desktop-file-validate"):
         subprocess.run(["desktop-file-validate", str(menu)], check=True)
-    assert str(prefix / "bin/shiwen-app") in menu.read_text()
+    assert str(prefix / "bin/offlinefind") in menu.read_text()
+    assert "Name=OfflineFind" in menu.read_text()
+    assert "Name[zh_CN]=拾文" in menu.read_text()
 
 
 def test_reinstall_repairs_entry_but_preserves_modified_install_and_blocks_downgrade(tmp_path):

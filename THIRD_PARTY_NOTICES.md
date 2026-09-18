@@ -1,6 +1,6 @@
 # Third-party notices / 第三方依赖说明
 
-Shiwen's source is MIT licensed. Dependencies retain their own licenses; this file is an index, not a replacement for those terms. Binary bundles include dependency metadata and license material collected by the packaging tools where available.
+OfflineFind's source is MIT licensed. Dependencies retain their own licenses; this file is an index, not a replacement for those terms. Binary bundles include dependency metadata and license material collected by the packaging tools where available.
 
 拾文源码使用 MIT；依赖各自保留原许可。本文件仅提供索引，不替代原条款。打包工具在可用时收集依赖元数据与许可材料。
 

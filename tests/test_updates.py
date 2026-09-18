@@ -225,3 +225,51 @@ def test_missing_feed_falls_back_to_releases_api():
     updater.check()
     assert finish(updater)["phase"] == "current"
     assert calls == [MANIFEST, API]
+
+
+def test_renamed_release_prefers_new_assets_and_accepts_legacy_feed():
+    from copy import deepcopy
+
+    from shiwen.updates import LEGACY_REPOSITORY
+
+    item = release("v0.1.1", "0.1.1")
+    for asset in item["assets"]:
+        asset["browser_download_url"] = asset["browser_download_url"].replace(
+            REPOSITORY, LEGACY_REPOSITORY
+        )
+    legacy = release_info([item], "0.1.0", "linux", "x86_64")
+    assert len(legacy["assets"]) == 2 and legacy["newer"]
+    assert all(a["url"].startswith(REPOSITORY + "/") for a in legacy["assets"])
+    modern = deepcopy(item["assets"])
+    for asset in modern:
+        asset["name"] = asset["name"].replace("Shiwen-", "OfflineFind-")
+        asset["browser_download_url"] = f"{REPOSITORY}/releases/download/v0.1.1/{asset['name']}"
+    item["assets"].extend(modern)
+    selected = release_info([item], "0.1.0", "linux", "x86_64")
+    assert len(selected["assets"]) == 2
+    assert all(a["name"].startswith("OfflineFind-") for a in selected["assets"])
+    for asset in modern:
+        asset["browser_download_url"] = asset["browser_download_url"].replace(
+            "/asoming/offlinefind/", "/someone/offlinefind/"
+        )
+    assert not release_info([item], "0.1.0", "linux", "x86_64")["assets"]
+
+
+def test_release_feed_keeps_legacy_urls_for_old_clients(tmp_path):
+    import subprocess
+    import sys
+    from pathlib import Path
+
+    from shiwen.updates import LEGACY_REPOSITORY
+
+    item = release("v0.1.1", "0.1.1")
+    source, target = tmp_path / "releases.json", tmp_path / "feed.json"
+    source.write_text(json.dumps([item]))
+    script = Path(__file__).resolve().parents[1] / "scripts/release_feed.py"
+    subprocess.run([sys.executable, str(script), str(source), str(target)], check=True)
+    feed = json.loads(target.read_text())
+    for asset in feed[0]["assets"]:
+        assert asset["browser_download_url"] == (
+            f"{LEGACY_REPOSITORY}/releases/download/v0.1.1/{asset['name']}"
+        )
+    assert len(release_info(feed, "0.1.0", "linux", "x86_64")["assets"]) == 2

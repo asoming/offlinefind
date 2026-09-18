@@ -21,6 +21,15 @@ def main():
             }
             for asset in release.get("assets", [])
         ]
+        # <=0.1.0 validates this exact repository path and Shiwen asset name.
+        # GitHub redirects it to the renamed repository; new clients use OfflineFind assets.
+        for asset in item["assets"]:
+            if asset["name"].startswith("Shiwen-"):
+                asset["browser_download_url"] = asset["browser_download_url"].replace(
+                    "https://github.com/asoming/offlinefind/",
+                    "https://github.com/asoming/shiwen/",
+                    1,
+                )
         feed.append(item)
     target.parent.mkdir(parents=True, exist_ok=True)
     target.write_text(json.dumps(feed, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")

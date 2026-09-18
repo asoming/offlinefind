@@ -23,7 +23,7 @@ def bundle_version(bundle):
             value = ast.literal_eval(node.value)
             if isinstance(value, str) and version(value):
                 return value
-    raise ValueError("Invalid Shiwen bundle version")
+    raise ValueError("Invalid OfflineFind bundle version")
 
 
 def atomic_text(path, text, mode=0o644):
@@ -96,9 +96,15 @@ def install_bundle(source, prefix):
         applications = prefix / "share/applications"
         binaries.mkdir(parents=True, exist_ok=True)
         applications.mkdir(parents=True, exist_ok=True)
-        launcher = binaries / "shiwen-app"
+        launcher = binaries / "offlinefind"
         atomic_text(
             launcher, f'#!/bin/sh\nexec {shlex.quote(str(current / "shiwen"))} "$@"\n', 0o755
+        )
+        # Keep the original command and installation identity for existing users.
+        atomic_text(
+            binaries / "shiwen-app",
+            f'#!/bin/sh\nexec {shlex.quote(str(launcher))} "$@"\n',
+            0o755,
         )
         command = (
             str(launcher)
@@ -109,7 +115,7 @@ def install_bundle(source, prefix):
             .replace("%", "%%")
         )
         desktop = (
-            "[Desktop Entry]\nVersion=1.0\nType=Application\nName=Shiwen\nName[zh_CN]=拾文\n"
+            "[Desktop Entry]\nVersion=1.0\nType=Application\nName=OfflineFind\nName[zh_CN]=拾文\n"
             f'Exec="{command}"\nIcon={current / "shiwen.svg"}\n'
             "Terminal=false\nCategories=Office;\nKeywords=search;documents;pdf;markdown;docx;\n"
             "StartupNotify=true\nStartupWMClass=Shiwen\n"
@@ -121,7 +127,7 @@ def install_bundle(source, prefix):
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Install Shiwen for the current Linux user")
+    parser = argparse.ArgumentParser(description="Install OfflineFind for the current Linux user")
     parser.add_argument("--prefix", type=Path, default=Path.home() / ".local")
     args = parser.parse_args()
     if sys.platform != "linux":
@@ -133,5 +139,5 @@ def main():
         parser.exit(1, f"安装失败 / Installation failed: {error}\n")
     print(
         f"安装完成 / Installed: {target}\n"
-        "请退出旧窗口后从菜单打开拾文 / Quit the old app, then reopen Shiwen."
+        "请退出旧窗口后从菜单打开拾文 / Quit the old app, then reopen OfflineFind."
     )

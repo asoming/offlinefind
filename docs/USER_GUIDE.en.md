@@ -7,11 +7,11 @@
 Supported desktop targets are Ubuntu 22.04 / 24.04 x64. Open the downloaded `.deb` in your software installer, or run:
 
 ```bash
-sudo apt install ./Shiwen-*-linux-amd64.deb
-shiwen
+sudo apt install ./OfflineFind-*-linux-amd64.deb
+offlinefind
 ```
 
-Find **Shiwen** in the application menu after installation. For the portable tar.gz, extract it and run `./shiwen` inside the Shiwen folder. Both packages use system Python 3.10+, GTK 3 and WebKit. Install missing dependencies with:
+Find **OfflineFind** in the application menu after installation. For the portable tar.gz, extract it and run `./offlinefind` inside the OfflineFind folder. Both packages use system Python 3.10+, GTK 3 and WebKit. Install missing dependencies with:
 
 ```bash
 sudo apt install python3 python3-gi python3-gi-cairo gir1.2-gtk-3.0 gir1.2-webkit2-4.1 xdg-utils
@@ -21,7 +21,7 @@ Existing `gir1.2-webkit2-4.0` also works on Ubuntu 22.04. Application Python mod
 
 ## Portable installation and repeated launches
 
-On Linux, extract the tar.gz, enter `Shiwen`, then run `./install-user`. It installs into `~/.local/share/shiwen/<version>`, creates `~/.local/bin/shiwen-app` and a menu entry, and atomically updates the `current` link. Run the same installer from each downloaded new version. No administrator privileges are needed for the app; system runtime dependencies still apply. DEB installations should be upgraded through the package manager.
+On Linux, extract the tar.gz, enter `OfflineFind`, then run `./install-user`. It installs into `~/.local/share/shiwen/<version>`, creates `~/.local/bin/offlinefind` and the compatible `shiwen-app` alias and a menu entry, and atomically updates the `current` link. Run the same installer from each downloaded new version. No administrator privileges are needed for the app; system runtime dependencies still apply. DEB installations should be upgraded through the package manager.
 
 Older portable launch paths under that installation follow the current version. Launcher backups are kept as `launch.py.before-upgrade`. The default index in `~/.local/share/Shiwen` is preserved. Quit the old app before installing: versions before beta.9 cannot participate in the single-instance protocol. The installer does not stop running processes.
 
@@ -30,7 +30,7 @@ From beta.9, a repeated launch using the same data directory requests the existi
 
 ## Open and search
 
-Open Shiwen normally to discover local disks automatically. No folder selection is required, and mixed folders are supported. Regular files and folders are indexed by name first; an independent worker extracts PDF, Markdown and DOCX contents. Images, videos, archives, code and other formats receive a name index only, without reading their contents.
+Open OfflineFind normally to discover local disks automatically. No folder selection is required, and mixed folders are supported. Regular files and folders are indexed by name first; an independent worker extracts PDF, Markdown and DOCX contents. Images, videos, archives, code and other formats receive a name index only, without reading their contents.
 
 Windows discovers fixed disks with drive letters. Linux/macOS traverse the local directory tree, prioritizing the user's home directory. Virtual filesystems, network mounts, `.git`, `.cache`, dependencies, trash, symlinks and the app's own index are skipped. Ordinary hidden files remain searchable. Inaccessible folders are skipped without elevation; cloud placeholders are not downloaded. macOS privacy permissions may restrict searchable locations.
 
@@ -73,23 +73,23 @@ Default data directories are `%LOCALAPPDATA%\Shiwen` on Windows, `~/Library/Appl
 
 Open **Settings → Software updates → Check for updates**. The app shows the latest compatible release and its notes. Choose a package (Linux offers DEB and portable tar.gz), then **Download package**. Progress and cancellation are available. A completed download must pass size and SHA-256 verification; incomplete or invalid packages are removed.
 
-Choose **Show download folder** after completion. Downloads go into a new `Shiwen-…` subfolder of your system Downloads directory, without overwriting earlier downloads. Quit Shiwen before installing the DEB or replacing the extracted application. Keep the existing data directory to preserve your index and settings. This version downloads packages but does not install or restart automatically.
+Choose **Show download folder** after completion. Downloads go into a new `OfflineFind-…` subfolder of your system Downloads directory, without overwriting earlier downloads. Quit OfflineFind before installing the DEB or replacing the extracted application. Keep the existing data directory to preserve your index and settings. This version downloads packages but does not install or restart automatically.
 
 Only manual update actions connect to GitHub. Startup, indexing, searching and opening Settings do not check online. Documents, file paths and index contents are never sent. Beta installations follow newer beta or stable releases; stable installations ignore prereleases. Older published versions are not offered as downgrades. If networking fails, retry or use **View releases** to download through your browser.
 
 ## Troubleshooting
 
-- **No result:** check the selected folder/type, indexing progress and file status. Scanned PDFs need OCR outside Shiwen.
+- **No result:** check the selected folder/type, indexing progress and file status. Scanned PDFs need OCR outside OfflineFind.
 - **A changed file shows no text temporarily:** the stale content is withdrawn until its new version is ready. A failed update never silently serves old text as current.
 - **Moved file lost its bookmark:** cross-path identity and bookmark transfer are not yet implemented. Re-bookmark its new location.
 - **Windows window does not start:** verify that Edge WebView2 is installed; the app intentionally does not fall back to Internet Explorer.
 - **macOS blocks launch:** use the OS's approval flow for a downloaded unsigned app; do not turn off global protections.
-- **Damaged local database:** quit Shiwen and move its data directory aside, then restart to discover disks automatically. Automatic repair is planned. Do not upload the old database: it contains document text.
+- **Damaged local database:** quit OfflineFind and move its data directory aside, then restart to discover disks automatically. Automatic repair is planned. Do not upload the old database: it contains document text.
 
 
 ## Window shutdown
 
-Clicking the integrated upper-right × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.8 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that Shiwen process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.
+Clicking the integrated upper-right × exits the desktop window and requests cancellation of indexing and downloads. Unfinished documents remain pending for the next launch. There is no minimize-to-tray behavior. Beta.8 fixes a Linux callback race that could leave the old process waiting after window destruction. If an older frozen copy is still running, end that OfflineFind process in the system monitor once, then reopen the upgraded application. Network cleanup may still wait for the active request's timeout.
 
 
 ## Frameless window controls
@@ -97,3 +97,10 @@ Clicking the integrated upper-right × exits the desktop window and requests can
 The system title bar is hidden. Use the upper-right buttons to minimize, maximize/restore and close. Drag the heading or brand area to move the window; double-click that area to maximize/restore. Drag any edge or corner to resize. The minimum window size is 780 × 580. Closing exits the application; it does not hide to a tray. Browser development mode cannot control a native window.
 
 Full desktop memory can be several hundred MiB, and broad searches may take seconds. See the [measured performance](PERFORMANCE.en.md). When upgrading, quit the running old window and reopen from the application menu; installing a new version does not replace an already-running process.
+
+
+## Name change in 0.1.1
+
+The English name is OfflineFind; the Chinese name remains 拾文. Download `OfflineFind-*` packages. The portable archive contains `OfflineFind`; Windows launches `OfflineFind.exe`, macOS `OfflineFind.app`, and Linux `./offlinefind`. The Linux user installer creates `~/.local/bin/offlinefind`, retaining `shiwen-app` and older launch paths. Existing data directories containing `Shiwen` and the Debian package ID `shiwen` deliberately remain unchanged. The Python distribution is `offlinefind`; its internal import module remains `shiwen`.
+
+Older versions can still find the renamed release through their manual updater. `Shiwen-*` assets are byte-identical compatibility copies, not a second application. Existing historical releases retain their original names.

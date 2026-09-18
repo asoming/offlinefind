@@ -60,7 +60,7 @@ RSS sums include Python, parser children when present and WebView processes. Sha
 
 Cross-platform CI measurements are recorded below separately; runner hardware, corpus sizes and rendering differ, so these are not controlled OS comparisons.
 
-All three jobs passed in [run 35207745672](https://github.com/asoming/shiwen/actions/runs/35207745672), revision `e848222`. Each desktop reopens a 1,000-document index; the separate 100,000-name benchmark is not loaded into its desktop. Windows runs on Server 2025 CI, not a physical Windows 11 workstation. macOS sums new WebKit XPC processes in the otherwise isolated runner; pre-existing shared services are excluded. First-results times include native WebView initialization, which was particularly slow on Linux CI. Closing time starts at the close request, not process startup.
+All three jobs passed in [run 35207745672](https://github.com/asoming/offlinefind/actions/runs/35207745672), revision `e848222`. Each desktop reopens a 1,000-document index; the separate 100,000-name benchmark is not loaded into its desktop. Windows runs on Server 2025 CI, not a physical Windows 11 workstation. macOS sums new WebKit XPC processes in the otherwise isolated runner; pre-existing shared services are excluded. First-results times include native WebView initialization, which was particularly slow on Linux CI. Closing time starts at the close request, not process startup.
 
 | CI desktop | Idle RSS (MiB) | Peak RSS (MiB) | Idle CPU, one core | First results / close (s) |
 | --- | ---: | ---: | ---: | ---: |

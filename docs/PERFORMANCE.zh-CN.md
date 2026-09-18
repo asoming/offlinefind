@@ -60,7 +60,7 @@ RSS 汇总含 Python、存在时的解析子进程和 WebView；共享页可能�
 
 以下另列三平台 CI 测量。机器、语料规模、渲染环境不同，不构成受控的操作系统性能比较。
 
-[工作流 35207745672](https://github.com/asoming/shiwen/actions/runs/35207745672) 的三个任务全部通过，代码为 `e848222`。桌面均重开 1,000 份文档索引；另测的 100,000 条名称没有合入桌面库。Windows 使用 Server 2025 CI，不是 Windows 11 实体工作站。macOS 汇总独立测试环境中新建的 WebKit XPC 进程，排除原有共享服务。首批结果时间包含 WebView 初始化，Linux CI 中尤为缓慢；关闭耗时从发起关闭起计算。
+[工作流 35207745672](https://github.com/asoming/offlinefind/actions/runs/35207745672) 的三个任务全部通过，代码为 `e848222`。桌面均重开 1,000 份文档索引；另测的 100,000 条名称没有合入桌面库。Windows 使用 Server 2025 CI，不是 Windows 11 实体工作站。macOS 汇总独立测试环境中新建的 WebKit XPC 进程，排除原有共享服务。首批结果时间包含 WebView 初始化，Linux CI 中尤为缓慢；关闭耗时从发起关闭起计算。
 
 | CI 桌面 | 空闲 RSS（MiB） | 峰值 RSS（MiB） | 空闲 CPU，单核 | 首批结果 / 关闭（秒） |
 | --- | ---: | ---: | ---: | ---: |

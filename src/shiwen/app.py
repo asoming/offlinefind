@@ -240,7 +240,7 @@ def serve(bridge: Bridge, port: int):
             pass
 
     server = ThreadingHTTPServer(("127.0.0.1", port), Handler)
-    print(f"Shiwen developer preview: http://127.0.0.1:{server.server_port}/", flush=True)
+    print(f"OfflineFind developer preview: http://127.0.0.1:{server.server_port}/", flush=True)
     try:
         server.serve_forever()
     finally:
@@ -284,7 +284,7 @@ def self_test(destination: Path):
 
 def main():
     multiprocessing.freeze_support()
-    parser = argparse.ArgumentParser(description="Shiwen · offline document search")
+    parser = argparse.ArgumentParser(description="OfflineFind · offline file and full-text search")
     parser.add_argument("--version", action="version", version=__version__)
     parser.add_argument("--data-dir", type=Path, default=user_data_path("Shiwen", appauthor=False))
     parser.add_argument(
@@ -305,7 +305,7 @@ def main():
     if not instance.acquire():
         activated = instance.notify()
         print(
-            "Shiwen is already running."
+            "OfflineFind is already running."
             + (" Window activation requested." if activated else " Wait for startup or shutdown.")
         )
         return
@@ -338,7 +338,7 @@ def run_application(args, instance):
             import webview
 
             window = webview.create_window(
-                "拾文 · Shiwen",
+                "拾文 · OfflineFind",
                 html=html(),
                 js_api=bridge,
                 width=1220,

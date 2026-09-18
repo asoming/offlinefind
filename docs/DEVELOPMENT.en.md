@@ -40,7 +40,7 @@ Create synthetic QA documents and run the browser preview:
 
 ```bash
 python scripts/demo_documents.py /tmp/shiwen-fixtures
-shiwen --serve --folder /tmp/shiwen-fixtures --data-dir /tmp/shiwen-index
+offlinefind --serve --folder /tmp/shiwen-fixtures --data-dir /tmp/shiwen-index
 ```
 
 The preview server binds to `127.0.0.1`, validates Host/Origin, requires a per-process token and rejects oversized requests. It must not be exposed through tunnels or public hosting. Only the desktop bridge can invoke a native directory picker.
